@@ -1,0 +1,372 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* .es-bg {
+   position: relative;
+   background: transparent;
+   overflow: hidden;
+   z-index: 1;
+
+   &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      border: 1px solid #364153;
+      background: #364153;
+      transition: linear 200ms all;
+      z-index: -2;
+   }
+
+   &.no-bg::before {
+      background: transparent;
+      border: none;
+   }
+
+   &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(to right, #2b7fff, #9810fa);
+      transition: linear 200ms all;
+      opacity: 0;
+      z-index: -1;
+   }
+
+   &.no-bg:not(.es-bg-active)::after {
+      border: none;
+      background: transparent;
+   }
+
+   &.no-bg:not(.es-bg-active):hover::after {
+      border: 1px solid #364153;
+      background: #364153;
+   }
+
+   &:hover::after {
+      opacity: 1;
+   }
+}
+
+.es-bg-active::after {
+   opacity: 1;
+} */
+
+/* Custom styles for Chrome Extension */
+body {
+   margin: 0;
+   padding: 0;
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Chrome Extension specific styles */
+.extension-popup {
+   width: 800px;
+   max-width: 800px;
+   height: 600px;
+   max-height: 600px;
+   overflow-y: auto;
+   overflow-x: hidden;
+}
+
+/* Custom dark dotted background */
+.bg-dark-dotted {
+   @apply bg-gray-900;
+   background-image: radial-gradient(circle, #272b47 1px, transparent 1px), radial-gradient(#29316f 1px, transparent 1px);
+   background-size: 20px 20px, 40px 40px;
+
+   /* @apply bg-[#282a38];
+   background-image: radial-gradient(#0003 1px, transparent 1px),
+      radial-gradient(#0005 1px, transparent 1px);
+   background-size: 20px 20px, 40px 40px; */
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar {
+   scrollbar-width: thin;
+   scrollbar-color: #4a5568 #2d3748;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+   width: 6px;
+   height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+   background: #2d3748;
+   border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+   background: #4a5568;
+   border-radius: 3px;
+   transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+   background: #718096;
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner {
+   background: #2d3748;
+}
+
+/* Button Transition Effects */
+.btn-primary {
+   @apply px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-lg font-medium shadow cursor-pointer transition-all duration-300;
+}
+
+.btn-primary:hover {
+   @apply from-green-600 to-blue-700 transform scale-105;
+}
+
+.btn-secondary {
+   @apply px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium shadow cursor-pointer transition-all duration-300;
+}
+
+.btn-secondary:hover {
+   @apply from-blue-600 to-purple-700 transform scale-105;
+}
+
+.btn-danger {
+   @apply px-4 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg font-medium shadow cursor-pointer transition-all duration-300;
+}
+
+.btn-danger:hover {
+   @apply from-red-600 to-pink-700 transform scale-105;
+}
+
+.btn-neutral {
+   @apply px-4 py-2 bg-gray-700 text-white rounded-lg font-medium cursor-pointer transition-all duration-200;
+}
+
+.btn-neutral:hover {
+   @apply bg-gray-600 transform scale-105;
+}
+
+@theme inline {
+   --radius-sm: calc(var(--radius) - 4px);
+   --radius-md: calc(var(--radius) - 2px);
+   --radius-lg: var(--radius);
+   --radius-xl: calc(var(--radius) + 4px);
+   --color-background: var(--background);
+   --color-foreground: var(--foreground);
+   --color-card: var(--card);
+   --color-card-foreground: var(--card-foreground);
+   --color-popover: var(--popover);
+   --color-popover-foreground: var(--popover-foreground);
+   --color-primary: var(--primary);
+   --color-primary-foreground: var(--primary-foreground);
+   --color-secondary: var(--secondary);
+   --color-secondary-foreground: var(--secondary-foreground);
+   --color-muted: var(--muted);
+   --color-muted-foreground: var(--muted-foreground);
+   --color-accent: var(--accent);
+   --color-accent-foreground: var(--accent-foreground);
+   --color-destructive: var(--destructive);
+   --color-border: var(--border);
+   --color-input: var(--input);
+   --color-ring: var(--ring);
+   --color-chart-1: var(--chart-1);
+   --color-chart-2: var(--chart-2);
+   --color-chart-3: var(--chart-3);
+   --color-chart-4: var(--chart-4);
+   --color-chart-5: var(--chart-5);
+   --color-sidebar: var(--sidebar);
+   --color-sidebar-foreground: var(--sidebar-foreground);
+   --color-sidebar-primary: var(--sidebar-primary);
+   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+   --color-sidebar-accent: var(--sidebar-accent);
+   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+   --color-sidebar-border: var(--sidebar-border);
+   --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+   --radius: 0.625rem;
+   --background: oklch(1 0 0);
+   --foreground: oklch(0.145 0 0);
+   --card: oklch(1 0 0);
+   --card-foreground: oklch(0.145 0 0);
+   --popover: oklch(1 0 0);
+   --popover-foreground: oklch(0.145 0 0);
+   --primary: oklch(0.205 0 0);
+   --primary-foreground: oklch(0.985 0 0);
+   --secondary: oklch(0.97 0 0);
+   --secondary-foreground: oklch(0.205 0 0);
+   --muted: oklch(0.97 0 0);
+   --muted-foreground: oklch(0.556 0 0);
+   --accent: oklch(0.97 0 0);
+   --accent-foreground: oklch(0.205 0 0);
+   --destructive: oklch(0.577 0.245 27.325);
+   --border: oklch(0.922 0 0);
+   --input: oklch(0.922 0 0);
+   --ring: oklch(0.708 0 0);
+   --chart-1: oklch(0.646 0.222 41.116);
+   --chart-2: oklch(0.6 0.118 184.704);
+   --chart-3: oklch(0.398 0.07 227.392);
+   --chart-4: oklch(0.828 0.189 84.429);
+   --chart-5: oklch(0.769 0.188 70.08);
+   --sidebar: oklch(0.985 0 0);
+   --sidebar-foreground: oklch(0.145 0 0);
+   --sidebar-primary: oklch(0.205 0 0);
+   --sidebar-primary-foreground: oklch(0.985 0 0);
+   --sidebar-accent: oklch(0.97 0 0);
+   --sidebar-accent-foreground: oklch(0.205 0 0);
+   --sidebar-border: oklch(0.922 0 0);
+   --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+   --background: oklch(0.145 0 0);
+   --foreground: oklch(0.985 0 0);
+   --card: oklch(0.205 0 0);
+   --card-foreground: oklch(0.985 0 0);
+   --popover: oklch(0.205 0 0);
+   --popover-foreground: oklch(0.985 0 0);
+   --primary: oklch(0.922 0 0);
+   --primary-foreground: oklch(0.205 0 0);
+   --secondary: oklch(0.269 0 0);
+   --secondary-foreground: oklch(0.985 0 0);
+   --muted: oklch(0.269 0 0);
+   --muted-foreground: oklch(0.708 0 0);
+   --accent: oklch(0.269 0 0);
+   --accent-foreground: oklch(0.985 0 0);
+   --destructive: oklch(0.704 0.191 22.216);
+   --border: oklch(1 0 0 / 10%);
+   --input: oklch(1 0 0 / 15%);
+   --ring: oklch(0.556 0 0);
+   --chart-1: oklch(0.488 0.243 264.376);
+   --chart-2: oklch(0.696 0.17 162.48);
+   --chart-3: oklch(0.769 0.188 70.08);
+   --chart-4: oklch(0.627 0.265 303.9);
+   --chart-5: oklch(0.645 0.246 16.439);
+   --sidebar: oklch(0.205 0 0);
+   --sidebar-foreground: oklch(0.985 0 0);
+   --sidebar-primary: oklch(0.488 0.243 264.376);
+   --sidebar-primary-foreground: oklch(0.985 0 0);
+   --sidebar-accent: oklch(0.269 0 0);
+   --sidebar-accent-foreground: oklch(0.985 0 0);
+   --sidebar-border: oklch(1 0 0 / 10%);
+   --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+   * {
+      @apply border-border outline-ring/50;
+   }
+   body {
+      @apply bg-background text-foreground;
+      /* Global custom scrollbar styling */
+      scrollbar-width: thin;
+      scrollbar-color: #3b82f6 transparent;
+   }
+
+   /* Webkit scrollbar for body */
+   body::-webkit-scrollbar {
+      width: 6px;
+   }
+
+   body::-webkit-scrollbar-track {
+      background: rgba(31, 41, 55, 0.1);
+      border-radius: 10px;
+   }
+
+   body::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+   }
+
+   body::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(to bottom, #2563eb, #7c3aed);
+      box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+   }
+
+   body::-webkit-scrollbar-corner {
+      background: transparent;
+   }
+}
+
+/* Custom scrollbar styling for Excel viewer */
+.excel-scroll-container {
+   scrollbar-width: thin;
+   scrollbar-color: #6b7280 #1f2937;
+}
+
+.excel-scroll-container::-webkit-scrollbar {
+   width: 8px;
+   height: 8px;
+}
+
+.excel-scroll-container::-webkit-scrollbar-track {
+   background: #1f2937;
+   border-radius: 4px;
+}
+
+.excel-scroll-container::-webkit-scrollbar-thumb {
+   background: #6b7280;
+   border-radius: 4px;
+   transition: background-color 0.2s ease;
+}
+
+.excel-scroll-container::-webkit-scrollbar-thumb:hover {
+   background: #9ca3af;
+}
+
+/* Global custom scrollbar with gradient theme */
+.custom-scrollbar {
+   scrollbar-width: thin;
+   scrollbar-color: #3b82f6 transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+   width: 6px;
+   height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+   background: rgba(31, 41, 55, 0.1);
+   border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+   background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+   border-radius: 10px;
+   transition: all 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+   background: linear-gradient(to bottom, #2563eb, #7c3aed);
+   box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner {
+   background: transparent;
+}
+
+/* Scroll fade effect */
+.scroll-fade-bottom::after {
+   content: "";
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   height: 20px;
+   background: linear-gradient(to bottom, transparent, rgba(31, 41, 55, 0.8));
+   pointer-events: none;
+   z-index: 10;
+}
