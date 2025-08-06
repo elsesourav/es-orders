@@ -12,6 +12,7 @@ const TextInput = ({
    helperText = "",
    className = "",
    width = "w-full",
+   type = "text",
    onFocus,
    onKeyDown,
 }) => {
@@ -37,7 +38,7 @@ const TextInput = ({
 
          <div className="relative">
             <input
-               type="text"
+               type={type}
                value={displayValue || ""}
                onChange={(e) => onChange(e.target.value)}
                onFocus={handleFocus}

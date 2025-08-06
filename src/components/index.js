@@ -1,6 +1,13 @@
 // Export all reusable components from this file
+export { default as AccountPage } from "./AccountPage";
 export { default as Button } from "./Button";
 export { default as ConfirmDialog } from "./ConfirmDialog";
 export { default as CustomAlert } from "./CustomAlert";
-export { default as Header } from "./Header";
-export { default as Navbar } from "./Navbar";
+export { default as HomePage } from "./HomePage";
+export { default as OrdersPage } from "./OrdersPage";
+export { default as ResponsiveNav } from "./ResponsiveNav";
+export { default as SettingsPage } from "./SettingsPage";
+export { default as ThemeToggle } from "./ThemeToggle";
+
+// Export login components
+export { LoginPage } from "./login";

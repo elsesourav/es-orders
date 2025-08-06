@@ -3,64 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* .es-bg {
-   position: relative;
-   background: transparent;
-   overflow: hidden;
-   z-index: 1;
-
-   &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      border: 1px solid #364153;
-      background: #364153;
-      transition: linear 200ms all;
-      z-index: -2;
-   }
-
-   &.no-bg::before {
-      background: transparent;
-      border: none;
-   }
-
-   &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(to right, #2b7fff, #9810fa);
-      transition: linear 200ms all;
-      opacity: 0;
-      z-index: -1;
-   }
-
-   &.no-bg:not(.es-bg-active)::after {
-      border: none;
-      background: transparent;
-   }
-
-   &.no-bg:not(.es-bg-active):hover::after {
-      border: 1px solid #364153;
-      background: #364153;
-   }
-
-   &:hover::after {
-      opacity: 1;
-   }
-}
-
-.es-bg-active::after {
-   opacity: 1;
-} */
-
 /* Custom styles for Chrome Extension */
 body {
    margin: 0;
@@ -72,20 +14,11 @@ body {
    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Chrome Extension specific styles */
-.extension-popup {
-   width: 800px;
-   max-width: 800px;
-   height: 600px;
-   max-height: 600px;
-   overflow-y: auto;
-   overflow-x: hidden;
-}
-
 /* Custom dark dotted background */
 .bg-dark-dotted {
    @apply bg-gray-900;
-   background-image: radial-gradient(circle, #272b47 1px, transparent 1px), radial-gradient(#29316f 1px, transparent 1px);
+   background-image: radial-gradient(circle, #272b47 1px, transparent 1px),
+      radial-gradient(#29316f 1px, transparent 1px);
    background-size: 20px 20px, 40px 40px;
 
    /* @apply bg-[#282a38];
@@ -96,8 +29,8 @@ body {
 
 /* Custom Scrollbar Styles */
 .custom-scrollbar {
-   scrollbar-width: thin;
-   scrollbar-color: #4a5568 #2d3748;
+   scrollbar-width: thin !important;
+   scrollbar-color: #4a5568 #2d3748 !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -122,6 +55,132 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-corner {
    background: #2d3748;
+}
+
+/* Custom utility classes using CSS variables */
+.bg-primary {
+   background-color: var(--color-primary);
+}
+
+.bg-primary-50 {
+   background-color: var(--color-primary-50);
+}
+
+.bg-primary-100 {
+   background-color: var(--color-primary-100);
+}
+
+.bg-primary-600 {
+   background-color: var(--color-primary-600);
+}
+
+.bg-primary-900 {
+   background-color: var(--color-primary-900);
+}
+
+.text-primary {
+   color: var(--color-primary);
+}
+
+.text-primary-600 {
+   color: var(--color-primary-600);
+}
+
+.text-primary-700 {
+   color: var(--color-primary-700);
+}
+
+.text-primary-300 {
+   color: var(--color-primary-300);
+}
+
+.border-primary {
+   border-color: var(--color-primary);
+}
+
+.bg-app-light {
+   background-color: var(--color-bg-primary);
+}
+
+.bg-app-secondary {
+   background-color: var(--color-bg-secondary);
+}
+
+.bg-app-dark {
+   background-color: var(--color-bg-dark);
+}
+
+.text-app-primary {
+   color: var(--color-text-primary);
+}
+
+.text-app-secondary {
+   color: var(--color-text-secondary);
+}
+
+.border-app {
+   border-color: var(--color-border-light);
+}
+
+.shadow-app-sm {
+   box-shadow: var(--shadow-sm);
+}
+
+.shadow-app-md {
+   box-shadow: var(--shadow-md);
+}
+
+.shadow-app-lg {
+   box-shadow: var(--shadow-lg);
+}
+
+/* Status utility classes */
+.bg-success {
+   background-color: var(--color-success);
+}
+
+.bg-success-light {
+   background-color: var(--color-success-light);
+}
+
+.text-success {
+   color: var(--color-success);
+}
+
+.bg-warning {
+   background-color: var(--color-warning);
+}
+
+.bg-warning-light {
+   background-color: var(--color-warning-light);
+}
+
+.text-warning {
+   color: var(--color-warning);
+}
+
+.bg-error {
+   background-color: var(--color-error);
+}
+
+.bg-error-light {
+   background-color: var(--color-error-light);
+}
+
+.text-error {
+   color: var(--color-error);
+}
+
+.bg-info {
+   background-color: var(--color-info);
+}
+
+.bg-info-light {
+   background-color: var(--color-info-light);
+}
+
+.text-info {
+   color: var(--color-info);
 }
 
 /* Button Transition Effects */
@@ -196,6 +255,59 @@ body {
 }
 
 :root {
+   /* App Color Palette */
+   --color-primary: #2563eb;
+   --color-primary-50: #eff6ff;
+   --color-primary-100: #dbeafe;
+   --color-primary-200: #bfdbfe;
+   --color-primary-300: #93c5fd;
+   --color-primary-400: #60a5fa;
+   --color-primary-500: #3b82f6;
+   --color-primary-600: #2563eb;
+   --color-primary-700: #1d4ed8;
+   --color-primary-800: #1e40af;
+   --color-primary-900: #1e3a8a;
+
+   /* Background Colors */
+   --color-bg-primary: #ffffff;
+   --color-bg-secondary: #f8fafc;
+   --color-bg-tertiary: #f1f5f9;
+   --color-bg-dark: #0f172a;
+   --color-bg-dark-secondary: #1e293b;
+   --color-bg-dark-tertiary: #334155;
+
+   /* Text Colors */
+   --color-text-primary: #0f172a;
+   --color-text-secondary: #475569;
+   --color-text-tertiary: #64748b;
+   --color-text-dark-primary: #f8fafc;
+   --color-text-dark-secondary: #cbd5e1;
+   --color-text-dark-tertiary: #94a3b8;
+
+   /* Border Colors */
+   --color-border-light: #e2e8f0;
+   --color-border-medium: #cbd5e1;
+   --color-border-dark: #475569;
+
+   /* Status Colors */
+   --color-success: #10b981;
+   --color-success-light: #ecfdf5;
+   --color-warning: #f59e0b;
+   --color-warning-light: #fffbeb;
+   --color-error: #ef4444;
+   --color-error-light: #fef2f2;
+   --color-info: #06b6d4;
+   --color-info-light: #f0fdfa;
+
+   /* Shadow Colors */
+   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+      0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+   /* Original design system variables */
    --radius: 0.625rem;
    --background: oklch(1 0 0);
    --foreground: oklch(0.145 0 0);
