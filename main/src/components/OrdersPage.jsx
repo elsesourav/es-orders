@@ -122,15 +122,9 @@ const OrdersPage = () => {
                   unitType
                );
 
-               console.log("Product Details:", {
-                  name: names.join(", "),
-                  weight: weight,
-                  unite: unitType,
-               });
-
                return {
                   name: names.join(", "),
-                  weight: weight,
+                  weight: weight.toFixed(3),
                   unite: unitType,
                };
             }
