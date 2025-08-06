@@ -38,7 +38,7 @@ const HomePage = ({ onNavigateToOrders }) => {
    const handleRTDClick = (e, state) => {
       e.stopPropagation();
       localStorage.setItem(
-         "selectedState",
+         "es_orders_selected_state",
          JSON.stringify({
             ...state,
             selectedType: "rtd",
@@ -52,7 +52,7 @@ const HomePage = ({ onNavigateToOrders }) => {
    const handleHandoverClick = (e, state) => {
       e.stopPropagation();
       localStorage.setItem(
-         "selectedState",
+         "es_orders_selected_state",
          JSON.stringify({
             ...state,
             selectedType: "handover",
