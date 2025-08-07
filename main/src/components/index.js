@@ -11,3 +11,6 @@ export { default as ThemeToggle } from "./ThemeToggle";
 
 // Export login components
 export { LoginPage } from "./login";
+
+// Export orders components
+export { OrdersPopup, Pagination } from "./orders";
