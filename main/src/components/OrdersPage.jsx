@@ -1,9 +1,9 @@
 import { Tag } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AiOutlineDeploymentUnit } from "react-icons/ai";
 import { GiWeight } from "react-icons/gi";
 import { getAllProducts } from "../api/productsApi";
-import { OrdersPopup, Pagination } from "./orders";
+import { OrdersPopup, Pagination, VoiceControl } from "./orders";
 
 const OrdersPage = () => {
    const [stateData, setStateData] = useState(null);
@@ -90,49 +90,87 @@ const OrdersPage = () => {
       [products]
    );
 
-   // Pagination logic
-   const nextOrder = () => {
-      if (
-         selectedOrderIndex !== null &&
-         selectedOrderIndex < orders.length - 1
-      ) {
-         const newIndex = selectedOrderIndex + 1;
-         setSelectedOrderIndex(newIndex);
-         setSelectedItemIndex(0);
-         if (products.length > 0) {
-            const productDetails = updateProductDetails(
-               orders[newIndex].orderItems[0]
-            );
-            setProduct(productDetails);
-         } else {
-            setProduct({
-               name: "Loading...",
-               weight: "Loading...",
-               unite: "Loading...",
-            });
+   // Stable navigation functions for voice commands
+   const nextOrderRef = useRef();
+   const prevOrderRef = useRef();
+   const selectOrderRef = useRef();
+
+   nextOrderRef.current = () => {
+      setSelectedOrderIndex((prevIndex) => {
+         if (prevIndex !== null && prevIndex < orders.length - 1) {
+            const newIndex = prevIndex + 1;
+            setSelectedItemIndex(0);
+
+            if (products.length > 0 && orders[newIndex]?.orderItems?.[0]) {
+               const productDetails = updateProductDetails(
+                  orders[newIndex].orderItems[0]
+               );
+               setProduct(productDetails);
+            } else {
+               setProduct({
+                  name: "Loading...",
+                  weight: "Loading...",
+                  unite: "Loading...",
+               });
+            }
+
+            return newIndex;
          }
-      }
+         return prevIndex;
+      });
    };
 
-   const prevOrder = () => {
-      if (selectedOrderIndex !== null && selectedOrderIndex > 0) {
-         const newIndex = selectedOrderIndex - 1;
-         setSelectedOrderIndex(newIndex);
-         setSelectedItemIndex(0);
-         if (products.length > 0) {
-            const productDetails = updateProductDetails(
-               orders[newIndex].orderItems[0]
-            );
-            setProduct(productDetails);
-         } else {
-            setProduct({
-               name: "Loading...",
-               weight: "Loading...",
-               unite: "Loading...",
-            });
+   prevOrderRef.current = () => {
+      setSelectedOrderIndex((prevIndex) => {
+         if (prevIndex !== null && prevIndex > 0) {
+            const newIndex = prevIndex - 1;
+            setSelectedItemIndex(0);
+
+            if (products.length > 0 && orders[newIndex]?.orderItems?.[0]) {
+               const productDetails = updateProductDetails(
+                  orders[newIndex].orderItems[0]
+               );
+               setProduct(productDetails);
+            } else {
+               setProduct({
+                  name: "Loading...",
+                  weight: "Loading...",
+                  unite: "Loading...",
+               });
+            }
+
+            return newIndex;
          }
-      }
+         return prevIndex;
+      });
    };
+
+   selectOrderRef.current = (orderIndex) => {
+      setSelectedOrderIndex(orderIndex);
+      setSelectedItemIndex(0);
+
+      if (products.length > 0 && orders[orderIndex]?.orderItems?.[0]) {
+         const productDetails = updateProductDetails(
+            orders[orderIndex].orderItems[0]
+         );
+         setProduct(productDetails);
+      } else {
+         setProduct({
+            name: "Loading...",
+            weight: "Loading...",
+            unite: "Loading...",
+         });
+      }
+      setShowOrdersPopup(false);
+   };
+
+   // Wrapper functions for UI callbacks
+   const nextOrder = useCallback(() => nextOrderRef.current(), []);
+   const prevOrder = useCallback(() => prevOrderRef.current(), []);
+   const selectOrder = useCallback(
+      (orderIndex) => selectOrderRef.current(orderIndex),
+      []
+   );
 
    useEffect(() => {
       // Fetch state data from localStorage
@@ -188,32 +226,21 @@ const OrdersPage = () => {
       }
    }, [orders, products, selectedOrderIndex, updateProductDetails]);
 
-   const selectOrder = (orderIndex) => {
-      setSelectedOrderIndex(orderIndex);
-      setSelectedItemIndex(0);
-      // Only update product details if products are loaded
-      if (products.length > 0) {
-         const productDetails = updateProductDetails(
-            orders[orderIndex].orderItems[0]
-         );
-         setProduct(productDetails);
-      } else {
-         setProduct({
-            name: "Loading...",
-            weight: "Loading...",
-            unite: "Loading...",
-         });
-      }
-      setShowOrdersPopup(false);
-   };
-
    const selectedOrder =
       selectedOrderIndex !== null ? orders[selectedOrderIndex] : null;
 
    return (
       <div className="relative flex flex-col">
+         {/* Voice Control Component */}
+         <VoiceControl
+            onNextOrder={nextOrder}
+            onPrevOrder={prevOrder}
+            onSelectOrder={selectOrder}
+            ordersLength={orders.length}
+         />
+
          {/* Header */}
-         <div className="relative flex justify-center items-center gap-3 mb-2">
+         <div className="relative flex justify-center items-center gap-3 my-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">
                {stateData?.selectedType?.toUpperCase() || "Loading..."}
             </p>
@@ -243,18 +270,7 @@ const OrdersPage = () => {
 
                            <div className="flex gap-2 h-14 p-1 pb-3 overflow-x-auto custom-scrollbar">
                               {selectedOrder.orderItems.length > 1 &&
-                                 [
-                                    ...selectedOrder.orderItems,
-                                    {},
-                                    {},
-                                    {},
-                                    {},
-                                    {},
-                                    {},
-                                    {},
-                                    {},
-                                    {},
-                                 ].map((_, index) => (
+                                 selectedOrder.orderItems.map((_, index) => (
                                     <button
                                        key={index}
                                        onClick={() => {
@@ -358,10 +374,10 @@ const OrdersPage = () => {
                </div>
 
                {/* Buyer Details */}
-               <div className="mt-8 text-center">
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+               <div className="mb-6 text-center">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                      Buyer Details
-                  </h1>
+                  </h2>
                   <div className="space-y-2">
                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         Name:{" "}

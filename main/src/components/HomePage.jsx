@@ -109,9 +109,9 @@ const HomePage = ({ onNavigateToOrders }) => {
                {states.map((state, index) => (
                   <div
                      key={state.id || index}
-                     className="relative w-full grid grid-cols-[2fr_3fr] bg-white dark:bg-gray-800 rounded-lg px-4 py-4 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1"
+                     className="relative w-full grid grid-cols-[1fr_3fr] bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1"
                   >
-                     <div className="relative w-full h-full flex items-center text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-200">
+                     <div className="relative w-full h-full flex items-center text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-200">
                         {state.timestamp || "No timestamp"}
                      </div>
 
