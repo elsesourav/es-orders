@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "../lib/ThemeContext";
+import { useTheme } from "../../lib/ThemeContext";
 
 export const CustomAlert = ({
    type = "info",

@@ -1,5 +1,5 @@
 import { TextInput as RNTextInput, Text, View } from "react-native";
-import { useTheme } from "../lib/ThemeContext";
+import { useTheme } from "../../lib/ThemeContext";
 
 export const TextInput = ({
    label,

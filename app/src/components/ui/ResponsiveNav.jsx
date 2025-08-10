@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../lib/ThemeContext";
+import { useTheme } from "../../lib/ThemeContext";
 import { ThemeToggle } from "./ThemeToggle";
 
 export const ResponsiveNav = ({

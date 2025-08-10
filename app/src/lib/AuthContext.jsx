@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState } from "react";
+import bcrypt from "bcryptjs";
 import { supabase } from "./supabaseClient";
 
 const AuthContext = createContext();
@@ -14,22 +15,26 @@ export const useAuth = () => {
 
 // Authentication functions - all in one place
 const AuthAPI = {
-   // Simple password hashing for React Native (using basic encoding)
-   hashPassword: (password) => {
-      // For demo purposes - in production, use a proper crypto library
-      // Simple hash using string manipulation for React Native compatibility
-      let hash = 0;
-      const saltedPassword = password + "salt_key_here";
-      for (let i = 0; i < saltedPassword.length; i++) {
-         const char = saltedPassword.charCodeAt(i);
-         hash = (hash << 5) - hash + char;
-         hash = hash & hash; // Convert to 32-bit integer
+   // Secure password hashing using bcrypt
+   hashPassword: async (password) => {
+      try {
+         const saltRounds = 10;
+         const hashedPassword = await bcrypt.hash(password, saltRounds);
+         return hashedPassword;
+      } catch (error) {
+         console.error("Error hashing password:", error);
+         throw new Error("Failed to hash password");
       }
-      return hash.toString(36);
    },
 
-   verifyPassword: (password, hashedPassword) => {
-      return AuthAPI.hashPassword(password) === hashedPassword;
+   verifyPassword: async (password, hashedPassword) => {
+      try {
+         const isMatch = await bcrypt.compare(password, hashedPassword);
+         return isMatch;
+      } catch (error) {
+         console.error("Error verifying password:", error);
+         return false;
+      }
    },
 
    // Storage functions
@@ -94,40 +99,50 @@ const AuthAPI = {
 
    // Main auth functions
    signup: async ({ name, username, password }) => {
-      const hashedPassword = AuthAPI.hashPassword(password);
-      const { data, error } = await supabase
-         .from("users")
-         .insert([
-            {
-               name,
-               username: username.toLowerCase(),
-               password: hashedPassword,
-            },
-         ])
-         .select()
-         .single();
+      try {
+         const hashedPassword = await AuthAPI.hashPassword(password);
+         const { data, error } = await supabase
+            .from("users")
+            .insert([
+               {
+                  name,
+                  username: username.toLowerCase(),
+                  password: hashedPassword,
+               },
+            ])
+            .select()
+            .single();
 
-      if (data && !error) {
-         await AuthAPI.setUserStorage(data.id, data.name, data.username);
+         if (data && !error) {
+            await AuthAPI.setUserStorage(data.id, data.name, data.username);
+         }
+         return { data, error };
+      } catch (error) {
+         console.error("Signup error:", error);
+         return { data: null, error: error.message };
       }
-      return { data, error };
    },
 
    signin: async ({ username, password }) => {
-      const { data: user, error } = await AuthAPI.getUserByUsername(
-         username.toLowerCase()
-      );
-      if (error || !user) {
-         return { data: null, error: "User not found" };
-      }
+      try {
+         const { data: user, error } = await AuthAPI.getUserByUsername(
+            username.toLowerCase()
+         );
+         if (error || !user) {
+            return { data: null, error: "User not found" };
+         }
 
-      const isMatch = AuthAPI.verifyPassword(password, user.password);
-      if (!isMatch) {
-         return { data: null, error: "Invalid password" };
-      }
+         const isMatch = await AuthAPI.verifyPassword(password, user.password);
+         if (!isMatch) {
+            return { data: null, error: "Invalid password" };
+         }
 
-      await AuthAPI.setUserStorage(user.id, user.name, user.username);
-      return { data: user, error: null };
+         await AuthAPI.setUserStorage(user.id, user.name, user.username);
+         return { data: user, error: null };
+      } catch (error) {
+         console.error("Signin error:", error);
+         return { data: null, error: error.message };
+      }
    },
 
    signout: async () => {
@@ -143,6 +158,7 @@ export const AuthProvider = ({ children }) => {
       // Check if user is stored locally
       const checkStoredUser = async () => {
          try {
+            setLoading(true);
             const storedUser = await AuthAPI.getUserStorage();
             if (storedUser) {
                setUser(storedUser);
@@ -159,7 +175,8 @@ export const AuthProvider = ({ children }) => {
 
    const login = async ({ username, password }) => {
       try {
-         console.log("Attempting login with:", { username, password });
+         setLoading(true);
+         console.log("Attempting login with:", { username });
 
          if (!username || !password) {
             throw new Error("Username and password are required");
@@ -186,12 +203,19 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
          console.error("Login error:", error);
          return { success: false, error: error.message };
+      } finally {
+         setLoading(false);
       }
    };
 
    const register = async ({ name, username, password }) => {
       try {
+         setLoading(true);
          console.log("Attempting signup with:", { name, username });
+
+         if (!name || !username || !password) {
+            throw new Error("All fields are required");
+         }
 
          const { data, error } = await AuthAPI.signup({
             name,
@@ -203,7 +227,11 @@ export const AuthProvider = ({ children }) => {
 
          if (error) {
             console.error("Signup error:", error);
-            throw new Error(error);
+            // Handle specific database errors
+            if (error.code === "23505") {
+               throw new Error("Username already exists");
+            }
+            throw new Error(error.message || "Signup failed");
          }
 
          if (data) {
@@ -215,10 +243,12 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
          console.error("Signup error:", error);
          return { success: false, error: error.message };
+      } finally {
+         setLoading(false);
       }
    };
 
-   const logout = async () => {
+   const signout = async () => {
       try {
          await AuthAPI.signout();
          setUser(null);
@@ -232,8 +262,16 @@ export const AuthProvider = ({ children }) => {
       loading,
       login,
       register,
-      logout,
+      logout: signout, // Provide both names for compatibility
+      signout,
       isAuthenticated: !!user,
+      // Debug function to check auth state
+      getAuthState: () => ({
+         user,
+         loading,
+         isAuthenticated: !!user,
+         hasStoredUser: user !== null,
+      }),
    };
 
    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

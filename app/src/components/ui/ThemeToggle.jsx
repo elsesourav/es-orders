@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity } from "react-native";
-import { useTheme } from "../lib/ThemeContext";
+import { useTheme } from "../../lib/ThemeContext";
 
 export const ThemeToggle = ({ size = "md", style }) => {
    const { isDark, toggleTheme, theme } = useTheme();

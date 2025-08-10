@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 import { AuthProvider, useAuth } from "./src/lib/AuthContext";
+import "./global.css"
 import { ThemeProvider, useTheme } from "./src/lib/ThemeContext";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";

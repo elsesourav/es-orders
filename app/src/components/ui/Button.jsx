@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
-import { useTheme } from "../lib/ThemeContext";
+import { useTheme } from "../../lib/ThemeContext";
 
 export const Button = ({
    title,
@@ -21,6 +21,7 @@ export const Button = ({
       const variantStyles = {
          primary: `bg-blue-600 ${disabled ? "opacity-50" : ""}`,
          secondary: `bg-gray-600 ${disabled ? "opacity-50" : ""}`,
+         danger: `bg-red-600 ${disabled ? "opacity-50" : ""}`,
          outline: `border-2 border-blue-600 ${disabled ? "opacity-50" : ""}`,
          ghost: `${disabled ? "opacity-50" : ""}`,
       };
@@ -40,6 +41,7 @@ export const Button = ({
       const variantStyles = {
          primary: "text-white",
          secondary: "text-white",
+         danger: "text-white",
          outline: "text-blue-600",
          ghost: "text-blue-600",
       };

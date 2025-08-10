@@ -1,5 +1,5 @@
 import { Modal, Text, TouchableWithoutFeedback, View } from "react-native";
-import { useTheme } from "../lib/ThemeContext";
+import { useTheme } from "../../lib/ThemeContext";
 import { Button } from "./Button";
 
 export const ConfirmDialog = ({
