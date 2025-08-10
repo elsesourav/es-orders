@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { useTheme } from "../../lib/ThemeContext";
-import { Button } from "../Button";
-import { ConfirmDialog } from "../ConfirmDialog";
-import { CustomAlert } from "../CustomAlert";
+import { Button } from "../ui/Button";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { CustomAlert } from "../ui/CustomAlert";
 
 export const UserProfile = ({ user, onLogout }) => {
    const { theme } = useTheme();

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { deleteOrder, getAllOrders } from "../api/ordersApi";
-import { Button } from "../components/Button";
+import { Button } from "../components/ui/Button";
 import { useTheme } from "../lib/ThemeContext";
 import { formatCurrency, formatDateTime } from "../lib/utils";
 
