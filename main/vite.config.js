@@ -36,7 +36,7 @@ export default defineConfig({
    },
    build: {
       minify: false,
-      outDir: "./../",
+      outDir: "./dist",
    },
    publicDir: "public",
    base: "./",

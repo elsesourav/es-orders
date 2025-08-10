@@ -1,0 +1,35 @@
+{
+   "expo": {
+      "name": "ES Orders",
+      "slug": "es-orders",
+      "version": "1.0.8",
+      "orientation": "portrait",
+      "icon": "./assets/icon.png",
+      "userInterfaceStyle": "automatic",
+      "newArchEnabled": true,
+      "scheme": "es-orders",
+      "splash": {
+         "image": "./assets/splash-icon.png",
+         "resizeMode": "contain",
+         "backgroundColor": "#ffffff"
+      },
+      "assetBundlePatterns": ["**/*"],
+      "ios": {
+         "supportsTablet": true,
+         "bundleIdentifier": "com.esorders.app"
+      },
+      "android": {
+         "adaptiveIcon": {
+            "foregroundImage": "./assets/adaptive-icon.png",
+            "backgroundColor": "#ffffff"
+         },
+         "edgeToEdgeEnabled": true,
+         "package": "com.esorders.app"
+      },
+      "web": {
+         "favicon": "./assets/favicon.png",
+         "bundler": "metro"
+      },
+      "plugins": ["expo-router"]
+   }
+}

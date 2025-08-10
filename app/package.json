@@ -1,0 +1,43 @@
+{
+  "name": "seller-automation-mobile",
+  "version": "1.0.8",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:android": "expo build:android",
+    "build:ios": "expo build:ios"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "@react-native-community/datetimepicker": "8.4.1",
+    "@react-navigation/native": "^7.1.6",
+    "@react-navigation/stack": "^7.4.5",
+    "@supabase/supabase-js": "^2.54.0",
+    "expo": "~53.0.20",
+    "expo-constants": "^17.1.7",
+    "expo-crypto": "^14.1.5",
+    "expo-font": "^13.3.2",
+    "expo-router": "^5.1.4",
+    "expo-secure-store": "^14.2.3",
+    "expo-splash-screen": "^0.30.10",
+    "expo-status-bar": "~2.2.3",
+    "expo-vector-icons": "^10.0.1",
+    "nativewind": "^4.1.23",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native": "0.79.5",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.1",
+    "react-native-svg": "15.11.2",
+    "react-native-url-polyfill": "^2.0.0",
+    "react-native-web": "^0.20.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}
