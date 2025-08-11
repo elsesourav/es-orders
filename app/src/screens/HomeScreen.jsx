@@ -12,7 +12,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useTheme } from "../lib/ThemeContext";
 
 export const HomeScreen = ({ navigation }) => {
-   const { user, logout } = useAuth();
+   const { user } = useAuth();
    const { theme, toggleTheme, isDark } = useTheme();
    const [orders, setOrders] = useState([]);
    const [loading, setLoading] = useState(false);
@@ -50,10 +50,6 @@ export const HomeScreen = ({ navigation }) => {
       fetchOrders();
    }, []);
 
-   const handleLogout = async () => {
-      await logout();
-   };
-
    return (
       <SafeAreaView
          style={{ flex: 1, backgroundColor: theme.colors.background }}
@@ -87,13 +83,6 @@ export const HomeScreen = ({ navigation }) => {
                      style={{ backgroundColor: theme.colors.surface }}
                   >
                      <Text>{isDark ? "☀️" : "🌙"}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                     onPress={handleLogout}
-                     className="p-2 rounded-lg"
-                     style={{ backgroundColor: theme.colors.surface }}
-                  >
-                     <Text>🚪</Text>
                   </TouchableOpacity>
                </View>
             </View>

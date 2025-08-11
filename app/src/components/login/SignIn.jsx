@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import { Button } from "./../ui/Button";
 import { useTheme } from "../../lib/ThemeContext";
-import { Button } from "../ui/Button";
 import { CustomAlert } from "../ui/CustomAlert";
 import { TextInput } from "../ui/TextInput";
 
@@ -96,17 +96,16 @@ export const SignIn = ({ onSignIn, onSwitchToSignUp }) => {
                />
 
                <Button
-                  title="Sign In"
                   onPress={handleSubmit}
                   loading={loading}
                   style={{ marginTop: 16 }}
-               />
+               >
+                  Sign In
+               </Button>
 
-               <Button
-                  title="Don't have an account? Sign Up"
-                  onPress={onSwitchToSignUp}
-                  variant="ghost"
-               />
+               <Button onPress={onSwitchToSignUp} variant="ghost">
+                  Don't have an account? Sign Up
+               </Button>
             </View>
 
             <View className="mt-8">

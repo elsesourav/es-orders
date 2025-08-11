@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import { Button } from "./../ui/Button";
 import { useTheme } from "../../lib/ThemeContext";
-import { Button } from "../ui/Button";
 import { CustomAlert } from "../ui/CustomAlert";
 import { TextInput } from "../ui/TextInput";
 

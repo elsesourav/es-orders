@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Button } from "./../ui/Button";
+import { version } from "../../../package.json";
 import { useAuth } from "../../lib/AuthContext";
 import { useTheme } from "../../lib/ThemeContext";
 import { LoginPage } from "../login/LoginPage";
-import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { CustomAlert } from "../ui/CustomAlert";
 
@@ -124,55 +125,15 @@ export const AccountPage = () => {
             <AccountRow label="User ID" value={user?.id || "Not set"} />
          </AccountSection>
 
-         {/* App Settings */}
-         <AccountSection title="App Settings">
-            <AccountRow
-               label="Theme"
-               value={theme.mode === "dark" ? "Dark" : "Light"}
-               onPress={toggleTheme}
-               showArrow={true}
-            />
-            <AccountRow label="Version" value="1.0.0" />
-         </AccountSection>
-
-         {/* Account Actions */}
-         <AccountSection title="Account Actions">
-            <View className="space-y-3">
-               <Button
-                  variant="secondary"
-                  onPress={() =>
-                     setAlert({
-                        type: "info",
-                        message: "Edit profile coming soon!",
-                     })
-                  }
-                  className="w-full"
-               >
-                  Edit Profile
-               </Button>
-
-               <Button
-                  variant="secondary"
-                  onPress={() =>
-                     setAlert({
-                        type: "info",
-                        message: "Change password coming soon!",
-                     })
-                  }
-                  className="w-full"
-               >
-                  Change Password
-               </Button>
-
-               <Button
-                  variant="danger"
-                  onPress={() => setShowLogoutDialog(true)}
-                  className="w-full"
-               >
-                  Sign Out
-               </Button>
-            </View>
-         </AccountSection>
+         {/* Sign Out Button */}
+         <View className="items-center mt-6 px-4">
+            <Button
+               title="Sign Out"
+               variant="destructiveSoft"
+               onPress={() => setShowLogoutDialog(true)}
+               className="w-1/2"
+            ></Button>
+         </View>
 
          {/* App Info */}
          <View className="mt-6 items-center">
@@ -180,13 +141,7 @@ export const AccountPage = () => {
                className="text-sm text-center"
                style={{ color: theme.colors.textSecondary }}
             >
-               ES Orders App v1.0.0
-            </Text>
-            <Text
-               className="text-xs text-center mt-1"
-               style={{ color: theme.colors.textSecondary }}
-            >
-               Made with ❤️ for order management
+               ES Orders App v{version}
             </Text>
          </View>
 
