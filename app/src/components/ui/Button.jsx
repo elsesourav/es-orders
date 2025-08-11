@@ -1,4 +1,4 @@
-import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../../lib/ThemeContext";
 
 export const Button = ({
@@ -11,197 +11,246 @@ export const Button = ({
    style,
    textStyle,
    children,
+   backgroundOpacity,
+   borderOpacity,
+   outlineOpacity,
    ...props
 }) => {
    const { theme } = useTheme();
 
-   const getButtonStyles = () => {
-      const baseStyle = {
-         flexDirection: "row",
-         alignItems: "center",
-         justifyContent: "center",
-         borderRadius: 8,
-         opacity: disabled ? 0.6 : 1,
-         overflow: "hidden", // Prevent white box artifacts
-         // Modern shadow system
-         shadowColor: "#000",
-         shadowOffset: { width: 0, height: 1 },
-         shadowOpacity: 0.05,
-         shadowRadius: 2,
-         elevation: 1,
-      };
-
-      const sizeStyles = {
-         sm: {
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-            minHeight: 36,
-            borderRadius: 6,
-         },
-         default: {
-            paddingHorizontal: 16,
-            paddingVertical: 10,
-            minHeight: 40,
-            borderRadius: 8,
-         },
-         lg: {
-            paddingHorizontal: 20,
-            paddingVertical: 12,
-            minHeight: 44,
-            borderRadius: 10,
-         },
-         icon: {
-            padding: 10,
-            minHeight: 40,
-            minWidth: 40,
-            borderRadius: 8,
-         },
-      };
-
-      const variantStyles = {
-         default: {
-            backgroundColor: theme.colors.primary,
-            borderWidth: 0,
-         },
-         destructive: {
-            backgroundColor: "#dc2626", // red-600
-            borderWidth: 0,
-         },
-         outline: {
-            backgroundColor: "transparent",
-            borderWidth: 1,
-            borderColor: theme.colors.border || "#e5e7eb",
-            shadowOpacity: 0,
-            elevation: 0,
-         },
-         secondary: {
-            backgroundColor: theme.colors.card || "#f3f4f6",
-            borderWidth: 0,
-         },
-         ghost: {
-            backgroundColor: "transparent",
-            borderWidth: 0,
-            shadowOpacity: 0,
-            elevation: 0,
-         },
-         link: {
-            backgroundColor: "transparent",
-            borderWidth: 0,
-            shadowOpacity: 0,
-            elevation: 0,
-            paddingHorizontal: 0,
-            paddingVertical: 0,
-            minHeight: "auto",
-         },
-         // Soft variants with transparency
-         destructiveSoft: {
-            backgroundColor: "#dc262615", // red with alpha
-            borderWidth: 1,
-            borderColor: "#dc262630",
-         },
-         primarySoft: {
-            backgroundColor: theme.colors.primary + "15" || "#3b82f615",
-            borderWidth: 1,
-            borderColor: theme.colors.primary + "30" || "#3b82f630",
-         },
-         successSoft: {
-            backgroundColor: "#16a34a15", // green with alpha
-            borderWidth: 1,
-            borderColor: "#16a34a30",
-         },
-      };
-
-      return {
-         ...baseStyle,
-         ...sizeStyles[size],
-         ...variantStyles[variant],
-      };
+   // Helper function to convert hex to RGBA
+   const hexToRgba = (hex, alpha) => {
+      const cleanHex = hex.replace("#", "");
+      const r = parseInt(cleanHex.slice(0, 2), 16);
+      const g = parseInt(cleanHex.slice(2, 4), 16);
+      const b = parseInt(cleanHex.slice(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
    };
 
-   const getTextStyles = () => {
-      const baseStyle = {
+   // Theme colors
+   const primaryColor = theme.colors.primary || "#3b82f6";
+   const textColor = theme.colors.text || "#000000";
+   const borderColor = theme.colors.border || "#e5e7eb";
+   const cardColor = theme.colors.card || "#f3f4f6";
+
+   // Size configurations
+   const sizes = {
+      sm: {
+         paddingHorizontal: 12,
+         paddingVertical: 8,
+         borderRadius: 6,
+         outlineRadius: 8,
+         fontSize: 14,
+         fontWeight: "500",
+      },
+      default: {
+         paddingHorizontal: 24,
+         paddingVertical: 12,
+         borderRadius: 10,
+         outlineRadius: 12,
+         fontSize: 14,
          fontWeight: "600",
-         textAlign: "center",
-         includeFontPadding: false, // Better text alignment on Android
-      };
-
-      const sizeStyles = {
-         sm: { fontSize: 14, fontWeight: "500" },
-         default: { fontSize: 14, fontWeight: "600" },
-         lg: { fontSize: 16, fontWeight: "600" },
-         icon: { fontSize: 0 }, // No text for icon buttons
-      };
-
-      const variantStyles = {
-         default: { color: "#ffffff" },
-         destructive: { color: "#ffffff" },
-         outline: { color: theme.colors.text || "#000000" },
-         secondary: { color: theme.colors.text || "#000000" },
-         ghost: { color: theme.colors.text || "#000000" },
-         link: {
-            color: theme.colors.primary || "#3b82f6",
-            textDecorationLine: "underline",
-         },
-         destructiveSoft: { color: "#dc2626" },
-         primarySoft: { color: theme.colors.primary || "#3b82f6" },
-         successSoft: { color: "#16a34a" },
-      };
-
-      return {
-         ...baseStyle,
-         ...sizeStyles[size],
-         ...variantStyles[variant],
-      };
+      },
+      lg: {
+         paddingHorizontal: 32,
+         paddingVertical: 16,
+         borderRadius: 12,
+         outlineRadius: 14,
+         fontSize: 16,
+         fontWeight: "600",
+      },
    };
 
-   const getLoadingColor = () => {
-      const transparentVariants = [
-         "outline",
-         "ghost",
-         "link",
-         "destructiveSoft",
-         "primarySoft",
-         "successSoft",
-      ];
-
-      if (transparentVariants.includes(variant)) {
-         if (variant === "destructiveSoft") return "#dc2626";
-         if (variant === "primarySoft")
-            return theme.colors.primary || "#3b82f6";
-         if (variant === "successSoft") return "#16a34a";
-         if (variant === "outline" || variant === "ghost")
-            return theme.colors.text || "#000000";
-         if (variant === "link") return theme.colors.primary || "#3b82f6";
+   // Get variant colors
+   const getVariantConfig = () => {
+      switch (variant) {
+         case "destructive":
+            return {
+               color: "#dc2626",
+               outlineOpacity: outlineOpacity || 0.05,
+               borderOpacity: borderOpacity || 0.8,
+               backgroundOpacity: backgroundOpacity || 1,
+               textColor: "#ffffff",
+               needsOutline: true,
+            };
+         case "destructiveSoft":
+            return {
+               color: "#dc2626",
+               outlineOpacity: outlineOpacity || 0.08,
+               borderOpacity: borderOpacity || 0.3,
+               backgroundOpacity: backgroundOpacity || 0.1,
+               textColor: backgroundOpacity > 0.5 ? "#ffffff" : "#dc2626",
+               needsOutline: true,
+            };
+         case "success":
+            return {
+               color: "#16a34a",
+               outlineOpacity: outlineOpacity || 0.05,
+               borderOpacity: borderOpacity || 0.8,
+               backgroundOpacity: backgroundOpacity || 1,
+               textColor: "#ffffff",
+               needsOutline: true,
+            };
+         case "successSoft":
+            return {
+               color: "#16a34a",
+               outlineOpacity: outlineOpacity || 0.08,
+               borderOpacity: borderOpacity || 0.3,
+               backgroundOpacity: backgroundOpacity || 0.1,
+               textColor: "#16a34a",
+               needsOutline: true,
+            };
+         case "warning":
+            return {
+               color: "#f59e0b",
+               outlineOpacity: outlineOpacity || 0.05,
+               borderOpacity: borderOpacity || 0.8,
+               backgroundOpacity: backgroundOpacity || 1,
+               textColor: "#ffffff",
+               needsOutline: true,
+            };
+         case "warningSoft":
+            return {
+               color: "#f59e0b",
+               outlineOpacity: outlineOpacity || 0.08,
+               borderOpacity: borderOpacity || 0.3,
+               backgroundOpacity: backgroundOpacity || 0.1,
+               textColor: "#f59e0b",
+               needsOutline: true,
+            };
+         case "primarySoft":
+            return {
+               color: primaryColor,
+               outlineOpacity: outlineOpacity || 0.08,
+               borderOpacity: borderOpacity || 0.3,
+               backgroundOpacity: backgroundOpacity || 0.1,
+               textColor: primaryColor,
+               needsOutline: true,
+            };
+         case "outline":
+            return {
+               color: borderColor,
+               outlineOpacity: 0,
+               borderOpacity: 1,
+               backgroundOpacity: 0,
+               textColor: textColor,
+               needsOutline: false,
+            };
+         case "ghost":
+            return {
+               color: textColor,
+               outlineOpacity: 0,
+               borderOpacity: 0,
+               backgroundOpacity: 0,
+               textColor: textColor,
+               needsOutline: false,
+            };
+         case "link":
+            return {
+               color: primaryColor,
+               outlineOpacity: 0,
+               borderOpacity: 0,
+               backgroundOpacity: 0,
+               textColor: primaryColor,
+               needsOutline: false,
+               textDecorationLine: "underline",
+            };
+         default: // "default"
+            return {
+               color: primaryColor,
+               outlineOpacity: outlineOpacity || 0.05,
+               borderOpacity: borderOpacity || 0.8,
+               backgroundOpacity: backgroundOpacity || 1,
+               textColor: "#ffffff",
+               needsOutline: true,
+            };
       }
-
-      if (variant === "secondary") return theme.colors.text || "#000000";
-
-      return "#ffffff";
    };
 
-   return (
-      <TouchableOpacity
-         style={[getButtonStyles(), style]}
-         onPress={onPress}
-         disabled={disabled || loading}
-         activeOpacity={0.7}
-         underlayColor="transparent"
-         delayPressIn={0}
-         delayPressOut={0}
-         {...props}
-      >
-         {loading && (
-            <ActivityIndicator
-               size="small"
-               color={getLoadingColor()}
-               style={{ marginRight: children || title ? 8 : 0 }}
-            />
-         )}
+   const sizeConfig = sizes[size] || sizes.default;
+   const variantConfig = getVariantConfig();
 
-         {children ||
-            (title && (
-               <Text style={[getTextStyles(), textStyle]}>{title}</Text>
-            ))}
-      </TouchableOpacity>
+   // Button outline styles (outer container) - matches your buttonOutline
+   const buttonOutlineStyles = {
+      padding: 0, // Space for outline
+      borderWidth: 2,
+      borderColor: hexToRgba(variantConfig.color, variantConfig.outlineOpacity), // Outline with opacity
+      borderRadius: sizeConfig.outlineRadius, // Slightly larger radius for outline
+      backgroundColor: "transparent",
+      opacity: disabled ? 0.5 : 1,
+   };
+
+   // Button styles (inner pressable) - matches your button
+   const buttonStyles = {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: sizeConfig.paddingVertical,
+      paddingHorizontal: sizeConfig.paddingHorizontal,
+      borderWidth: 1,
+      borderColor: hexToRgba(variantConfig.color, variantConfig.borderOpacity), // Border with opacity
+      borderRadius: sizeConfig.borderRadius, // rounded corners
+      backgroundColor: hexToRgba(
+         variantConfig.color,
+         variantConfig.backgroundOpacity
+      ), // Background with opacity
+   };
+
+   // Text styles
+   const textStyles = {
+      fontSize: sizeConfig.fontSize,
+      fontWeight: sizeConfig.fontWeight,
+      color: variantConfig.textColor,
+      textAlign: "center",
+      textAlignVertical: "center",
+      includeFontPadding: false,
+      ...(variantConfig.textDecorationLine && {
+         textDecorationLine: variantConfig.textDecorationLine,
+      }),
+   };
+
+   // Loading indicator color
+   const getLoadingColor = () => {
+      return variantConfig.textColor;
+   };
+
+   // Single render - use outline wrapper only when needed
+   return (
+      <View
+         style={[variantConfig.needsOutline ? buttonOutlineStyles : {}, style]}
+      >
+         <TouchableOpacity
+            style={[
+               variantConfig.needsOutline
+                  ? buttonStyles
+                  : { ...buttonStyles, width: "100%" },
+            ]}
+            onPress={onPress}
+            disabled={disabled || loading}
+            activeOpacity={0.8}
+            {...props}
+         >
+            <View
+               style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flex: 1,
+               }}
+            >
+               {loading && (
+                  <ActivityIndicator
+                     size="small"
+                     color={getLoadingColor()}
+                     style={{ marginRight: children || title ? 8 : 0 }}
+                  />
+               )}
+               {children ||
+                  (title && (
+                     <Text style={[textStyles, textStyle]}>{title}</Text>
+                  ))}
+            </View>
+         </TouchableOpacity>
+      </View>
    );
 };

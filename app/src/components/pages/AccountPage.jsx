@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Button } from "./../ui/Button";
 import { version } from "../../../package.json";
 import { useAuth } from "../../lib/AuthContext";
 import { useTheme } from "../../lib/ThemeContext";
 import { LoginPage } from "../login/LoginPage";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { CustomAlert } from "../ui/CustomAlert";
+import { Button } from "./../ui/Button";
 
 export const AccountPage = () => {
    const { user, isAuthenticated, signout } = useAuth();
@@ -130,9 +130,12 @@ export const AccountPage = () => {
             <Button
                title="Sign Out"
                variant="destructiveSoft"
-               onPress={() => setShowLogoutDialog(true)}
                className="w-1/2"
-            ></Button>
+               onPress={() => setShowLogoutDialog(true)}
+               backgroundOpacity={0.2}
+               borderOpacity={0.4}
+               outlineOpacity={0.05}
+            />
          </View>
 
          {/* App Info */}
