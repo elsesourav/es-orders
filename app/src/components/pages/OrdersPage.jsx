@@ -294,7 +294,7 @@ export const OrdersPage = ({ navigation, route }) => {
                         selectedOrder.orderItems.length > 0 && (
                            <View>
                               {/* Item Number Buttons - Show only if multiple items */}
-                              {selectedOrder.orderItems.length >= 1 && (
+                              {selectedOrder.orderItems.length > 1 && (
                                  <ScrollView
                                     horizontal
                                     showsHorizontalScrollIndicator={false}
@@ -302,12 +302,16 @@ export const OrdersPage = ({ navigation, route }) => {
                                        flexDirection: "row",
                                        height: 56,
                                        padding: 4,
-                                       margin: 4,
+                                       marginHorizontal: 4,
+                                       marginVertical: 10,
                                     }}
                                     contentContainerStyle={{ gap: 8 }}
                                  >
-                                    {[...selectedOrder.orderItems, {}].map(
-                                       (_, index) => (
+                                    {selectedOrder.orderItems.map((_, index) => {
+                                       const isSelected =
+                                          selectedItemIndex === index;
+
+                                       return (
                                           <TouchableOpacity
                                              key={index}
                                              onPress={() => {
@@ -320,49 +324,71 @@ export const OrdersPage = ({ navigation, route }) => {
                                                    );
                                                 setProduct(productDetails);
                                              }}
+                                             activeOpacity={0.7}
                                              style={{
-                                                width: 40,
-                                                height: 40,
-                                                borderRadius: 8,
-                                                borderWidth: 1,
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                backgroundColor:
-                                                   selectedItemIndex === index
-                                                      ? theme.colors.primary
-                                                      : theme.colors.card,
-                                                borderColor:
-                                                   selectedItemIndex === index
-                                                      ? theme.colors.primary
-                                                      : theme.colors.border,
                                                 transform: [
                                                    {
-                                                      scale:
-                                                         selectedItemIndex ===
-                                                         index
-                                                            ? 1.1
-                                                            : 1,
-                                                   },
+                                                      scale: isSelected
+                                                         ? 1.1
+                                                         : 1,
+                                                   }
                                                 ],
                                              }}
-                                             activeOpacity={0.7}
                                           >
-                                             <Text
+                                             <View
                                                 style={{
-                                                   color:
-                                                      selectedItemIndex ===
-                                                      index
-                                                         ? "#ffffff"
-                                                         : theme.colors.text,
-                                                   fontWeight: "600",
-                                                   fontSize: 20,
+                                                   width: 48,
+                                                   height: 48,
+                                                   borderRadius: 12,
+                                                   borderWidth: 2,
+                                                   justifyContent: "center",
+                                                   alignItems: "center",
+                                                   backgroundColor: isSelected
+                                                      ? "#ff6b35"
+                                                      : "#2c3e50",
+                                                   borderColor: "#ff8c42",
+                                                   shadowColor: isSelected
+                                                      ? "#ff6b35"
+                                                      : "#2c3e50",
+                                                   shadowOffset: {
+                                                      width: 0,
+                                                      height: isSelected
+                                                         ? 8
+                                                         : 4,
+                                                   },
+                                                   shadowOpacity: isSelected
+                                                      ? 0.6
+                                                      : 0.3,
+                                                   shadowRadius: isSelected
+                                                      ? 15
+                                                      : 6,
+                                                   elevation: isSelected
+                                                      ? 12
+                                                      : 6,
                                                 }}
                                              >
-                                                {index + 1}
-                                             </Text>
+                                                <Text
+                                                   style={{
+                                                      color: "#ffffff",
+                                                      fontWeight: "700",
+                                                      fontSize: isSelected
+                                                         ? 22
+                                                         : 18,
+                                                      textShadowColor:
+                                                         "rgba(0, 0, 0, 0.3)",
+                                                      textShadowOffset: {
+                                                         width: 1,
+                                                         height: 1,
+                                                      },
+                                                      textShadowRadius: 2,
+                                                   }}
+                                                >
+                                                   {index + 1}
+                                                </Text>
+                                             </View>
                                           </TouchableOpacity>
-                                       )
-                                    )}
+                                       );
+                                    })}
                                  </ScrollView>
                               )}
 
@@ -419,7 +445,7 @@ export const OrdersPage = ({ navigation, route }) => {
                                                 <View style={{ flex: 1 }}>
                                                    <Text
                                                       style={{
-                                                         fontSize: 16,
+                                                         fontSize: 22,
                                                          fontWeight: "600",
                                                          color: "#c53030",
                                                       }}
@@ -427,6 +453,35 @@ export const OrdersPage = ({ navigation, route }) => {
                                                       {product.weight} g
                                                    </Text>
                                                 </View>
+                                             </View>
+
+                                             {/* Quantity */}
+                                             <View
+                                                style={{
+                                                   flexDirection: "row",
+                                                   width: 50,
+                                                   gap: 8,
+                                                   backgroundColor:
+                                                      item.quantity > 1
+                                                         ? "#f00"
+                                                         : "#f002",
+                                                   borderRadius: 8,
+                                                   borderWidth: 1,
+                                                   alignItems: "center",
+                                                   justifyContent: "center",
+                                                   textAlign: "center",
+                                                   borderColor: "#ff8c42",
+                                                }}
+                                             >
+                                                <Text
+                                                   style={{
+                                                      color: "#fff",
+                                                      fontSize: 18,
+                                                      fontWeight: "600",
+                                                   }}
+                                                >
+                                                   {item.quantity}x
+                                                </Text>
                                              </View>
 
                                              {/* Unit */}
@@ -475,7 +530,7 @@ export const OrdersPage = ({ navigation, route }) => {
                                                 alignItems: "center",
                                                 gap: 8,
                                                 padding: 8,
-                                                backgroundColor: "#fffbeb",
+                                                backgroundColor: "#fff",
                                                 borderRadius: 8,
                                                 borderWidth: 1,
                                                 borderColor: "#fed7aa",
@@ -498,8 +553,8 @@ export const OrdersPage = ({ navigation, route }) => {
                                              <View style={{ flex: 1 }}>
                                                 <Text
                                                    style={{
-                                                      fontSize: 16,
-                                                      fontWeight: "600",
+                                                      fontSize: 20,
+                                                      fontWeight: "900",
                                                       color: "#d97706",
                                                       flexWrap: "wrap",
                                                    }}
@@ -509,44 +564,11 @@ export const OrdersPage = ({ navigation, route }) => {
                                              </View>
                                           </View>
 
-                                          {/* Quantity Badge - Show only if quantity > 1 */}
-                                          {item.quantity > 1 && (
-                                             <View
-                                                style={{
-                                                   position: "absolute",
-                                                   top: 8,
-                                                   right: 8,
-                                                   backgroundColor: "#f56565",
-                                                   paddingHorizontal: 12,
-                                                   paddingVertical: 8,
-                                                   borderRadius: 20,
-                                                   shadowColor: "#000",
-                                                   shadowOffset: {
-                                                      width: 0,
-                                                      height: 2,
-                                                   },
-                                                   shadowOpacity: 0.25,
-                                                   shadowRadius: 4,
-                                                   elevation: 5,
-                                                }}
-                                             >
-                                                <Text
-                                                   style={{
-                                                      color: "#ffffff",
-                                                      fontSize: 18,
-                                                      fontWeight: "600",
-                                                   }}
-                                                >
-                                                   {item.quantity}x
-                                                </Text>
-                                             </View>
-                                          )}
-
                                           {/* Product Image */}
                                           <View
                                              style={{
-                                                marginTop: 24,
-                                                marginBottom: 16,
+                                                marginTop: 1,
+                                                marginBottom: 10,
                                                 alignItems: "center",
                                              }}
                                           >
@@ -555,8 +577,8 @@ export const OrdersPage = ({ navigation, route }) => {
                                                    uri: item.primaryImageUrl,
                                                 }}
                                                 style={{
-                                                   width: 200,
-                                                   height: 200,
+                                                   width: 250,
+                                                   height: 250,
                                                    borderRadius: 8,
                                                    backgroundColor:
                                                       theme.colors.surface,
@@ -564,19 +586,6 @@ export const OrdersPage = ({ navigation, route }) => {
                                                 resizeMode="cover"
                                              />
                                           </View>
-
-                                          {/* Product Title */}
-                                          <Text
-                                             style={{
-                                                fontSize: 18,
-                                                fontWeight: "500",
-                                                color: theme.colors.text,
-                                                marginBottom: 4,
-                                                lineHeight: 24,
-                                             }}
-                                          >
-                                             {item.title}
-                                          </Text>
 
                                           {/* SKU */}
                                           <Text
@@ -593,6 +602,19 @@ export const OrdersPage = ({ navigation, route }) => {
                                                 SKU:{" "}
                                              </Text>
                                              {item.sku}
+                                          </Text>
+
+                                          {/* Product Title */}
+                                          <Text
+                                             style={{
+                                                fontSize: 18,
+                                                fontWeight: "500",
+                                                color: theme.colors.text,
+                                                marginBottom: 4,
+                                                lineHeight: 24,
+                                             }}
+                                          >
+                                             {item.title}
                                           </Text>
                                        </View>
                                     );
