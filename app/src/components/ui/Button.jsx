@@ -245,10 +245,15 @@ export const Button = ({
                      style={{ marginRight: children || title ? 8 : 0 }}
                   />
                )}
-               {children ||
-                  (title && (
-                     <Text style={[textStyles, textStyle]}>{title}</Text>
-                  ))}
+               {children ? (
+                  typeof children === "string" ? (
+                     <Text style={[textStyles, textStyle]}>{children}</Text>
+                  ) : (
+                     children
+                  )
+               ) : (
+                  title && <Text style={[textStyles, textStyle]}>{title}</Text>
+               )}
             </View>
          </TouchableOpacity>
       </View>

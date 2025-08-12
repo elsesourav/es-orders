@@ -44,8 +44,8 @@ export const SettingsScreen = () => {
 
    return (
       <SafeAreaView
-         className="flex-1"
-         style={{ backgroundColor: theme.colors.background }}
+         style={{ flex: 1, backgroundColor: theme.colors.background }}
+         edges={["left", "right"]}
       >
          <ScrollView
             className="flex-1 px-4"

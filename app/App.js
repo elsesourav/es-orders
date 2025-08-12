@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -37,10 +38,19 @@ const MainTabNavigator = () => {
          screenOptions={{
             headerStyle: {
                backgroundColor: theme.colors.surface,
+               height: 70,
+               shadowColor: theme.colors.border,
+               shadowOffset: { width: 0, height: 1 },
+               shadowOpacity: 0.3,
+               shadowRadius: 2,
+               elevation: 3,
+               borderTopColor: theme.colors.border,
+               borderBottomWidth: 0.5,
             },
             headerTintColor: theme.colors.text,
             headerTitleStyle: {
-               fontWeight: "bold",
+               fontWeight: "600",
+               fontSize: 18,
             },
             tabBarStyle: {
                backgroundColor: theme.colors.surface,
@@ -50,8 +60,9 @@ const MainTabNavigator = () => {
             tabBarActiveTintColor: theme.colors.primary,
             tabBarInactiveTintColor: theme.colors.textSecondary,
             tabBarLabelStyle: {
-               fontSize: 12,
+               fontSize: 11,
                fontWeight: "500",
+               marginTop: 2,
             },
          }}
       >
@@ -60,8 +71,12 @@ const MainTabNavigator = () => {
             component={HomeScreen}
             options={{
                title: "Dashboard",
-               tabBarIcon: ({ color, size }) => (
-                  <Text style={{ color, fontSize: size }}>🏠</Text>
+               tabBarIcon: ({ color, size, focused }) => (
+                  <Ionicons
+                     name={focused ? "home" : "home-outline"}
+                     size={size}
+                     color={color}
+                  />
                ),
             }}
          />
@@ -70,8 +85,12 @@ const MainTabNavigator = () => {
             component={OrdersScreen}
             options={{
                title: "Orders",
-               tabBarIcon: ({ color, size }) => (
-                  <Text style={{ color, fontSize: size }}>📦</Text>
+               tabBarIcon: ({ color, size, focused }) => (
+                  <Ionicons
+                     name={focused ? "receipt" : "receipt-outline"}
+                     size={size}
+                     color={color}
+                  />
                ),
             }}
          />
@@ -80,8 +99,12 @@ const MainTabNavigator = () => {
             component={SettingsScreen}
             options={{
                title: "Settings",
-               tabBarIcon: ({ color, size }) => (
-                  <Text style={{ color, fontSize: size }}>⚙️</Text>
+               tabBarIcon: ({ color, size, focused }) => (
+                  <Ionicons
+                     name={focused ? "settings" : "settings-outline"}
+                     size={size}
+                     color={color}
+                  />
                ),
             }}
          />
@@ -89,9 +112,13 @@ const MainTabNavigator = () => {
             name="Account"
             component={AccountScreen}
             options={{
-               title: "Account",
-               tabBarIcon: ({ color, size }) => (
-                  <Text style={{ color, fontSize: size }}>👤</Text>
+               title: "Profile",
+               tabBarIcon: ({ color, size, focused }) => (
+                  <Ionicons
+                     name={focused ? "person" : "person-outline"}
+                     size={size}
+                     color={color}
+                  />
                ),
             }}
          />

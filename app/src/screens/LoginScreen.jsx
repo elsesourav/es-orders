@@ -8,6 +8,7 @@ export const LoginScreen = () => {
    return (
       <SafeAreaView
          style={{ flex: 1, backgroundColor: theme.colors.background }}
+         edges={["left", "right", "top", "bottom"]}
       >
          <LoginPage />
       </SafeAreaView>

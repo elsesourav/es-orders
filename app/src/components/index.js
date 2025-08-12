@@ -10,5 +10,8 @@ export * from "./login";
 // Input Components
 export * from "./inputs";
 
+// Orders Components
+export * from "./orders";
+
 // Login Components
 export * from "./login";

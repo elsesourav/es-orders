@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { Button } from "./../ui/Button";
 import { useTheme } from "../../lib/ThemeContext";
 import { CustomAlert } from "../ui/CustomAlert";
 import { TextInput } from "../ui/TextInput";
+import { Button } from "./../ui/Button";
 
 export const SignIn = ({ onSignIn, onSwitchToSignUp }) => {
    const { theme } = useTheme();
    const [username, setUsername] = useState("");
    const [password, setPassword] = useState("");
-   const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
    const [alert, setAlert] = useState(null);
 
@@ -55,27 +54,50 @@ export const SignIn = ({ onSignIn, onSwitchToSignUp }) => {
 
    return (
       <ScrollView
-         className="flex-1 px-6"
-         contentContainerStyle={{ paddingVertical: 20 }}
+         contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: 24,
+            paddingVertical: 32,
+         }}
          style={{ backgroundColor: theme.colors.background }}
+         showsVerticalScrollIndicator={false}
       >
-         <View className="flex-1 justify-center">
-            <View className="mb-8">
+         <View
+            style={{
+               flex: 1,
+               justifyContent: "center",
+               maxWidth: 400,
+               alignSelf: "center",
+               width: "100%",
+            }}
+         >
+            {/* Header */}
+            <View style={{ alignItems: "center", marginBottom: 48 }}>
                <Text
-                  className="text-3xl font-bold text-center mb-2"
-                  style={{ color: theme.colors.text }}
+                  style={{
+                     fontSize: 32,
+                     fontWeight: "bold",
+                     color: theme.colors.text,
+                     marginBottom: 8,
+                     textAlign: "center",
+                  }}
                >
                   Welcome Back
                </Text>
                <Text
-                  className="text-lg text-center"
-                  style={{ color: theme.colors.textSecondary }}
+                  style={{
+                     fontSize: 18,
+                     color: theme.colors.textSecondary,
+                     textAlign: "center",
+                     lineHeight: 24,
+                  }}
                >
                   Sign in to your account
                </Text>
             </View>
 
-            <View className="space-y-4">
+            {/* Form */}
+            <View style={{ marginBottom: 32 }}>
                <TextInput
                   label="Username"
                   placeholder="Enter your username"
@@ -91,27 +113,34 @@ export const SignIn = ({ onSignIn, onSwitchToSignUp }) => {
                   placeholder="Enter your password"
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
+                  secureTextEntry={true}
+                  showPasswordToggle={true}
                   required
                />
 
                <Button
                   onPress={handleSubmit}
                   loading={loading}
-                  style={{ marginTop: 16 }}
+                  style={{ marginTop: 8, marginBottom: 16 }}
+                  size="lg"
                >
                   Sign In
                </Button>
 
-               <Button onPress={onSwitchToSignUp} variant="ghost">
+               <Button onPress={onSwitchToSignUp} variant="ghost" size="lg">
                   Don't have an account? Sign Up
                </Button>
             </View>
 
-            <View className="mt-8">
+            {/* Footer */}
+            <View style={{ alignItems: "center", marginTop: 32 }}>
                <Text
-                  className="text-center text-sm"
-                  style={{ color: theme.colors.textSecondary }}
+                  style={{
+                     fontSize: 14,
+                     color: theme.colors.textSecondary,
+                     textAlign: "center",
+                     lineHeight: 20,
+                  }}
                >
                   Secure login with custom authentication
                </Text>

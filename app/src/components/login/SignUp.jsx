@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { Button } from "./../ui/Button";
 import { useTheme } from "../../lib/ThemeContext";
 import { CustomAlert } from "../ui/CustomAlert";
 import { TextInput } from "../ui/TextInput";
+import { Button } from "./../ui/Button";
 
 export const SignUp = ({ onSignUp, onSwitchToSignIn }) => {
    const { theme } = useTheme();
@@ -13,7 +13,6 @@ export const SignUp = ({ onSignUp, onSwitchToSignIn }) => {
       password: "",
       confirmPassword: "",
    });
-   const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
    const [alert, setAlert] = useState(null);
 
@@ -93,27 +92,50 @@ export const SignUp = ({ onSignUp, onSwitchToSignIn }) => {
 
    return (
       <ScrollView
-         className="flex-1 px-6"
-         contentContainerStyle={{ paddingVertical: 20 }}
+         contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: 24,
+            paddingVertical: 32,
+         }}
          style={{ backgroundColor: theme.colors.background }}
+         showsVerticalScrollIndicator={false}
       >
-         <View className="flex-1 justify-center">
-            <View className="mb-8">
+         <View
+            style={{
+               flex: 1,
+               justifyContent: "center",
+               maxWidth: 400,
+               alignSelf: "center",
+               width: "100%",
+            }}
+         >
+            {/* Header */}
+            <View style={{ alignItems: "center", marginBottom: 40 }}>
                <Text
-                  className="text-3xl font-bold text-center mb-2"
-                  style={{ color: theme.colors.text }}
+                  style={{
+                     fontSize: 32,
+                     fontWeight: "bold",
+                     color: theme.colors.text,
+                     marginBottom: 8,
+                     textAlign: "center",
+                  }}
                >
                   Create Account
                </Text>
                <Text
-                  className="text-lg text-center"
-                  style={{ color: theme.colors.textSecondary }}
+                  style={{
+                     fontSize: 18,
+                     color: theme.colors.textSecondary,
+                     textAlign: "center",
+                     lineHeight: 24,
+                  }}
                >
                   Join our platform today
                </Text>
             </View>
 
-            <View className="space-y-4">
+            {/* Form */}
+            <View style={{ marginBottom: 24 }}>
                <TextInput
                   label="Full Name"
                   placeholder="Enter your full name"
@@ -139,7 +161,8 @@ export const SignUp = ({ onSignUp, onSwitchToSignIn }) => {
                   placeholder="Create a password"
                   value={formData.password}
                   onChangeText={(value) => handleChange("password", value)}
-                  secureTextEntry={!showPassword}
+                  secureTextEntry={true}
+                  showPasswordToggle={true}
                   helperText="Must be at least 6 characters"
                   required
                />
@@ -151,7 +174,8 @@ export const SignUp = ({ onSignUp, onSwitchToSignIn }) => {
                   onChangeText={(value) =>
                      handleChange("confirmPassword", value)
                   }
-                  secureTextEntry={!showPassword}
+                  secureTextEntry={true}
+                  showPasswordToggle={true}
                   required
                />
 
@@ -159,20 +183,28 @@ export const SignUp = ({ onSignUp, onSwitchToSignIn }) => {
                   title="Create Account"
                   onPress={handleSubmit}
                   loading={loading}
-                  style={{ marginTop: 16 }}
+                  style={{ marginTop: 8, marginBottom: 16 }}
+                  size="lg"
                />
 
                <Button
                   title="Already have an account? Sign In"
                   onPress={onSwitchToSignIn}
                   variant="ghost"
+                  size="lg"
                />
             </View>
 
-            <View className="mt-8">
+            {/* Footer */}
+            <View style={{ alignItems: "center", marginTop: 24 }}>
                <Text
-                  className="text-center text-sm"
-                  style={{ color: theme.colors.textSecondary }}
+                  style={{
+                     fontSize: 14,
+                     color: theme.colors.textSecondary,
+                     textAlign: "center",
+                     lineHeight: 20,
+                     paddingHorizontal: 16,
+                  }}
                >
                   By signing up, you agree to our Terms of Service and Privacy
                   Policy

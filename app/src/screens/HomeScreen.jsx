@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useEffect, useRef, useState } from "react";
 import {
    RefreshControl,
    ScrollView,
@@ -7,41 +9,46 @@ import {
    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "../components/ui/Button";
+import { getAllOrders } from "../api/ordersApi";
 import { useAuth } from "../lib/AuthContext";
 import { useTheme } from "../lib/ThemeContext";
 
 export const HomeScreen = ({ navigation }) => {
    const { user } = useAuth();
-   const { theme, toggleTheme, isDark } = useTheme();
-   const [orders, setOrders] = useState([]);
-   const [loading, setLoading] = useState(false);
+   const { theme } = useTheme();
+   const [states, setStates] = useState([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState(null);
    const [refreshing, setRefreshing] = useState(false);
+   const hasFetched = useRef(false);
 
    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-         // TODO: Implement API call to fetch orders
-         // const response = await getAllOrders();
-         // setOrders(response);
+      if (hasFetched.current && !refreshing) return;
+      hasFetched.current = true;
 
-         // Mock data for now
-         setTimeout(() => {
-            setOrders([
-               { id: 1, status: "Pending", total: 150.0, items: 3 },
-               { id: 2, status: "Processing", total: 89.99, items: 1 },
-               { id: 3, status: "Shipped", total: 299.5, items: 5 },
-            ]);
-            setLoading(false);
-         }, 1000);
-      } catch (error) {
-         console.error("Error fetching orders:", error);
+      try {
+         setLoading(true);
+         const response = await getAllOrders();
+
+         const states =
+            response?.map((item) => ({
+               ...item?.order_data?.states,
+               id: item?.id,
+               timestamp: item?.order_data?.timestamp,
+            })) || [];
+
+         setStates(states);
+         setError(null);
+      } catch (err) {
+         setError(err.message);
+      } finally {
          setLoading(false);
       }
    };
 
    const onRefresh = async () => {
       setRefreshing(true);
+      hasFetched.current = false;
       await fetchOrders();
       setRefreshing(false);
    };
@@ -50,182 +57,260 @@ export const HomeScreen = ({ navigation }) => {
       fetchOrders();
    }, []);
 
+   const handleRTDClick = (state) => {
+      // Store selected state data for navigation
+      // You can implement AsyncStorage or other state management here
+      console.log("RTD clicked for state:", state);
+      navigation?.navigate?.("Orders", {
+         selectedState: {
+            ...state,
+            selectedType: "rtd",
+         },
+      });
+   };
+
+   const handleHandoverClick = (state) => {
+      // Store selected state data for navigation
+      console.log("Handover clicked for state:", state);
+      navigation?.navigate?.("Orders", {
+         selectedState: {
+            ...state,
+            selectedType: "handover",
+         },
+      });
+   };
+
+   if (loading && !refreshing) {
+      return (
+         <SafeAreaView
+            style={{ flex: 1, backgroundColor: theme.colors.background }}
+            edges={["left", "right"]}
+         >
+            <View className="flex-1 justify-center items-center py-12">
+               <View className="items-center">
+                  <View
+                     className="w-12 h-12 rounded-full border-2 border-transparent mb-4"
+                     style={{
+                        borderTopColor: theme.colors.primary,
+                        transform: [{ rotate: "0deg" }],
+                     }}
+                  >
+                     {/* Simple loading animation placeholder */}
+                     <View
+                        className="w-full h-full rounded-full"
+                        style={{
+                           borderWidth: 2,
+                           borderColor: "transparent",
+                           borderTopColor: theme.colors.primary,
+                        }}
+                     />
+                  </View>
+                  <Text style={{ color: theme.colors.textSecondary }}>
+                     Loading states...
+                  </Text>
+               </View>
+            </View>
+         </SafeAreaView>
+      );
+   }
+
+   if (error) {
+      return (
+         <SafeAreaView
+            style={{ flex: 1, backgroundColor: theme.colors.background }}
+            edges={["left", "right"]}
+         >
+            <View className="flex-1 justify-center items-center py-12">
+               <View
+                  className="mx-6 p-6 rounded-lg border max-w-md"
+                  style={{
+                     backgroundColor: theme.colors.card,
+                     borderColor: "#ef4444",
+                  }}
+               >
+                  <Text style={{ color: "#ef4444" }}>Error: {error}</Text>
+               </View>
+            </View>
+         </SafeAreaView>
+      );
+   }
+
    return (
       <SafeAreaView
          style={{ flex: 1, backgroundColor: theme.colors.background }}
+         edges={["left", "right"]}
       >
          <ScrollView
-            className="flex-1"
+            style={{ flex: 1 }}
+            contentContainerStyle={{
+               paddingHorizontal: 16,
+               paddingVertical: 16,
+            }}
             refreshControl={
-               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+               <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  tintColor={theme.colors.primary}
+               />
             }
          >
             {/* Header */}
-            <View className="px-6 py-4 flex-row justify-between items-center">
-               <View>
+            <View
+               style={{
+                  paddingBottom: 16,
+                  alignItems: "center",
+               }}
+            >
+               <Text
+                  style={{
+                     fontSize: 28,
+                     fontWeight: "bold",
+                     color: theme.colors.text,
+                     textAlign: "center",
+                  }}
+               >
+                  Saved States
+               </Text>
+            </View>
+
+            {states.length === 0 ? (
+               <View className="flex-1 justify-center items-center py-12">
+                  <Ionicons
+                     name="cube-outline"
+                     size={64}
+                     color={theme.colors.textSecondary}
+                     style={{ marginBottom: 16 }}
+                  />
                   <Text
-                     className="text-xl font-bold"
+                     className="text-lg font-medium mb-2"
                      style={{ color: theme.colors.text }}
                   >
-                     Welcome back, {user?.user_metadata?.name || user?.email}!
+                     No saved states found
                   </Text>
                   <Text
-                     className="text-sm"
+                     className="text-center"
                      style={{ color: theme.colors.textSecondary }}
                   >
-                     ES Orders Dashboard
+                     You haven't created any order states yet.
                   </Text>
                </View>
-               <View className="flex-row space-x-2">
-                  <TouchableOpacity
-                     onPress={toggleTheme}
-                     className="p-2 rounded-lg"
-                     style={{ backgroundColor: theme.colors.surface }}
-                  >
-                     <Text>{isDark ? "☀️" : "🌙"}</Text>
-                  </TouchableOpacity>
-               </View>
-            </View>
-
-            {/* Stats Cards */}
-            <View className="px-6 mb-6">
-               <View className="flex-row space-x-4">
-                  <View
-                     className="flex-1 p-4 rounded-lg"
-                     style={{ backgroundColor: theme.colors.card }}
-                  >
-                     <Text
-                        className="text-sm"
-                        style={{ color: theme.colors.textSecondary }}
+            ) : (
+               <View>
+                  {states.map((state, index) => (
+                     <View
+                        key={state.id || index}
+                        style={{
+                           backgroundColor: theme.colors.card,
+                           borderColor: theme.colors.border,
+                           borderWidth: 1,
+                           borderRadius: 8,
+                           padding: 8,
+                           marginBottom: 16,
+                           shadowColor: theme.colors.shadow,
+                           shadowOffset: { width: 0, height: 1 },
+                           shadowOpacity: 0.1,
+                           shadowRadius: 2,
+                           elevation: 2,
+                        }}
                      >
-                        Total Orders
-                     </Text>
-                     <Text
-                        className="text-2xl font-bold"
-                        style={{ color: theme.colors.text }}
-                     >
-                        {orders.length}
-                     </Text>
-                  </View>
-                  <View
-                     className="flex-1 p-4 rounded-lg"
-                     style={{ backgroundColor: theme.colors.card }}
-                  >
-                     <Text
-                        className="text-sm"
-                        style={{ color: theme.colors.textSecondary }}
-                     >
-                        Revenue
-                     </Text>
-                     <Text
-                        className="text-2xl font-bold"
-                        style={{ color: theme.colors.text }}
-                     >
-                        $
-                        {orders
-                           .reduce((sum, order) => sum + order.total, 0)
-                           .toFixed(2)}
-                     </Text>
-                  </View>
-               </View>
-            </View>
-
-            {/* Quick Actions */}
-            <View className="px-6 mb-6">
-               <Text
-                  className="text-lg font-semibold mb-3"
-                  style={{ color: theme.colors.text }}
-               >
-                  Quick Actions
-               </Text>
-               <View className="space-y-3">
-                  <Button
-                     title="📦 View All Orders"
-                     onPress={() => navigation?.navigate?.("Orders")}
-                     variant="outline"
-                  />
-                  <Button
-                     title="➕ Create New Order"
-                     onPress={() => navigation?.navigate?.("CreateOrder")}
-                     variant="outline"
-                  />
-                  <Button
-                     title="📊 Analytics"
-                     onPress={() => navigation?.navigate?.("Analytics")}
-                     variant="outline"
-                  />
-                  <Button
-                     title="⚙️ Settings"
-                     onPress={() => navigation?.navigate?.("Settings")}
-                     variant="outline"
-                  />
-               </View>
-            </View>
-
-            {/* Recent Orders */}
-            <View className="px-6 mb-6">
-               <Text
-                  className="text-lg font-semibold mb-3"
-                  style={{ color: theme.colors.text }}
-               >
-                  Recent Orders
-               </Text>
-               {loading ? (
-                  <View
-                     className="p-4 rounded-lg"
-                     style={{ backgroundColor: theme.colors.card }}
-                  >
-                     <Text style={{ color: theme.colors.textSecondary }}>
-                        Loading orders...
-                     </Text>
-                  </View>
-               ) : orders.length === 0 ? (
-                  <View
-                     className="p-4 rounded-lg"
-                     style={{ backgroundColor: theme.colors.card }}
-                  >
-                     <Text style={{ color: theme.colors.textSecondary }}>
-                        No orders found
-                     </Text>
-                  </View>
-               ) : (
-                  orders.slice(0, 5).map((order) => (
-                     <TouchableOpacity
-                        key={order.id}
-                        className="p-4 mb-2 rounded-lg"
-                        style={{ backgroundColor: theme.colors.card }}
-                        onPress={() =>
-                           navigation?.navigate?.("OrderDetails", {
-                              orderId: order.id,
-                           })
-                        }
-                     >
-                        <View className="flex-row justify-between items-center">
-                           <View>
+                        <View className="grid grid-cols-3 gap-2">
+                           {/* Timestamp Section */}
+                           <View className="flex-1 flex justify-center items-start">
                               <Text
-                                 className="font-semibold"
+                                 className="text-lg pl-1 font-semibold"
                                  style={{ color: theme.colors.text }}
                               >
-                                 Order #{order.id}
-                              </Text>
-                              <Text
-                                 className="text-sm"
-                                 style={{ color: theme.colors.textSecondary }}
-                              >
-                                 {order.items} items • {order.status}
+                                 {state.timestamp || "No timestamp"}
                               </Text>
                            </View>
-                           <Text
-                              className="font-bold"
-                              style={{ color: theme.colors.primary }}
-                           >
-                              ${order.total.toFixed(2)}
-                           </Text>
+
+                           {/* Cards Section */}
+                           <View className="flex-2 flex-row gap-2">
+                              {/* RTD Card */}
+                              <TouchableOpacity
+                                 className="flex-1 rounded-lg p-2 border"
+                                 style={{
+                                    backgroundColor: "#dbeafe33",
+                                    borderColor: "#93c5fd",
+                                 }}
+                                 onPress={() => handleRTDClick(state)}
+                                 activeOpacity={0.7}
+                              >
+                                 <View className="flex-row items-center space-x-3">
+                                    <View
+                                       className="size-10 rounded-lg flex justify-center items-center mr-2"
+                                       style={{ backgroundColor: "#bfdbfe" }}
+                                    >
+                                       <Ionicons
+                                          name="cube"
+                                          size={24}
+                                          color="#2563eb"
+                                       />
+                                    </View>
+                                    <View>
+                                       <Text
+                                          className="text-md font-semibold"
+                                          style={{ color: theme.colors.text }}
+                                       >
+                                          RTD
+                                       </Text>
+                                       <Text
+                                          className="text-md"
+                                          style={{
+                                             color: theme.colors.textSecondary,
+                                          }}
+                                       >
+                                          {state.rtd?.length || 0} items
+                                       </Text>
+                                    </View>
+                                 </View>
+                              </TouchableOpacity>
+
+                              {/* Handover Card */}
+                              <TouchableOpacity
+                                 className="flex-1 rounded-lg p-2 border"
+                                 style={{
+                                    backgroundColor: "#f3e8ff33",
+                                    borderColor: "#c4b5fd",
+                                 }}
+                                 onPress={() => handleHandoverClick(state)}
+                                 activeOpacity={0.7}
+                              >
+                                 <View className="flex-row items-center space-x-3">
+                                    <View
+                                       className="size-10 rounded-lg flex justify-center items-center mr-2"
+                                       style={{ backgroundColor: "#ddd6fe" }}
+                                    >
+                                       <MaterialCommunityIcons
+                                          name="truck-delivery"
+                                          size={24}
+                                          color="#2563eb"
+                                       />
+                                    </View>
+                                    <View>
+                                       <Text
+                                          className="text-md font-semibold"
+                                          style={{ color: theme.colors.text }}
+                                       >
+                                          Handover
+                                       </Text>
+                                       <Text
+                                          className="text-md"
+                                          style={{
+                                             color: theme.colors.textSecondary,
+                                          }}
+                                       >
+                                          {state.handover?.length || 0} items
+                                       </Text>
+                                    </View>
+                                 </View>
+                              </TouchableOpacity>
+                           </View>
                         </View>
-                     </TouchableOpacity>
-                  ))
-               )}
-            </View>
+                     </View>
+                  ))}
+               </View>
+            )}
          </ScrollView>
       </SafeAreaView>
    );

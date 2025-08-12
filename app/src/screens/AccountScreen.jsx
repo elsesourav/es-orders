@@ -7,8 +7,8 @@ export const AccountScreen = () => {
 
    return (
       <SafeAreaView
-         className="flex-1"
-         style={{ backgroundColor: theme.colors.background }}
+         style={{ flex: 1, backgroundColor: theme.colors.background }}
+         edges={["left", "right"]}
       >
          <AccountPage />
       </SafeAreaView>
