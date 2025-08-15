@@ -19,7 +19,7 @@ export const Pagination = ({
             alignItems: "center",
             paddingHorizontal: 10,
             paddingVertical: 8,
-            backgroundColor: theme.colors.card,
+            backgroundColor: theme.colors.pagination,
             borderRadius: 8,
             marginHorizontal: 16,
             marginBottom: 16,

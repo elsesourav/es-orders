@@ -71,6 +71,7 @@ export const ThemeProvider = ({ children }) => {
          textSecondary: isDark ? "#D1D5DB" : "#6B7280",
          border: isDark ? "#4B5563" : "#E5E7EB",
          card: isDark ? "#374151" : "#FFFFFF",
+         pagination: isDark ? "#374151" : "#00000033",
       },
    };
 

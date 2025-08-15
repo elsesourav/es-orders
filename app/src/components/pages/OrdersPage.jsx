@@ -252,7 +252,7 @@ export const OrdersPage = ({ navigation, route }) => {
                   style={{
                      fontSize: 14,
                      color: theme.colors.textSecondary,
-                     opacity: 0.3,
+                     opacity: 0.2,
                      fontWeight: "500",
                   }}
                >
@@ -261,7 +261,7 @@ export const OrdersPage = ({ navigation, route }) => {
                <Text
                   style={{
                      fontSize: 14,
-                     opacity: 0.3,
+                     opacity: 0.2,
                      color: theme.colors.textSecondary,
                   }}
                >
@@ -501,7 +501,7 @@ export const OrdersPage = ({ navigation, route }) => {
                                                    style={{
                                                       padding: 4,
                                                       backgroundColor:
-                                                         "#48bb78",
+                                                         "#48bb7844",
                                                       borderRadius: 6,
                                                    }}
                                                 >
