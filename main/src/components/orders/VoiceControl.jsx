@@ -2,28 +2,28 @@ import { Mic, MicOff } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /**
- * Enhanced Voice Control Component with Queue System
- * 
+ * Simplified Voice Control Component with Vosk Integration
+ *
  * Features:
+ * - Primary: Browser's Web Speech API for better performance
+ * - Fallback: Vosk offline speech recognition for reliability
  * - Continuous voice recognition without stopping
- * - Command queue system (max 2 commands) for better processing
+ * - Direct command processing without queue
  * - Pattern-based action matching with multiple command variations
- * - Automatic queue cleanup (commands older than 10 seconds removed)
- * - Visual feedback for queue status and command results
+ * - Visual feedback for command results
  * - Support for both numeric and spoken number commands
- * 
+ *
  * Supported Commands:
  * - Navigation: "next", "previous", "back", "forward"
  * - Direct order access: "open 5", "show three", "order 10"
  * - Quick navigation: "first", "last", "start", "end"
  * - Help: "help", "commands"
- * 
+ *
  * @param {Function} onNextOrder - Callback for next order navigation
  * @param {Function} onPrevOrder - Callback for previous order navigation
  * @param {Function} onSelectOrder - Callback for direct order selection
  * @param {number} ordersLength - Total number of orders available
  */
-
 const VoiceControl = ({
    onNextOrder,
    onPrevOrder,
@@ -37,14 +37,157 @@ const VoiceControl = ({
    const [showVoiceStatus, setShowVoiceStatus] = useState(false);
    const [voiceStatusType, setVoiceStatusType] = useState("info"); // "success", "error", "info"
    const [shouldStopVoice, setShouldStopVoice] = useState(false);
-   const recognitionRef = useRef(null);
+   const [recognitionType, setRecognitionType] = useState("none"); // "web", "vosk", "none"
+
+   // References for different recognition systems
+   const webSpeechRef = useRef(null);
+   const voskRecognizerRef = useRef(null);
+   const audioContextRef = useRef(null);
+   const mediaStreamRef = useRef(null);
+   const sourceNodeRef = useRef(null);
+   const processorNodeRef = useRef(null);
+
    const restartTimeoutRef = useRef(null);
    const isManualStopRef = useRef(false);
-   const heartbeatRef = useRef(null);
+   const voskModelRef = useRef(null);
 
-   // Voice Command Queue - maximum length of 2
-   const [voiceQueue, setVoiceQueue] = useState([]);
-   const queueMaxLength = 2;
+   // Enhanced number parsing function
+   const parseSpokenNumber = useCallback((text) => {
+      if (!text) return null;
+
+      const cleanText = text.toLowerCase().trim();
+
+      // First, try to extract direct digits
+      const digitMatch = cleanText.match(/\d+/);
+      if (digitMatch) {
+         const num = parseInt(digitMatch[0]);
+         return num;
+      }
+
+      // Extended number mapping with common misheard words
+      const numberMap = {
+         // Basic numbers with common misheard alternatives
+         one: 1,
+         won: 1,
+         want: 1,
+         two: 2,
+         to: 2,
+         too: 2,
+         three: 3,
+         tree: 3,
+         free: 3,
+         four: 4,
+         for: 4,
+         fore: 4,
+         five: 5,
+         file: 5,
+         fife: 5,
+         six: 6,
+         sex: 6,
+         sick: 6,
+         seven: 7,
+         eight: 8,
+         ate: 8,
+         nine: 9,
+         ten: 10,
+
+         // Teens
+         eleven: 11,
+         twelve: 12,
+         thirteen: 13,
+         fourteen: 14,
+         fifteen: 15,
+         sixteen: 16,
+         seventeen: 17,
+         eighteen: 18,
+         nineteen: 19,
+
+         // Tens
+         twenty: 20,
+         thirty: 30,
+         forty: 40,
+         fifty: 50,
+         sixty: 60,
+         seventy: 70,
+         eighty: 80,
+         ninety: 90,
+
+         // Hundreds
+         hundred: 100,
+      };
+
+      // Try compound numbers like "thirty one", "forty five", etc.
+      const compoundMatch = cleanText.match(
+         /(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[^\w]*(one|two|three|four|five|six|seven|eight|nine|won|to|too|tree|free|for|fore|file|ate)/i
+      );
+      if (compoundMatch) {
+         const tens = numberMap[compoundMatch[1].toLowerCase()] || 0;
+         const ones = numberMap[compoundMatch[2].toLowerCase()] || 0;
+         const result = tens + ones;
+         return result;
+      }
+
+      // Try "one hundred X" patterns
+      const hundredMatch = cleanText.match(
+         /(one|two|three|four|five|six|seven|eight|nine|won|to|too|tree|free|for|fore|file)\s*hundred\s*(and\s*)?(.*)/i
+      );
+      if (hundredMatch) {
+         const hundreds = (numberMap[hundredMatch[1].toLowerCase()] || 1) * 100;
+         const remainder = hundredMatch[3]
+            ? parseSpokenNumber(hundredMatch[3])
+            : 0;
+         const result = hundreds + remainder;
+         return result;
+      }
+
+      // Try simple hundred
+      if (cleanText.includes("hundred")) {
+         return 100;
+      }
+
+      // Look for any single word numbers in the text
+      const words = cleanText.split(/\s+/);
+      for (const word of words) {
+         // Remove punctuation and check
+         const cleanWord = word.replace(/[^\w]/g, "");
+         if (numberMap[cleanWord]) {
+            const result = numberMap[cleanWord];
+            return result;
+         }
+      }
+
+      return null;
+   }, []);
+
+   // Enhanced function to extract order number from text
+   const extractOrderNumber = useCallback(
+      (text) => {
+         // Try different patterns to find the number
+         const patterns = [
+            // Direct number patterns
+            /(?:open|show|select|go\s+to|order|number)\s+(\d+)/i,
+            /(\d+)/,
+
+            // Word patterns - more flexible
+            /(?:open|show|select|go\s+to|order|number)\s+(.+)/i,
+            /(.+)/,
+         ];
+
+         for (const pattern of patterns) {
+            const match = text.match(pattern);
+            if (match) {
+               const numberText = match[1];
+               const parsedNumber = parseSpokenNumber(numberText);
+               if (parsedNumber && parsedNumber > 0) {
+                  return parsedNumber;
+               }
+            }
+         }
+
+         return null;
+      },
+      [parseSpokenNumber]
+   );
 
    // Action definitions with patterns - memoized to prevent unnecessary re-renders
    const voiceActions = useMemo(
@@ -81,64 +224,38 @@ const VoiceControl = ({
          },
          openOrder: {
             patterns: [
-               /open\s+(\d+)/i,
-               /open\s+order\s+(\d+)/i,
-               /show\s+(\d+)/i,
-               /select\s+(\d+)/i,
-               /go\s+to\s+(\d+)/i,
-               /order\s+(\d+)/i,
-               /number\s+(\d+)/i,
+               // More flexible patterns that catch various phrasings
+               /(?:open|show|select|go\s+to|order|number)\s+(.+)/i,
+               /(?:open|show|select)\s*(.+)/i,
+               /(.+)\s+(?:order|orders)/i,
+               // Common misheard patterns
+               /(?:hope|over|upon|opening)\s+(.+)/i,
+               /(?:file|five|fife)\s*(\d+)?/i,
+               /(?:show|so|shall)\s+(.+)/i,
+               // Just numbers or words that could be numbers
+               /(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\s*\w*/i,
+               /(won|to|too|tree|free|for|fore|file|ate)\s*\w*/i,
+               /(\d+)/i,
             ],
             action: (matches) => {
-               const orderNumber = parseInt(matches[1]);
-               const orderIndex = orderNumber - 1; // Convert to 0-based index
-               if (orderIndex >= 0 && orderIndex < ordersLength) {
-                  onSelectOrder(orderIndex);
-                  return `Opened order ${orderNumber}`;
+               // Extract number from the matched text
+               const orderNumber = extractOrderNumber(matches.input);
+
+               if (orderNumber && orderNumber > 0) {
+                  const orderIndex = orderNumber - 1; // Convert to 0-based index
+
+                  if (orderIndex >= 0 && orderIndex < ordersLength) {
+                     onSelectOrder(orderIndex);
+                     return `Opened order ${orderNumber}`;
+                  } else {
+                     throw new Error(
+                        `Order ${orderNumber} not found (1-${ordersLength})`
+                     );
+                  }
                } else {
-                  throw new Error(`Order ${orderNumber} not found (1-${ordersLength})`);
-               }
-            },
-         },
-         openOrderSpoken: {
-            patterns: [
-               /open\s+(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)/i,
-               /show\s+(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)/i,
-               /select\s+(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)/i,
-               /order\s+(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)/i,
-               /number\s+(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)/i,
-            ],
-            action: (matches) => {
-               const spokenNumber = matches[1].toLowerCase();
-               const numberMap = {
-                  one: 1,
-                  two: 2,
-                  three: 3,
-                  four: 4,
-                  five: 5,
-                  six: 6,
-                  seven: 7,
-                  eight: 8,
-                  nine: 9,
-                  ten: 10,
-                  eleven: 11,
-                  twelve: 12,
-                  thirteen: 13,
-                  fourteen: 14,
-                  fifteen: 15,
-                  sixteen: 16,
-                  seventeen: 17,
-                  eighteen: 18,
-                  nineteen: 19,
-                  twenty: 20,
-               };
-               const orderNumber = numberMap[spokenNumber];
-               const orderIndex = orderNumber - 1;
-               if (orderIndex >= 0 && orderIndex < ordersLength) {
-                  onSelectOrder(orderIndex);
-                  return `Opened order ${orderNumber}`;
-               } else {
-                  throw new Error(`Order ${orderNumber} not found (1-${ordersLength})`);
+                  throw new Error(
+                     `Could not understand number in: "${matches.input}"`
+                  );
                }
             },
          },
@@ -188,32 +305,18 @@ const VoiceControl = ({
             },
          },
       }),
-      [onNextOrder, onPrevOrder, onSelectOrder, ordersLength]
+      [
+         onNextOrder,
+         onPrevOrder,
+         onSelectOrder,
+         ordersLength,
+         extractOrderNumber,
+      ]
    );
 
-   // Add voice command to queue
-   const addToVoiceQueue = useCallback(
-      (transcript) => {
-         setVoiceQueue((prev) => {
-            const newQueue = [
-               ...prev,
-               {
-                  text: transcript,
-                  timestamp: Date.now(),
-               },
-            ];
-            // Keep only the last queueMaxLength items
-            return newQueue.slice(-queueMaxLength);
-         });
-      },
-      [queueMaxLength]
-   );
-
-   // Process voice commands from queue
+   // Process voice commands directly
    const processVoiceCommand = useCallback(
       (transcript) => {
-         console.log("Processing voice command:", transcript);
-
          // Try to match against all action patterns
          for (const [, actionDef] of Object.entries(voiceActions)) {
             for (const pattern of actionDef.patterns) {
@@ -247,43 +350,163 @@ const VoiceControl = ({
       [voiceActions]
    );
 
-   // Check queue for combined commands
-   const checkQueueForActions = useCallback(() => {
-      if (voiceQueue.length === 0) return;
+   // Process transcript from either recognition system
+   const handleTranscript = useCallback(
+      (transcript, isFinal = true) => {
+         if (!transcript.trim()) return;
 
-      // Try to process the most recent command first
-      const latestCommand = voiceQueue[voiceQueue.length - 1];
-      const processed = processVoiceCommand(latestCommand.text);
+         const cleanTranscript = transcript.toLowerCase().trim();
 
-      // If single command didn't work and we have 2 commands, try combining them
-      if (!processed && voiceQueue.length === 2) {
-         const combinedText = voiceQueue.map((item) => item.text).join(" ");
-         processVoiceCommand(combinedText);
+         if (isFinal) {
+            // Process command directly
+            processVoiceCommand(cleanTranscript);
+            setVoiceStatus(`Heard: "${cleanTranscript}"`);
+            setVoiceStatusType("info");
+            setShowVoiceStatus(true);
+         } else {
+            // Show interim results
+            setVoiceStatus(`Listening: "${cleanTranscript}"`);
+            setVoiceStatusType("info");
+            setShowVoiceStatus(true);
+         }
+      },
+      [processVoiceCommand]
+   );
+
+   // Initialize Vosk speech recognition
+   const initializeVosk = useCallback(async () => {
+      try {
+         setVoiceStatus("Loading Vosk model...");
+         setVoiceStatusType("info");
+         setShowVoiceStatus(true);
+
+         // Dynamically import Vosk
+         const Vosk = await import("../../lib/vosk.js");
+
+         // Load the model (you need to place the model file in public/models/)
+         const model = await Vosk.createModel(
+            "/models/vosk-model-small-en-us-0.15.zip"
+         );
+         voskModelRef.current = model;
+
+         const recognizer = new model.KaldiRecognizer(16000);
+         voskRecognizerRef.current = recognizer;
+
+         // Set up event handlers
+         recognizer.on("result", (message) => {
+            if (message.result.text) {
+               handleTranscript(message.result.text, true);
+            }
+         });
+
+         recognizer.on("partialresult", (message) => {
+            if (message.result.partial) {
+               handleTranscript(message.result.partial, false);
+            }
+         });
+
+         setVoiceStatus("Vosk model loaded");
+         setVoiceStatusType("success");
+         setShowVoiceStatus(true);
+         setTimeout(() => setShowVoiceStatus(false), 2000);
+
+         return true;
+      } catch (error) {
+         console.error("Failed to initialize Vosk:", error);
+         setVoiceStatus("Vosk initialization failed");
+         setVoiceStatusType("error");
+         setShowVoiceStatus(true);
+         setTimeout(() => setShowVoiceStatus(false), 3000);
+         return false;
       }
-   }, [voiceQueue, processVoiceCommand]);
+   }, [handleTranscript]);
 
-   // Clear old commands from queue (older than 10 seconds)
-   useEffect(() => {
-      if (voiceQueue.length === 0) return;
+   // Start Vosk listening
+   const startVoskListening = useCallback(async () => {
+      try {
+         // Get microphone access with optimal settings for Vosk
+         mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
+            audio: {
+               sampleRate: 16000, // Model's optimal sample rate
+               channelCount: 1, // Mono audio
+               echoCancellation: true, // Keep echo cancellation for better quality
+               noiseSuppression: true, // Keep noise suppression for cleaner audio
+               autoGainControl: true, // Auto gain helps with volume levels
+            },
+         });
 
-      const timer = setTimeout(() => {
-         const now = Date.now();
-         setVoiceQueue((prev) =>
-            prev.filter((item) => now - item.timestamp < 10000)
-         ); // Keep commands from last 10 seconds
-      }, 1000);
+         // Create audio context with 16kHz sample rate
+         audioContextRef.current = new AudioContext({ sampleRate: 16000 });
+         sourceNodeRef.current =
+            audioContextRef.current.createMediaStreamSource(
+               mediaStreamRef.current
+            );
+         processorNodeRef.current =
+            audioContextRef.current.createScriptProcessor(2048, 1, 1);
 
-      return () => clearTimeout(timer);
-   }, [voiceQueue]);
+         // Process audio data
+         processorNodeRef.current.onaudioprocess = (event) => {
+            try {
+               if (voskRecognizerRef.current) {
+                  voskRecognizerRef.current.acceptWaveform(event.inputBuffer);
+               }
+            } catch {
+               // Silently handle audio processing errors
+            }
+         };
 
-   // Voice Recognition Functions
-   const initializeVoiceRecognition = useCallback(() => {
+         // Connect audio nodes
+         sourceNodeRef.current.connect(processorNodeRef.current);
+         processorNodeRef.current.connect(audioContextRef.current.destination);
+
+         setIsVoiceListening(true);
+         setRecognitionType("vosk");
+         setVoiceStatus("Listening with Vosk");
+         setVoiceStatusType("info");
+         setShowVoiceStatus(true);
+         setTimeout(() => setShowVoiceStatus(false), 2000);
+
+         return true;
+      } catch (error) {
+         console.error("Error starting Vosk listening:", error);
+         setVoiceStatus("Microphone access denied");
+         setVoiceStatusType("error");
+         setShowVoiceStatus(true);
+         setTimeout(() => setShowVoiceStatus(false), 3000);
+         return false;
+      }
+   }, []);
+
+   // Stop Vosk listening
+   const stopVoskListening = useCallback(() => {
+      if (mediaStreamRef.current) {
+         mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+         mediaStreamRef.current = null;
+      }
+      if (processorNodeRef.current) {
+         processorNodeRef.current.disconnect();
+         processorNodeRef.current = null;
+      }
+      if (sourceNodeRef.current) {
+         sourceNodeRef.current.disconnect();
+         sourceNodeRef.current = null;
+      }
+      if (
+         audioContextRef.current &&
+         audioContextRef.current.state !== "closed"
+      ) {
+         audioContextRef.current.close();
+         audioContextRef.current = null;
+      }
+   }, []);
+
+   // Initialize Web Speech API
+   const initializeWebSpeech = useCallback(() => {
       if (
          !("webkitSpeechRecognition" in window) &&
          !("SpeechRecognition" in window)
       ) {
-         setVoiceStatus("Voice recognition not supported in this browser");
-         return;
+         return false;
       }
 
       const SpeechRecognition =
@@ -291,102 +514,40 @@ const VoiceControl = ({
       const recognition = new SpeechRecognition();
 
       recognition.continuous = true;
-      recognition.interimResults = false;
-      recognition.lang = "en-IN";
+      recognition.interimResults = true;
+      recognition.lang = "en-US";
 
       recognition.onstart = () => {
          setIsVoiceListening(true);
+         setRecognitionType("web");
          setShouldStopVoice(false);
          isManualStopRef.current = false;
-         setVoiceStatus("Listening");
+         setVoiceStatus("Listening with Web Speech API");
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
-
-         // Hide status after 2 seconds
-         setTimeout(() => {
-            setShowVoiceStatus(false);
-         }, 2000);
-
-         // Start heartbeat to restart recognition periodically (every 30 seconds)
-         // This helps prevent browser timeouts
-         heartbeatRef.current = setInterval(() => {
-            if (
-               !shouldStopVoice &&
-               !isManualStopRef.current &&
-               recognitionRef.current
-            ) {
-               try {
-                  console.log("Heartbeat restart...");
-                  recognitionRef.current.stop(); // This will trigger onend which will restart
-               } catch (error) {
-                  console.log("Heartbeat restart failed:", error);
-               }
-            }
-         }, 30000); // 30 seconds
+         setTimeout(() => setShowVoiceStatus(false), 2000);
       };
 
       recognition.onend = () => {
-         console.log(
-            "Recognition ended. Manual stop:",
-            isManualStopRef.current,
-            "Should stop:",
-            shouldStopVoice
-         );
-
-         // Clear any existing restart timeout
-         if (restartTimeoutRef.current) {
-            clearTimeout(restartTimeoutRef.current);
-            restartTimeoutRef.current = null;
-         }
-
-         // Clear heartbeat when recognition ends
-         if (heartbeatRef.current) {
-            clearInterval(heartbeatRef.current);
-            heartbeatRef.current = null;
-         }
-
-         // Only stop if manually stopped
          if (isManualStopRef.current || shouldStopVoice) {
             setIsVoiceListening(false);
+            setRecognitionType("none");
             setVoiceStatus("Stopped");
             setVoiceStatusType("info");
             setShowVoiceStatus(true);
             setTimeout(() => setShowVoiceStatus(false), 1500);
          } else {
-            // Auto-restart after a short delay to handle browser limitations
+            // Auto-restart for continuous listening
             restartTimeoutRef.current = setTimeout(() => {
                if (
                   !shouldStopVoice &&
                   !isManualStopRef.current &&
-                  recognitionRef.current
+                  webSpeechRef.current
                ) {
                   try {
-                     console.log("Auto-restarting recognition...");
-                     recognitionRef.current.start();
-                  } catch (error) {
-                     console.log("Auto-restart failed:", error);
-                     // Try again with a longer delay
-                     restartTimeoutRef.current = setTimeout(() => {
-                        if (
-                           !shouldStopVoice &&
-                           !isManualStopRef.current &&
-                           recognitionRef.current
-                        ) {
-                           try {
-                              recognitionRef.current.start();
-                           } catch (err) {
-                              console.log(
-                                 "Second restart attempt failed:",
-                                 err
-                              );
-                              setIsVoiceListening(false);
-                              setVoiceStatus("Auto-restart failed");
-                              setVoiceStatusType("error");
-                              setShowVoiceStatus(true);
-                              setTimeout(() => setShowVoiceStatus(false), 2000);
-                           }
-                        }
-                     }, 2000);
+                     webSpeechRef.current.start();
+                  } catch {
+                     // Auto-restart failed, silently continue
                   }
                }
             }, 1000);
@@ -394,69 +555,17 @@ const VoiceControl = ({
       };
 
       recognition.onerror = (event) => {
-         console.error("Speech recognition error:", event.error);
-
-         // Clear restart timeout on error
-         if (restartTimeoutRef.current) {
-            clearTimeout(restartTimeoutRef.current);
-            restartTimeoutRef.current = null;
-         }
-
-         // Clear heartbeat on error
-         if (heartbeatRef.current) {
-            clearInterval(heartbeatRef.current);
-            heartbeatRef.current = null;
-         }
+         console.error("Web Speech recognition error:", event.error);
 
          if (event.error === "not-allowed") {
-            setVoiceStatus("Access denied");
+            setVoiceStatus("Microphone access denied");
             setVoiceStatusType("error");
             setIsVoiceListening(false);
+            setRecognitionType("none");
             setShouldStopVoice(true);
             isManualStopRef.current = true;
             setShowVoiceStatus(true);
             setTimeout(() => setShowVoiceStatus(false), 3000);
-         } else if (event.error === "no-speech") {
-            // Don't stop for no-speech, just show brief status
-            setVoiceStatus("No speech detected");
-            setVoiceStatusType("info");
-            setShowVoiceStatus(true);
-            setTimeout(() => setShowVoiceStatus(false), 1500);
-         } else if (event.error === "aborted") {
-            // Recognition was manually stopped
-            if (isManualStopRef.current || shouldStopVoice) {
-               setVoiceStatus("Stopped");
-               setVoiceStatusType("info");
-               setShowVoiceStatus(true);
-               setTimeout(() => setShowVoiceStatus(false), 1500);
-            }
-         } else if (event.error === "network") {
-            setVoiceStatus("Network error - retrying...");
-            setVoiceStatusType("error");
-            setShowVoiceStatus(true);
-            setTimeout(() => setShowVoiceStatus(false), 2000);
-
-            // Auto-retry for network errors
-            if (!shouldStopVoice && !isManualStopRef.current) {
-               restartTimeoutRef.current = setTimeout(() => {
-                  if (
-                     recognitionRef.current &&
-                     !shouldStopVoice &&
-                     !isManualStopRef.current
-                  ) {
-                     try {
-                        recognitionRef.current.start();
-                     } catch (err) {
-                        console.log("Network error restart failed:", err);
-                     }
-                  }
-               }, 3000);
-            }
-         } else {
-            setVoiceStatus("Recognition error");
-            setVoiceStatusType("error");
-            setShowVoiceStatus(true);
-            setTimeout(() => setShowVoiceStatus(false), 2000);
          }
       };
 
@@ -464,7 +573,6 @@ const VoiceControl = ({
          let finalTranscript = "";
          let interimTranscript = "";
 
-         // Process both final and interim results
          for (let i = event.resultIndex; i < event.results.length; ++i) {
             if (event.results[i].isFinal) {
                finalTranscript += event.results[i][0].transcript;
@@ -473,103 +581,99 @@ const VoiceControl = ({
             }
          }
 
-         // Only process final results
          if (finalTranscript.trim()) {
-            const transcript = finalTranscript.toLowerCase().trim();
-            console.log("Voice command received:", transcript);
-
-            // Add to queue
-            addToVoiceQueue(transcript);
-
-            // Show what was heard
-            setVoiceStatus(`Heard: "${transcript}"`);
-            setVoiceStatusType("info");
-            setShowVoiceStatus(true);
-
-            // Process the command after a short delay to allow for queue updates
-            setTimeout(() => {
-               checkQueueForActions();
-            }, 100);
-         }
-
-         // Show interim results in status (optional)
-         if (interimTranscript.trim()) {
-            setVoiceStatus(`Listening: "${interimTranscript.trim()}"`);
-            setVoiceStatusType("info");
-            setShowVoiceStatus(true);
+            handleTranscript(finalTranscript, true);
+         } else if (interimTranscript.trim()) {
+            handleTranscript(interimTranscript, false);
          }
       };
 
-      recognitionRef.current = recognition;
-      return recognition;
-   }, [shouldStopVoice, addToVoiceQueue, checkQueueForActions]);
+      webSpeechRef.current = recognition;
+      return true;
+   }, [shouldStopVoice, handleTranscript]);
 
-   const toggleVoiceRecognition = useCallback(() => {
-      if (!recognitionRef.current) {
-         const recognition = initializeVoiceRecognition();
-         if (!recognition) return;
-      }
-
+   // Toggle voice recognition
+   const toggleVoiceRecognition = useCallback(async () => {
       if (isVoiceListening) {
-         // Stop voice recognition
+         // Stop recognition
          isManualStopRef.current = true;
          setShouldStopVoice(true);
 
-         // Clear any pending restart
          if (restartTimeoutRef.current) {
             clearTimeout(restartTimeoutRef.current);
             restartTimeoutRef.current = null;
          }
 
-         // Clear heartbeat
-         if (heartbeatRef.current) {
-            clearInterval(heartbeatRef.current);
-            heartbeatRef.current = null;
+         if (recognitionType === "web" && webSpeechRef.current) {
+            webSpeechRef.current.stop();
+         } else if (recognitionType === "vosk") {
+            stopVoskListening();
+            setIsVoiceListening(false);
+            setRecognitionType("none");
          }
 
-         recognitionRef.current.stop();
          setVoiceStatus("Voice recognition stopped");
+         setVoiceStatusType("info");
+         setShowVoiceStatus(true);
+         setTimeout(() => setShowVoiceStatus(false), 1500);
       } else {
-         // Start voice recognition
+         // Start recognition
          isManualStopRef.current = false;
          setShouldStopVoice(false);
-         try {
-            recognitionRef.current.start();
-         } catch (error) {
-            console.error("Failed to start voice recognition:", error);
-            setVoiceStatus("Failed to start voice recognition - Try again");
-            setVoiceStatusType("error");
-            setShowVoiceStatus(true);
-            setTimeout(() => setShowVoiceStatus(false), 2000);
+
+         let webSpeechStarted = false;
+
+         // Try Web Speech API first
+         if (initializeWebSpeech()) {
+            try {
+               webSpeechRef.current.start();
+               webSpeechStarted = true;
+               return;
+            } catch {
+               webSpeechStarted = false;
+            }
+         }
+
+         // Fallback to Vosk if Web Speech failed
+         if (!webSpeechStarted) {
+            const voskInitialized =
+               voskRecognizerRef.current || (await initializeVosk());
+            if (voskInitialized) {
+               await startVoskListening();
+            } else {
+               setVoiceStatus("No voice recognition available");
+               setVoiceStatusType("error");
+               setShowVoiceStatus(true);
+               setTimeout(() => setShowVoiceStatus(false), 3000);
+            }
          }
       }
-   }, [isVoiceListening, initializeVoiceRecognition]);
+   }, [
+      isVoiceListening,
+      recognitionType,
+      initializeWebSpeech,
+      initializeVosk,
+      startVoskListening,
+      stopVoskListening,
+   ]);
 
-   // Initialize voice recognition on component mount (no auto-start)
+   // Cleanup on unmount
    useEffect(() => {
-      initializeVoiceRecognition();
-
       return () => {
-         // Cleanup on unmount
          isManualStopRef.current = true;
          setShouldStopVoice(true);
 
          if (restartTimeoutRef.current) {
             clearTimeout(restartTimeoutRef.current);
-            restartTimeoutRef.current = null;
          }
 
-         if (heartbeatRef.current) {
-            clearInterval(heartbeatRef.current);
-            heartbeatRef.current = null;
+         if (webSpeechRef.current) {
+            webSpeechRef.current.stop();
          }
 
-         if (recognitionRef.current) {
-            recognitionRef.current.stop();
-            recognitionRef.current = null;
-         }
+         stopVoskListening();
       };
-   }, [initializeVoiceRecognition]);
+   }, [stopVoskListening]);
 
    return (
       <>
@@ -589,25 +693,23 @@ const VoiceControl = ({
             )}
          </button>
 
-         {/* Voice Queue Indicator - Top Right, below the mic button */}
-         {isVoiceListening && voiceQueue.length > 0 && (
-            <div className="fixed top-28 right-4 z-40 max-w-xs">
-               <div className="backdrop-blur-md text-xs px-2 py-1 rounded-lg shadow-lg border bg-blue-500/80 text-white border-blue-400/30">
-                  <div className="flex items-center gap-1">
-                     <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                     Queue: {voiceQueue.length}/{queueMaxLength}
-                  </div>
-                  {voiceQueue.length > 0 && (
-                     <div className="text-[10px] opacity-75 mt-1">
-                        Latest: "{voiceQueue[voiceQueue.length - 1]?.text.substring(0, 15)}..."
-                     </div>
-                  )}
+         {/* Recognition Type Indicator */}
+         {isVoiceListening && (
+            <div className="fixed top-16 right-16 z-40">
+               <div
+                  className={`backdrop-blur-md text-xs px-2 py-1 rounded-lg shadow-lg border ${
+                     recognitionType === "web"
+                        ? "bg-blue-500/80 text-white border-blue-400/30"
+                        : "bg-purple-500/80 text-white border-purple-400/30"
+                  }`}
+               >
+                  {recognitionType === "web" ? "Web API" : "Vosk"}
                </div>
             </div>
          )}
 
-         {/* Voice Commands Help - Top Right, below queue (only when listening and no queue) */}
-         {isVoiceListening && voiceQueue.length === 0 && (
+         {/* Voice Commands Help - Top Right, below the mic button */}
+         {isVoiceListening && (
             <div className="fixed top-28 right-4 z-40 max-w-xs">
                <div className="backdrop-blur-md text-xs px-2 py-1 rounded-lg shadow-lg border bg-green-500/80 text-white border-green-400/30">
                   <div className="flex items-center gap-1">

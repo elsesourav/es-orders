@@ -11,8 +11,14 @@ const copyExtensionUtils = () => {
       name: "copy-extension-utils",
       writeBundle() {
          try {
-            const sourceSkuPath = resolve(__dirname, "src/assets/sku");
-            const destSkuPath = resolve(__dirname, "dist/assets/sku");
+            const sourceSkuPath = resolve(
+               __dirname,
+               "public/models/vosk-model-small-en-us-0.15.zip"
+            );
+            const destSkuPath = resolve(
+               __dirname,
+               "./../models/vosk-model-small-en-us-0.15.zip"
+            );
 
             if (existsSync(sourceSkuPath)) {
                cpSync(sourceSkuPath, destSkuPath, { recursive: true });
