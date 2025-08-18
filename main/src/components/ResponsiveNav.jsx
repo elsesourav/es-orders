@@ -57,25 +57,20 @@ const ResponsiveNav = ({ activeTab, onTabChange }) => {
             <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-50">
                <div className="px-4 h-14">
                   {/* Mobile Navigation Tabs */}
-                  <div className="relative grid grid-cols-3 place-items-center h-full p-1">
-                     {/* Active tab indicator - sliding background with custom transition */}
+                  <div className="relative grid grid-cols-3 place-items-center h-full">
                      <div
-                        className="absolute top-1 bottom-1 w-1/3 bg-gradient-to-r from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 rounded-lg shadow-lg ring-1 ring-primary-200 dark:ring-primary-700"
+                        className="absolute top-1 bottom-1 w-1/3 rounded-lg backdrop-blur-sm bg-gray-200/60 dark:bg-gray-700/60 border border-gray-300/40 dark:border-gray-600/40"
                         style={{
                            left: `${
                               navItems.findIndex(
                                  (item) => item.id === activeTab
                               ) * 33.333
                            }%`,
-                           transform: "translateX(0.25rem)",
                            transition:
-                              "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)", // Custom bouncy easing
-                           boxShadow:
-                              "0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)",
+                              "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
                         }}
                      >
-                        {/* Inner glow effect */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-white/40 dark:via-white/10 dark:to-white/20 rounded-lg" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent dark:from-white/20 rounded-lg" />
                      </div>
 
                      {navItems.map((item) => {
@@ -84,31 +79,17 @@ const ResponsiveNav = ({ activeTab, onTabChange }) => {
                            <button
                               key={item.id}
                               onClick={() => handleNavClick(item.id)}
-                              className={`relative z-10 m-2 flex gap-1 items-center justify-center size-full rounded-lg transition-all duration-500 transform ${
+                              className={`relative z-10 m-2 flex gap-1 items-center justify-center size-full rounded-lg transition-all duration-300 transform ${
                                  activeTab === item.id
-                                    ? "text-primary-700 dark:text-primary-300 scale-105 font-semibold"
-                                    : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:scale-110 hover:rotate-1"
+                                    ? "text-primary-700 dark:text-primary-500 scale-105 font-semibold"
+                                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:scale-105"
                               }`}
-                              style={{
-                                 transition:
-                                    "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                              }}
                            >
                               <Icon
                                  size={18}
-                                 className={`transition-all duration-300 ${
-                                    activeTab === item.id
-                                       ? "drop-shadow-sm"
-                                       : ""
-                                 }`}
+                                 className="transition-colors duration-300"
                               />
-                              <span
-                                 className={`text-md font-medium transition-all duration-300 ${
-                                    activeTab === item.id
-                                       ? "drop-shadow-sm"
-                                       : ""
-                                 }`}
-                              >
+                              <span className="text-sm font-medium transition-colors duration-300">
                                  {item.label}
                               </span>
                            </button>

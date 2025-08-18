@@ -69,11 +69,6 @@ const SettingsPage = () => {
             </h2>
             <div className="flex items-center justify-between">
                <div className="flex items-center space-x-3">
-                  {isDarkMode ? (
-                     <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                  ) : (
-                     <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                  )}
                   <div>
                      <p className="font-medium text-gray-900 dark:text-white">
                         Dark Mode
@@ -85,15 +80,23 @@ const SettingsPage = () => {
                </div>
                <button
                   onClick={toggleTheme}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-                     isDarkMode ? "bg-primary-600" : "bg-gray-200"
+                  className={`relative inline-flex h-7 w-14 items-center rounded-full p-1 transition-all duration-300 ease-in-out focus:outline-none shadow-inner ${
+                     isDarkMode
+                        ? "bg-gray-600 hover:bg-gray-700"
+                        : "bg-gray-200 hover:bg-gray-300"
                   }`}
                >
                   <span
-                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                        isDarkMode ? "translate-x-6" : "translate-x-1"
+                     className={`inline-flex size-5 items-center justify-center transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${
+                        isDarkMode ? "translate-x-7" : "translate-x-0"
                      }`}
-                  />
+                  >
+                     {isDarkMode ? (
+                        <Moon className="w-3 h-3 text-primary-600" />
+                     ) : (
+                        <Sun className="w-3 h-3 text-yellow-500" />
+                     )}
+                  </span>
                </button>
             </div>
          </div>

@@ -1,4 +1,4 @@
-import { Tag, Boxes, Weight } from "lucide-react";
+import { Boxes, Package, Tag, Weight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAllProducts } from "../api/productsApi";
 import { OrdersPopup, Pagination, VoiceControl } from "./orders";
@@ -15,6 +15,15 @@ const OrdersPage = () => {
       unite: "NA",
    });
    const [showOrdersPopup, setShowOrdersPopup] = useState(false);
+
+   // Touch/swipe state for mobile navigation
+   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+   const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
+   const [isTransitioning, setIsTransitioning] = useState(false);
+   const [swipeDirection, setSwipeDirection] = useState(null); // 'left' | 'right' | null
+
+   // Minimum swipe distance to trigger navigation
+   const minSwipeDistance = 50;
 
    const updateProductDetails = useCallback(
       (item) => {
@@ -170,6 +179,67 @@ const OrdersPage = () => {
       []
    );
 
+   // Touch event handlers for swipe navigation
+   const handleTouchStart = useCallback((e) => {
+      const touch = e.touches[0];
+      setTouchStart({ x: touch.clientX, y: touch.clientY });
+      setTouchEnd({ x: touch.clientX, y: touch.clientY });
+   }, []);
+
+   const handleTouchMove = useCallback((e) => {
+      const touch = e.touches[0];
+      setTouchEnd({ x: touch.clientX, y: touch.clientY });
+   }, []);
+
+   const handleTouchEnd = useCallback(() => {
+      if (!touchStart.x || !touchEnd.x) return;
+
+      const deltaX = touchStart.x - touchEnd.x;
+      const deltaY = Math.abs(touchStart.y - touchEnd.y);
+
+      // Only trigger swipe if horizontal movement is greater than vertical (prevent interference with scrolling)
+      if (Math.abs(deltaX) > deltaY && Math.abs(deltaX) > minSwipeDistance) {
+         setIsTransitioning(true);
+
+         if (deltaX > 0) {
+            // Swipe left (next order)
+            setSwipeDirection("left");
+            setTimeout(() => {
+               if (
+                  selectedOrderIndex !== null &&
+                  selectedOrderIndex < orders.length - 1
+               ) {
+                  nextOrder();
+               }
+               setSwipeDirection(null);
+               setIsTransitioning(false);
+            }, 150);
+         } else {
+            // Swipe right (previous order)
+            setSwipeDirection("right");
+            setTimeout(() => {
+               if (selectedOrderIndex !== null && selectedOrderIndex > 0) {
+                  prevOrder();
+               }
+               setSwipeDirection(null);
+               setIsTransitioning(false);
+            }, 150);
+         }
+      }
+
+      // Reset touch positions
+      setTouchStart({ x: 0, y: 0 });
+      setTouchEnd({ x: 0, y: 0 });
+   }, [
+      touchStart,
+      touchEnd,
+      minSwipeDistance,
+      selectedOrderIndex,
+      orders.length,
+      nextOrder,
+      prevOrder,
+   ]);
+
    useEffect(() => {
       // Fetch state data from localStorage
       const storedState = localStorage.getItem("es_orders_selected_state");
@@ -228,7 +298,263 @@ const OrdersPage = () => {
       selectedOrderIndex !== null ? orders[selectedOrderIndex] : null;
 
    return (
-      <div className="relative flex flex-col">
+      <>
+         <div
+            className={`relative flex flex-col transition-all duration-200 ease-out ${
+               isTransitioning
+                  ? "scale-[0.995] opacity-90"
+                  : "scale-100 opacity-100"
+            }`}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+         >
+            {/* Header */}
+            <div className="relative opacity-30 flex justify-center items-center gap-2 my-1">
+               <div className="px-2 py-0.5 border border-primary-200 dark:border-primary-700 rounded-md">
+                  <p className="text-xs font-medium text-primary-700 dark:text-primary-300">
+                     {stateData?.selectedType?.toUpperCase() || "Loading..."}
+                  </p>
+               </div>
+               <div className="px-2 py-0.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-md">
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                     {stateData?.timestamp} • {orders.length} orders
+                  </p>
+               </div>
+            </div>
+
+            {/* Top Pagination */}
+            <Pagination
+               selectedOrderIndex={selectedOrderIndex}
+               totalOrders={orders.length}
+               onPrevious={prevOrder}
+               onNext={nextOrder}
+               onShowPopup={() => setShowOrdersPopup(true)}
+            />
+
+            {/* Order Details */}
+            {selectedOrder && (
+               <div
+                  className={`p-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20 transition-all duration-300 ease-out ${
+                     isTransitioning
+                        ? swipeDirection === "left"
+                           ? "transform -translate-x-2 opacity-80"
+                           : swipeDirection === "right"
+                           ? "transform translate-x-2 opacity-80"
+                           : ""
+                        : "transform translate-x-0 opacity-100"
+                  }`}
+               >
+                  {/* Order Items */}
+                  <div>
+                     {selectedOrder.orderItems &&
+                        selectedOrder.orderItems.length > 0 && (
+                           <div>
+                              {/* Single Item Display */}
+                              <div className="w-full">
+                                 {(() => {
+                                    const item =
+                                       selectedOrder.orderItems[
+                                          selectedItemIndex
+                                       ];
+
+                                    return (
+                                       <div className="w-full relative bg-white dark:bg-gray-800 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+                                          <div className="grid grid-cols-[1fr_100px] gap-2">
+                                             {/* Weight */}
+                                             <div className="flex items-center gap-2 px-2 py-1 bg-gradient-to-br from-success-light to-green-50 dark:from-green-900/30 dark:to-emerald-900/20 rounded-md border border-success/20 dark:border-green-700/50">
+                                                <div className="p-1 bg-success rounded-md flex-shrink-0">
+                                                   <Weight className="w-3 h-3 text-white" />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                   <p className="text-lg font-bold text-success dark:text-green-300 truncate">
+                                                      {parseFloat(
+                                                         product.weight
+                                                      )}{" "}
+                                                      g
+                                                   </p>
+                                                </div>
+                                             </div>
+
+                                             {/* Quantity Badge */}
+                                             <div
+                                                className={`flex items-center gap-2 px-2 py-1 bg-gradient-to-br from-warning/10 to-orange-400/10 dark:from-orange-900/10 dark:to-red-900/10 border-warning/20 dark:border-orange-600/20 rounded-md border ${
+                                                   item.quantity > 1 &&
+                                                   "bg-gradient-to-br from-warning/60 to-orange-400/60 dark:from-orange-900/60 dark:to-red-900/80 border-warning/80 dark:border-orange-600/60"
+                                                }`}
+                                             >
+                                                <div
+                                                   className={`p-1 bg-warning rounded-md flex-shrink-0 opacity-60 ${
+                                                      item.quantity > 1 &&
+                                                      "opacity-100"
+                                                   }`}
+                                                >
+                                                   <Boxes className="w-3 h-3 text-white" />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                   <p
+                                                      className={`text-lg font-bold text-warning dark:text-orange-300 truncate opacity-60 ${
+                                                         item.quantity > 1 &&
+                                                         "opacity-100 text-white"
+                                                      }`}
+                                                   >
+                                                      {item.quantity}x
+                                                   </p>
+                                                </div>
+                                             </div>
+
+                                             {/* Product Name */}
+                                             <div className="flex col-span-2 items-center gap-2 px-2 py-1 bg-gradient-to-br from-info-light to-blue-50 dark:from-blue-900/30 dark:to-cyan-900/20 rounded-md border border-info/20 dark:border-blue-700/50">
+                                                <div className="p-1 bg-info rounded-md flex-shrink-0">
+                                                   <Tag className="w-3 h-3 text-white" />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                   <p className="text-lg font-bold text-info dark:text-blue-300 line-clamp-1 break-words">
+                                                      {product.name}
+                                                   </p>
+                                                </div>
+                                             </div>
+                                          </div>
+
+                                          <div
+                                             className={`relative w-full my-2 gap-1 grid grid-cols-1 ${
+                                                selectedOrder.orderItems
+                                                   .length > 1 &&
+                                                "grid-cols-[1fr_50px]"
+                                             }`}
+                                          >
+                                             {/* Product Image */}
+                                             <div className="my-1 flex justify-center">
+                                                <div className="relative w-full max-w-[min(45vw,45vh)] max-h-[min(45vw,45vh)]">
+                                                   <img
+                                                      src={item.primaryImageUrl}
+                                                      alt={item.title}
+                                                      className="w-full h-full object-contain bg-gray-100 dark:bg-gray-700 shadow-app-sm rounded-md border border-gray-200 dark:border-gray-600"
+                                                   />
+                                                   <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent rounded-md"></div>
+                                                </div>
+                                             </div>
+
+                                             {/* Item Number Buttons - Show only if multiple items */}
+                                             <div
+                                                className={`relative p-1 flex flex-col justify-center items-center gap-2 w-full overflow-x-auto custom-scrollbar ${
+                                                   selectedOrder.orderItems
+                                                      .length < 2 && "hidden"
+                                                }`}
+                                             >
+                                                {selectedOrder.orderItems
+                                                   .length > 1 &&
+                                                   selectedOrder.orderItems.map(
+                                                      (_, index) => (
+                                                         <button
+                                                            key={index}
+                                                            onClick={() => {
+                                                               setSelectedItemIndex(
+                                                                  index
+                                                               );
+                                                               const productDetails =
+                                                                  updateProductDetails(
+                                                                     selectedOrder
+                                                                        .orderItems[
+                                                                        index
+                                                                     ]
+                                                                  );
+                                                               setProduct(
+                                                                  productDetails
+                                                               );
+                                                            }}
+                                                            className={`flex-shrink-0 size-9 rounded-md border transition-all duration-300 transform text-xs font-medium ${
+                                                               selectedItemIndex ===
+                                                               index
+                                                                  ? "bg-primary dark:bg-primary-600 text-white border-primary-600 dark:border-primary-400 scale-105 font-bold"
+                                                                  : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:border-primary-300 dark:hover:border-primary-600 hover:scale-105"
+                                                            }`}
+                                                         >
+                                                            {index + 1}
+                                                         </button>
+                                                      )
+                                                   )}
+                                             </div>
+                                          </div>
+
+                                          {/* SKU */}
+                                          <div className="mb-2 p-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
+                                             <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                <span className="font-semibold text-gray-900 dark:text-gray-200">
+                                                   SKU:
+                                                </span>{" "}
+                                                <span className="font-mono text-xs">
+                                                   {item.sku}
+                                                </span>
+                                             </p>
+                                          </div>
+
+                                          {/* Product Title */}
+                                          <div className="p-2 bg-gray-50 dark:bg-primary-900/20 rounded-md border border-primary-200 dark:border-primary-700">
+                                             <p className="text-xs font-medium text-gray-900 dark:text-white line-clamp-3 leading-relaxed">
+                                                {item.title}
+                                             </p>
+                                          </div>
+                                       </div>
+                                    );
+                                 })()}
+                              </div>
+                           </div>
+                        )}
+                  </div>
+
+                  {/* Buyer Details */}
+                  <div className="relative mt-4">
+                     <div className="bg-white dark:bg-gray-800 rounded-md p-2 border border-gray-200 dark:border-gray-700">
+                        <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                           <div className="w-1 h-4 bg-primary rounded-full"></div>
+                           Buyer Details
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                           <div className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
+                              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-0.5">
+                                 Name
+                              </p>
+                              <p className="text-xs font-semibold text-gray-900 dark:text-white">
+                                 {selectedOrder.buyerDetails?.name || "N/A"}
+                              </p>
+                           </div>
+                           <div className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
+                              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-0.5">
+                                 State
+                              </p>
+                              <p className="text-xs font-semibold text-gray-900 dark:text-white">
+                                 {selectedOrder.buyerDetails?.address?.state ||
+                                    "N/A"}
+                              </p>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            )}
+
+            {/* Empty State */}
+            {orders.length === 0 && (
+               <div className="text-center py-8">
+                  <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3">
+                     <Package className="w-8 h-8 text-gray-400 dark:text-gray-600" />
+                  </div>
+                  <div className="max-w-sm mx-auto px-4">
+                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                        No Orders Found
+                     </h3>
+                     <p className="text-xs text-gray-600 dark:text-gray-400">
+                        No orders found for{" "}
+                        <span className="font-medium text-primary">
+                           {stateData?.selectedType}
+                        </span>{" "}
+                        state.
+                     </p>
+                  </div>
+               </div>
+            )}
+         </div>
          {/* Voice Control Component */}
          <VoiceControl
             onNextOrder={nextOrder}
@@ -236,212 +562,6 @@ const OrdersPage = () => {
             onSelectOrder={selectOrder}
             ordersLength={orders.length}
          />
-
-         {/* Header */}
-         <div className="relative flex justify-center items-center gap-3 my-1 opacity-20">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-               {stateData?.selectedType?.toUpperCase() || "Loading..."}
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-               {stateData?.timestamp} • orders {orders.length}
-            </p>
-         </div>
-
-         {/* Top Pagination */}
-         <Pagination
-            selectedOrderIndex={selectedOrderIndex}
-            totalOrders={orders.length}
-            onPrevious={prevOrder}
-            onNext={nextOrder}
-            onShowPopup={() => setShowOrdersPopup(true)}
-         />
-
-         {/* Order Details */}
-         {selectedOrder && (
-            <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-               {/* Order Items */}
-               <div>
-                  {selectedOrder.orderItems &&
-                     selectedOrder.orderItems.length > 0 && (
-                        <div>
-                           {/* Single Item Display */}
-                           <div className="w-full min-w-full">
-                              {(() => {
-                                 const item =
-                                    selectedOrder.orderItems[selectedItemIndex];
-                              
-                                 return (
-                                    <div className="w-full relative">
-                                       <div className="grid grid-cols-[auto_80px] gap-2">
-                                          {/* Weight */}
-                                          <div className="flex items-center gap-2 lg:gap-3 p-2 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-700">
-                                             <div className="p-1 bg-green-500 rounded-lg flex-shrink-0">
-                                                <Weight className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                                             </div>
-                                             <div className="min-w-0 flex-1">
-                                                <p className="text-md sm:text-sm font-bold text-green-700 dark:text-green-300 truncate">
-                                                   {parseFloat(product.weight)} g
-                                                </p>
-                                             </div>
-                                          </div>
-
-                                          {/* Quantity Badge */}
-                                          <div
-                                             className={`flex items-center gap-2 lg:gap-3 p-2 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-700 ${
-                                                item.quantity > 1 &&
-                                                "bg-gradient-to-r from-orange-400 to-red-400 dark:from-orange-900/70 dark:to-red-900/70"
-                                             }`}
-                                          >
-                                             <div
-                                                className={`p-1 bg-orange-500 rounded-lg flex-shrink-0 opacity-50 ${
-                                                   item.quantity > 1 &&
-                                                   "opacity-100"
-                                                }`}
-                                             >
-                                                <Boxes className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                                             </div>
-                                             <div className="min-w-0 flex-1">
-                                                <p
-                                                   className={`text-md sm:text-sm font-bold text-orange-700 dark:text-orange-300 truncate opacity-50 ${
-                                                      item.quantity > 1 &&
-                                                      "opacity-100"
-                                                   }`}
-                                                >
-                                                   {item.quantity}x
-                                                </p>
-                                             </div>
-                                          </div>
-
-                                          {/* Product Name */}
-                                          <div className="flex col-span-2 items-center gap-2 lg:gap-3 p-2 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
-                                             <div className="p-1 bg-yellow-500 rounded-lg flex-shrink-0">
-                                                <Tag className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                                             </div>
-                                             <div className="min-w-0 flex-1">
-                                                <p className="text-md sm:text-sm font-bold text-yellow-700 dark:text-yellow-300 line-clamp-1 break-words">
-                                                   {product.name}
-                                                </p>
-                                             </div>
-                                          </div>
-                                       </div>
-
-                                       {/* Quantity Badge - Show only if quantity > 1 */}
-                                       {/* {item.quantity >= 1 && (
-                                          <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-md font-bold px-3 py-2 rounded-full shadow-lg">
-                                             {item.quantity}x
-                                          </div>
-                                       )} */}
-
-                                       <div
-                                          className={`relative w-full my-2 gap-1 grid grid-cols-1 ${
-                                             selectedOrder.orderItems.length >
-                                                1 && "grid-cols-[1fr_60px]"
-                                          }`}
-                                       >
-                                          {/* Product Image */}
-                                          <div className="my-2 flex justify-center">
-                                             <img
-                                                src={item.primaryImageUrl}
-                                                alt={item.title}
-                                                className="object-cover size-[min(50vw,50vh)] bg-gray-200 dark:bg-gray-600 shadow-lg rounded-sm"
-                                             />
-                                          </div>
-
-                                          {/* Item Number Buttons - Show only if multiple items */}
-                                          <div
-                                             className={`relative py-2 flex flex-col justify-center items-center gap-2 w-full overflow-x-auto custom-scrollbar ${
-                                                selectedOrder.orderItems
-                                                   .length < 2 && "hidden"
-                                             }`}
-                                          >
-                                             {selectedOrder.orderItems.length >=
-                                                1 &&
-                                                [
-                                                   ...selectedOrder.orderItems,
-                                                   {},
-                                                   {},
-                                                ].map((_, index) => (
-                                                   <button
-                                                      key={index}
-                                                      onClick={() => {
-                                                         setSelectedItemIndex(
-                                                            index
-                                                         );
-                                                         const productDetails =
-                                                            updateProductDetails(
-                                                               selectedOrder
-                                                                  .orderItems[
-                                                                  index
-                                                               ]
-                                                            );
-                                                         setProduct(
-                                                            productDetails
-                                                         );
-                                                      }}
-                                                      className={`flex-shrink-0 w-10 h-10 rounded-lg border transition-all duration-300 transform ${
-                                                         selectedItemIndex ===
-                                                         index
-                                                            ? "dark:bg-white/60 bg-gray-800/60 text-white dark:text-black  border-black dark:border-white scale-105 shadow-lg"
-                                                            : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 active:bg-purple-100 dark:active:bg-purple-900/30 hover:scale-105"
-                                                      }`}
-                                                   >
-                                                      {index + 1}
-                                                   </button>
-                                                ))}
-                                          </div>
-                                       </div>
-
-                                       {/* SKU */}
-                                       <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                                          <span className="font-medium">
-                                             SKU:
-                                          </span>{" "}
-                                          {item.sku}
-                                       </p>
-
-                                       {/* Product Title */}
-                                       <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-4">
-                                          {item.title}
-                                       </p>
-                                    </div>
-                                 );
-                              })()}
-                           </div>
-                        </div>
-                     )}
-               </div>
-
-               {/* Buyer Details */}
-               <div className="relative mt-10">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                     Buyer Details
-                  </h2>
-                  <div className="space-y-2">
-                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Name:{" "}
-                        <span className="font-medium text-gray-900 dark:text-white">
-                           {selectedOrder.buyerDetails?.name || "N/A"}
-                        </span>
-                     </p>
-                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        State:{" "}
-                        <span className="font-medium text-gray-900 dark:text-white">
-                           {selectedOrder.buyerDetails?.address?.state || "N/A"}
-                        </span>
-                     </p>
-                  </div>
-               </div>
-            </div>
-         )}
-
-         {/* Empty State */}
-         {orders.length === 0 && (
-            <div className="text-center py-12">
-               <p className="text-gray-600 dark:text-gray-400">
-                  No orders found for {stateData?.selectedType} state.
-               </p>
-            </div>
-         )}
 
          {/* Orders Popup */}
          <OrdersPopup
@@ -451,7 +571,7 @@ const OrdersPage = () => {
             selectedOrderIndex={selectedOrderIndex}
             onSelectOrder={selectOrder}
          />
-      </div>
+      </>
    );
 };
 

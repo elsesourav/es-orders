@@ -55,7 +55,7 @@ function IndexPage() {
       <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
          <ResponsiveNav activeTab={activeTab} onTabChange={setActiveTab} />
          <main className="relative h-full overflow-hidden">
-            <div className="max-w-7xl pt-16 md:pt-18 pb-8 px-4 sm:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto">
+            <div className="max-w-7xl pt-16 md:pt-18 pb-8 px-2 md:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto">
                {renderContent()}
             </div>
          </main>
