@@ -67,9 +67,9 @@ const OrdersPopup = ({
             </div>
 
             {/* Content */}
-            <div className="p-6">
+            <div className="py-6">
                {/* Orders Grid */}
-               <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-1 max-h-96 overflow-y-auto custom-scrollbar">
+               <div className="grid px-6 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-1 max-h-96 overflow-y-auto custom-scrollbar">
                   {orders.map((order, orderIndex) => (
                      <button
                         key={orderIndex}

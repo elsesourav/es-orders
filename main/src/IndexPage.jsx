@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-   AccountPage,
    HomePage,
    OrdersPage,
    ResponsiveNav,
@@ -12,30 +11,27 @@ function IndexPage() {
    const { isAuthenticated, loading } = useAuth();
    const [activeTab, setActiveTab] = useState("home");
 
-   // Redirect to account page if not authenticated
+   // Redirect to settings page if not authenticated
    useEffect(() => {
       if (!loading && !isAuthenticated) {
-         setActiveTab("account");
+         setActiveTab("settings");
       }
    }, [isAuthenticated, loading]);
 
    const renderContent = () => {
-      // If not authenticated, always show account page
-      if (!isAuthenticated) {
-         return <AccountPage />;
-      }
-
       switch (activeTab) {
          case "home":
             return (
                <HomePage onNavigateToOrders={() => setActiveTab("orders")} />
             );
          case "orders":
+            // If not authenticated, redirect to settings
+            if (!isAuthenticated) {
+               return <SettingsPage />;
+            }
             return <OrdersPage />;
          case "settings":
             return <SettingsPage />;
-         case "account":
-            return <AccountPage />;
          default:
             return (
                <HomePage onNavigateToOrders={() => setActiveTab("orders")} />
@@ -59,7 +55,7 @@ function IndexPage() {
       <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
          <ResponsiveNav activeTab={activeTab} onTabChange={setActiveTab} />
          <main className="relative h-full overflow-hidden">
-            <div className="max-w-7xl pt-18 pb-8 px-4 sm:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto">
+            <div className="max-w-7xl pt-16 md:pt-18 pb-8 px-4 sm:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto">
                {renderContent()}
             </div>
          </main>

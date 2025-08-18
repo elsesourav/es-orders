@@ -21,6 +21,10 @@ const VoiceControl = ({
    const [showVoiceStatus, setShowVoiceStatus] = useState(false);
    const [voiceStatusType, setVoiceStatusType] = useState("info"); // "success", "error", "info"
 
+   useEffect(() => {
+      console.log(voiceStatusType);
+   }, [voiceStatusType]);
+
    // References for Vosk recognition system
    const voskRecognizerRef = useRef(null);
    const audioContextRef = useRef(null);
@@ -49,31 +53,19 @@ const VoiceControl = ({
          return 1000;
       }
 
-      // Extended number mapping with common misheard words
+      // Extended number mapping
       const numberMap = {
-         // Basic numbers with common misheard alternatives
+         // Basic numbers
          zero: 0,
          one: 1,
-         won: 1,
-         want: 1,
          two: 2,
-         to: 2,
-         too: 2,
          three: 3,
-         tree: 3,
          free: 3,
          four: 4,
-         for: 4,
-         fore: 4,
          five: 5,
-         file: 5,
-         fife: 5,
          six: 6,
-         sex: 6,
-         sick: 6,
          seven: 7,
          eight: 8,
-         ate: 8,
          nine: 9,
          ten: 10,
 
@@ -296,10 +288,17 @@ const VoiceControl = ({
                if (matches) {
                   try {
                      const result = actionDef.action(matches);
-                     setVoiceStatus(result);
+                     setVoiceStatus(`ACTION: ${result}`);
+
                      setVoiceStatusType("success");
                      setShowVoiceStatus(true);
-                     setTimeout(() => setShowVoiceStatus(false), 1500);
+                     setTimeout(() => {
+                        setShowVoiceStatus(false);
+                        // Clean up memory after successful action
+                        if (typeof window !== "undefined" && window.gc) {
+                           window.gc();
+                        }
+                     }, 1500);
                      return true; // Command processed successfully
                   } catch (error) {
                      setVoiceStatus(error.message);
@@ -330,14 +329,17 @@ const VoiceControl = ({
          const cleanTranscript = transcript.toLowerCase().trim();
 
          if (isFinal) {
-            // Process command directly
-            processVoiceCommand(cleanTranscript);
-            setVoiceStatus(`Heard: "${cleanTranscript}"`);
-            setVoiceStatusType("info");
-            setShowVoiceStatus(true);
+            const commandProcessed = processVoiceCommand(cleanTranscript);
+
+            // Only show the transcript as info if no command was processed
+            if (!commandProcessed) {
+               setVoiceStatus(cleanTranscript);
+               setVoiceStatusType("info");
+               setShowVoiceStatus(true);
+            }
          } else {
             // Show interim results
-            setVoiceStatus(`Listening: "${cleanTranscript}"`);
+            setVoiceStatus(cleanTranscript);
             setVoiceStatusType("info");
             setShowVoiceStatus(true);
          }
@@ -348,7 +350,7 @@ const VoiceControl = ({
    // Initialize Vosk speech recognition
    const initializeVosk = useCallback(async () => {
       try {
-         setVoiceStatus("Loading Vosk model...");
+         setVoiceStatus("Loading...");
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
 
@@ -481,8 +483,8 @@ const VoiceControl = ({
             }
          });
 
-         setVoiceStatus("Vosk model loaded");
-         setVoiceStatusType("success");
+         setVoiceStatus("Mic On");
+         setVoiceStatusType("info");
          setShowVoiceStatus(true);
          setTimeout(() => setShowVoiceStatus(false), 2000);
 
@@ -536,7 +538,7 @@ const VoiceControl = ({
          processorNodeRef.current.connect(audioContextRef.current.destination);
 
          setIsVoiceListening(true);
-         setVoiceStatus("Listening with Vosk");
+         setVoiceStatus("Listening...");
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
          setTimeout(() => setShowVoiceStatus(false), 2000);
@@ -575,6 +577,47 @@ const VoiceControl = ({
       }
    }, []);
 
+   // Clean up Vosk model and recognizer
+   const cleanupVoskModel = useCallback(() => {
+      try {
+         // Terminate recognizer
+         if (voskRecognizerRef.current) {
+            voskRecognizerRef.current.remove?.();
+            voskRecognizerRef.current = null;
+         }
+
+         // Terminate model
+         if (voskModelRef.current) {
+            voskModelRef.current.terminate();
+            voskModelRef.current = null;
+         }
+
+         console.log("Vosk model and recognizer cleaned up");
+      } catch (error) {
+         console.warn("Error during Vosk cleanup:", error);
+      }
+   }, []);
+
+   // Complete memory cleanup
+   const performMemoryCleanup = useCallback(() => {
+      // Stop audio streams
+      stopVoskListening();
+      cleanupVoskModel();
+
+      // Reset state
+      setIsVoiceListening(false);
+      setShowVoiceStatus(false);
+      setVoiceStatus("Click to start voice commands");
+      setVoiceStatusType("info");
+
+      // Force garbage collection if available (development only)
+      if (typeof window !== "undefined" && window.gc) {
+         window.gc();
+      }
+
+      console.log("Memory cleanup completed");
+   }, [stopVoskListening, cleanupVoskModel]);
+
    // Toggle voice recognition (Vosk only)
    const toggleVoiceRecognition = useCallback(async () => {
       if (isVoiceListening) {
@@ -586,7 +629,13 @@ const VoiceControl = ({
          setVoiceStatus("Voice recognition stopped");
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
-         setTimeout(() => setShowVoiceStatus(false), 1500);
+         setTimeout(() => {
+            setShowVoiceStatus(false);
+            // Clean up memory after stopping
+            if (typeof window !== "undefined" && window.gc) {
+               window.gc();
+            }
+         }, 1500);
       } else {
          // Start recognition with Vosk
          isManualStopRef.current = false;
@@ -613,9 +662,9 @@ const VoiceControl = ({
    useEffect(() => {
       return () => {
          isManualStopRef.current = true;
-         stopVoskListening();
+         performMemoryCleanup();
       };
-   }, [stopVoskListening]);
+   }, [performMemoryCleanup]);
 
    return (
       <>
@@ -624,16 +673,16 @@ const VoiceControl = ({
             {/* Voice Status - Left side */}
             <div
                className={`max-w-xs h-full transition-opacity duration-300 ${
-                  showVoiceStatus && voiceStatus ? "opacity-50" : "opacity-0"
+                  showVoiceStatus && voiceStatus ? "opacity-100" : "opacity-0"
                }`}
             >
                <div
                   className={`relative backdrop-blur-md h-full text-sm px-4 py-2 rounded-xl shadow-2xl border transition-colors duration-300 ${
                      voiceStatusType === "success"
-                        ? "bg-green-500/10 text-white border-green-400"
+                        ? "bg-green-500/80 text-white border-green-400"
                         : voiceStatusType === "error"
-                        ? "bg-red-500 text-white border-red-400"
-                        : "bg-blue-500/10 text-white border-blue-400"
+                        ? "bg-red-500/80 text-white border-red-400"
+                        : "bg-blue-500/50 text-white border-blue-400"
                   }`}
                >
                   {voiceStatus}

@@ -10,7 +10,7 @@ const Pagination = ({
    if (totalOrders === 0) return null;
 
    return (
-      <div className="flex justify-center items-center gap-3 pt-3 pb-5">
+      <div className="flex justify-center items-center gap-3 pt-1 pb-5">
          {/* Previous Button */}
          <button
             onClick={onPrevious}

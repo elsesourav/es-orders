@@ -1,4 +1,5 @@
-import { Package } from "lucide-react";
+import { Package, Truck } from "lucide-react";
+
 import { useEffect, useRef, useState } from "react";
 import { getAllOrders } from "../api/ordersApi";
 
@@ -105,11 +106,11 @@ const HomePage = ({ onNavigateToOrders }) => {
                </p>
             </div>
          ) : (
-            <div className="space-y-4">
+            <div className="relative flex flex-col gap-4">
                {states.map((state, index) => (
                   <div
                      key={state.id || index}
-                     className="relative w-full grid grid-cols-[1fr_3fr] bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1"
+                     className="relative w-full grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-2 bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1"
                   >
                      <div className="relative w-full h-full flex items-center text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-200">
                         {state.timestamp || "No timestamp"}
@@ -143,7 +144,7 @@ const HomePage = ({ onNavigateToOrders }) => {
                         >
                            <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center active:bg-purple-200 dark:active:bg-purple-900/50 transition-colors duration-200">
-                                 <Package className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                 <Truck className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                               </div>
                               <div>
                                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
