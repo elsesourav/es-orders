@@ -31,7 +31,7 @@ const VoiceControl = ({
    const isManualStopRef = useRef(false);
    const voskModelRef = useRef(null);
 
-   // Enhanced number parsing function
+   // Enhanced number parsing function for 0-1000
    const parseSpokenNumber = useCallback((text) => {
       if (!text) return null;
 
@@ -41,12 +41,18 @@ const VoiceControl = ({
       const digitMatch = cleanText.match(/\d+/);
       if (digitMatch) {
          const num = parseInt(digitMatch[0]);
-         return num;
+         return num <= 1000 ? num : null;
+      }
+
+      // Check for "one thousand"
+      if (cleanText.includes("thousand")) {
+         return 1000;
       }
 
       // Extended number mapping with common misheard words
       const numberMap = {
          // Basic numbers with common misheard alternatives
+         zero: 0,
          one: 1,
          won: 1,
          want: 1,
@@ -96,43 +102,52 @@ const VoiceControl = ({
          hundred: 100,
       };
 
+      // Try complex hundreds patterns first (e.g., "five hundred sixty seven")
+      const complexHundredMatch = cleanText.match(
+         /(one|two|three|four|five|six|seven|eight|nine|won|to|too|tree|free|for|fore|file)\s*hundred\s*(and\s*)?(.+)/i
+      );
+      if (complexHundredMatch) {
+         const hundreds =
+            (numberMap[complexHundredMatch[1].toLowerCase()] || 1) * 100;
+         const remainderText = complexHundredMatch[3];
+
+         // Parse the remainder recursively
+         const remainder = parseSpokenNumber(remainderText) || 0;
+         const result = hundreds + remainder;
+         return result <= 1000 ? result : null;
+      }
+
+      // Try simple hundred patterns (e.g., "two hundred")
+      const simpleHundredMatch = cleanText.match(
+         /(one|two|three|four|five|six|seven|eight|nine|won|to|too|tree|free|for|fore|file)\s*hundred$/i
+      );
+      if (simpleHundredMatch) {
+         const hundreds =
+            (numberMap[simpleHundredMatch[1].toLowerCase()] || 1) * 100;
+         return hundreds;
+      }
+
       // Try compound numbers like "thirty one", "forty five", etc.
       const compoundMatch = cleanText.match(
-         /(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[^\w]*(one|two|three|four|five|six|seven|eight|nine|won|to|too|tree|free|for|fore|file|ate)/i
+         /(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\s+(one|two|three|four|five|six|seven|eight|nine|won|to|too|tree|free|for|fore|file|ate)/i
       );
       if (compoundMatch) {
          const tens = numberMap[compoundMatch[1].toLowerCase()] || 0;
          const ones = numberMap[compoundMatch[2].toLowerCase()] || 0;
-         const result = tens + ones;
-         return result;
+         return tens + ones;
       }
 
-      // Try "one hundred X" patterns
-      const hundredMatch = cleanText.match(
-         /(one|two|three|four|five|six|seven|eight|nine|won|to|too|tree|free|for|fore|file)\s*hundred\s*(and\s*)?(.*)/i
-      );
-      if (hundredMatch) {
-         const hundreds = (numberMap[hundredMatch[1].toLowerCase()] || 1) * 100;
-         const remainder = hundredMatch[3]
-            ? parseSpokenNumber(hundredMatch[3])
-            : 0;
-         const result = hundreds + remainder;
-         return result;
-      }
-
-      // Try simple hundred
-      if (cleanText.includes("hundred")) {
+      // Try just "hundred" alone
+      if (cleanText.includes("hundred") && !cleanText.match(/\d/)) {
          return 100;
       }
 
       // Look for any single word numbers in the text
       const words = cleanText.split(/\s+/);
       for (const word of words) {
-         // Remove punctuation and check
          const cleanWord = word.replace(/[^\w]/g, "");
-         if (numberMap[cleanWord]) {
-            const result = numberMap[cleanWord];
-            return result;
+         if (numberMap[cleanWord] !== undefined) {
+            return numberMap[cleanWord];
          }
       }
 
@@ -177,9 +192,10 @@ const VoiceControl = ({
                /next\s+order/i,
                /next\s+orders/i,
                /go\s+next/i,
+               /go\s+to\s+next/i,
+               /open\s+to\s+next/i,
+               /open\s+next/i,
                /move\s+next/i,
-               /forward/i,
-               /next/i,
             ],
             action: () => {
                onNextOrder();
@@ -190,12 +206,14 @@ const VoiceControl = ({
             patterns: [
                /previous\s+order/i,
                /previous\s+orders/i,
-               /prev\s+order/i,
                /go\s+back/i,
+               /go\s+to\s+previous/i,
+               /open\s+to\s+previous/i,
+               /open\s+previous/i,
+               /open\s+back/i,
+               /open\s+to\s+back/i,
                /go\s+previous/i,
                /move\s+back/i,
-               /back/i,
-               /previous/i,
             ],
             action: () => {
                onPrevOrder();
@@ -203,20 +221,7 @@ const VoiceControl = ({
             },
          },
          openOrder: {
-            patterns: [
-               // More flexible patterns that catch various phrasings
-               /(?:open|show|select|go\s+to|order|number)\s+(.+)/i,
-               /(?:open|show|select)\s*(.+)/i,
-               /(.+)\s+(?:order|orders)/i,
-               // Common misheard patterns
-               /(?:hope|over|upon|opening)\s+(.+)/i,
-               /(?:file|five|fife)\s*(\d+)?/i,
-               /(?:show|so|shall)\s+(.+)/i,
-               // Just numbers or words that could be numbers
-               /(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\s*\w*/i,
-               /(won|to|too|tree|free|for|fore|file|ate)\s*\w*/i,
-               /(\d+)/i,
-            ],
+            patterns: [/(?:open|show|select|go\s+to|go|goto|order)\s+(.+)/i],
             action: (matches) => {
                // Extract number from the matched text
                const orderNumber = extractOrderNumber(matches.input);
@@ -242,10 +247,9 @@ const VoiceControl = ({
          firstOrder: {
             patterns: [
                /first\s+order/i,
+               /open\s+first/i,
                /go\s+to\s+first/i,
-               /start/i,
-               /beginning/i,
-               /first/i,
+               /go\s+first/i,
             ],
             action: () => {
                if (ordersLength > 0) {
@@ -259,10 +263,9 @@ const VoiceControl = ({
          lastOrder: {
             patterns: [
                /last\s+order/i,
+               /open\s+last/i,
                /go\s+to\s+last/i,
-               /end/i,
-               /final/i,
-               /last/i,
+               /go\s+last/i,
             ],
             action: () => {
                if (ordersLength > 0) {
@@ -271,17 +274,6 @@ const VoiceControl = ({
                } else {
                   throw new Error("No orders available");
                }
-            },
-         },
-         helpCommands: {
-            patterns: [
-               /help/i,
-               /commands/i,
-               /what\s+can\s+i\s+say/i,
-               /voice\s+commands/i,
-            ],
-            action: () => {
-               return "Say: next, previous, open [number], first, last, or help";
             },
          },
       }),
@@ -360,13 +352,120 @@ const VoiceControl = ({
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
 
+         // Function to convert numbers to words (0-1000)
+         const numberToWords = (num) => {
+            if (num === 0) return "zero";
+
+            const ones = [
+               "",
+               "one",
+               "two",
+               "three",
+               "four",
+               "five",
+               "six",
+               "seven",
+               "eight",
+               "nine",
+            ];
+            const teens = [
+               "ten",
+               "eleven",
+               "twelve",
+               "thirteen",
+               "fourteen",
+               "fifteen",
+               "sixteen",
+               "seventeen",
+               "eighteen",
+               "nineteen",
+            ];
+            const tens = [
+               "",
+               "",
+               "twenty",
+               "thirty",
+               "forty",
+               "fifty",
+               "sixty",
+               "seventy",
+               "eighty",
+               "ninety",
+            ];
+
+            if (num === 1000) return "one thousand";
+            if (num >= 100) {
+               const hundreds = Math.floor(num / 100);
+               const remainder = num % 100;
+               let result = ones[hundreds] + " hundred";
+               if (remainder > 0) {
+                  if (remainder < 10) {
+                     result += " " + ones[remainder];
+                  } else if (remainder < 20) {
+                     result += " " + teens[remainder - 10];
+                  } else {
+                     const tensPlace = Math.floor(remainder / 10);
+                     const onesPlace = remainder % 10;
+                     result += " " + tens[tensPlace];
+                     if (onesPlace > 0) result += " " + ones[onesPlace];
+                  }
+               }
+               return result;
+            } else if (num >= 20) {
+               const tensPlace = Math.floor(num / 10);
+               const onesPlace = num % 10;
+               let result = tens[tensPlace];
+               if (onesPlace > 0) result += " " + ones[onesPlace];
+               return result;
+            } else if (num >= 10) {
+               return teens[num - 10];
+            } else {
+               return ones[num];
+            }
+         };
+
+         // Generate all numbers from 0 to 1000
+         const numbers = [];
+         for (let i = 0; i <= 1000; i++) {
+            numbers.push(numberToWords(i));
+         }
+
+         // Define grammar for voice commands and numbers in Vosk format
+         const grammarWords = [
+            // All numbers from 0 to 1000
+            ...numbers,
+
+            // Navigation commands
+            "next",
+            "previous",
+            "prev",
+            "forward",
+            "backward",
+            "back",
+            "go to",
+            "goto",
+            "select",
+            "open",
+            "show",
+
+            // Order-specific commands
+            "order",
+            "orders",
+            "first",
+            "last",
+            "page",
+            "item",
+         ];
+
+         // Convert to Vosk grammar format (JSON string)
+         const grammar = JSON.stringify(grammarWords);
 
          const model = await Vosk.createModel(
             "./models/vosk-model-small-en-us-0.15.zip"
          );
          voskModelRef.current = model;
 
-         const recognizer = new model.KaldiRecognizer(16000);
+         const recognizer = new model.KaldiRecognizer(16000, grammar);
          voskRecognizerRef.current = recognizer;
 
          // Set up event handlers
@@ -520,59 +619,43 @@ const VoiceControl = ({
 
    return (
       <>
-         {/* Fixed Voice Control Button - Top Right */}
-         <button
-            onClick={toggleVoiceRecognition}
-            className={`fixed top-16 right-4 z-50 size-11 rounded-2xl shadow-lg border-2 transition-all duration-300 opacity-40 ${
-               isVoiceListening
-                  ? "bg-red-500 text-white border-red-600 animate-pulse active:bg-red-600"
-                  : "bg-green-500 text-white border-green-600 active:bg-green-600"
-            }`}
-         >
-            {isVoiceListening ? (
-               <MicOff className="w-6 h-6 mx-auto" />
-            ) : (
-               <Mic className="w-6 h-6 mx-auto" />
-            )}
-         </button>
-
-         {/* Recognition Type Indicator */}
-         {isVoiceListening && (
-            <div className="fixed top-16 right-16 z-40">
-               <div className="backdrop-blur-md text-xs px-2 py-1 rounded-lg shadow-lg border bg-purple-500/80 text-white border-purple-400/30">
-                  Vosk
-               </div>
-            </div>
-         )}
-
-         {/* Voice Commands Help - Top Right, below the mic button */}
-         {isVoiceListening && (
-            <div className="fixed top-28 right-4 z-40 max-w-xs">
-               <div className="backdrop-blur-md text-xs px-2 py-1 rounded-lg shadow-lg border bg-green-500/80 text-white border-green-400/30">
-                  <div className="flex items-center gap-1">
-                     <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
-                     Say: next, prev, open [#], first, last
-                  </div>
-               </div>
-            </div>
-         )}
-
-         {/* Fixed Voice Status - Bottom Right */}
-         {showVoiceStatus && voiceStatus && (
-            <div className="fixed bottom-4 right-4 z-40 max-w-xs animate-pulse">
+         {/* Fixed Voice Control Section - Bottom Right */}
+         <div className="fixed bottom-4 right-4 h-10 z-50 flex items-center gap-2">
+            {/* Voice Status - Left side */}
+            <div
+               className={`max-w-xs h-full transition-opacity duration-300 ${
+                  showVoiceStatus && voiceStatus ? "opacity-50" : "opacity-0"
+               }`}
+            >
                <div
-                  className={`backdrop-blur-md text-sm px-4 py-2 rounded-xl shadow-2xl border ${
+                  className={`relative backdrop-blur-md h-full text-sm px-4 py-2 rounded-xl shadow-2xl border transition-colors duration-300 ${
                      voiceStatusType === "success"
-                        ? "bg-green-500/80 text-white border-green-400/30"
+                        ? "bg-green-500/10 text-white border-green-400"
                         : voiceStatusType === "error"
-                        ? "bg-red-500/80 text-white border-red-400/30"
-                        : "bg-black/30 dark:bg-white/30 text-white dark:text-gray-800 border-white/20 dark:border-gray-600/20"
+                        ? "bg-red-500 text-white border-red-400"
+                        : "bg-blue-500/10 text-white border-blue-400"
                   }`}
                >
                   {voiceStatus}
                </div>
             </div>
-         )}
+
+            {/* Voice Control Button - Right side */}
+            <button
+               onClick={toggleVoiceRecognition}
+               className={`relative h-full aspect-square rounded-2xl opacity-60 shadow-lg border-2 transition-all duration-300 ${
+                  isVoiceListening
+                     ? "bg-red-500 text-white border-red-600 animate-pulse active:bg-red-600"
+                     : "bg-green-500 text-white border-green-600 active:bg-green-600"
+               }`}
+            >
+               {isVoiceListening ? (
+                  <MicOff className="size-5 mx-auto" />
+               ) : (
+                  <Mic className="size-5 mx-auto" />
+               )}
+            </button>
+         </div>
       </>
    );
 };
