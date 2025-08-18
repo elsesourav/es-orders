@@ -1,5 +1,5 @@
 import react from "@vitejs/plugin-react";
-import { cpSync, existsSync } from "fs";
+import { cpSync, existsSync, rmSync } from "fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "path";
 import { defineConfig } from "vite";
@@ -9,11 +9,22 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const copyExtensionUtils = () => {
    return {
       name: "copy-extension-utils",
+      buildStart() {
+         try {
+            const assetsPath = resolve(__dirname, "./../assets");
+            if (existsSync(assetsPath)) {
+               rmSync(assetsPath, { recursive: true, force: true });
+               console.log("✓ Cleaned assets folder");
+            }
+         } catch (error) {
+            console.error("Failed to clean assets folder:", error);
+         }
+      },
       writeBundle() {
          try {
             const sourceSkuPath = resolve(
                __dirname,
-               "public/models/vosk-model-small-en-us-0.15.zip"
+               "./models/vosk-model-small-en-us-0.15.zip"
             );
             const destSkuPath = resolve(
                __dirname,

@@ -1,24 +1,8 @@
 import { Mic, MicOff } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import * as Vosk from "../../lib/vosk.js";
 
 /**
- * Simplified Voice Control Component with Vosk Integration
- *
- * Features:
- * - Primary: Browser's Web Speech API for better performance
- * - Fallback: Vosk offline speech recognition for reliability
- * - Continuous voice recognition without stopping
- * - Direct command processing without queue
- * - Pattern-based action matching with multiple command variations
- * - Visual feedback for command results
- * - Support for both numeric and spoken number commands
- *
- * Supported Commands:
- * - Navigation: "next", "previous", "back", "forward"
- * - Direct order access: "open 5", "show three", "order 10"
- * - Quick navigation: "first", "last", "start", "end"
- * - Help: "help", "commands"
- *
  * @param {Function} onNextOrder - Callback for next order navigation
  * @param {Function} onPrevOrder - Callback for previous order navigation
  * @param {Function} onSelectOrder - Callback for direct order selection
@@ -36,18 +20,14 @@ const VoiceControl = ({
    );
    const [showVoiceStatus, setShowVoiceStatus] = useState(false);
    const [voiceStatusType, setVoiceStatusType] = useState("info"); // "success", "error", "info"
-   const [shouldStopVoice, setShouldStopVoice] = useState(false);
-   const [recognitionType, setRecognitionType] = useState("none"); // "web", "vosk", "none"
 
-   // References for different recognition systems
-   const webSpeechRef = useRef(null);
+   // References for Vosk recognition system
    const voskRecognizerRef = useRef(null);
    const audioContextRef = useRef(null);
    const mediaStreamRef = useRef(null);
    const sourceNodeRef = useRef(null);
    const processorNodeRef = useRef(null);
 
-   const restartTimeoutRef = useRef(null);
    const isManualStopRef = useRef(false);
    const voskModelRef = useRef(null);
 
@@ -380,12 +360,9 @@ const VoiceControl = ({
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
 
-         // Dynamically import Vosk
-         const Vosk = await import("../../lib/vosk.js");
 
-         // Load the model (you need to place the model file in public/models/)
          const model = await Vosk.createModel(
-            "/models/vosk-model-small-en-us-0.15.zip"
+            "./models/vosk-model-small-en-us-0.15.zip"
          );
          voskModelRef.current = model;
 
@@ -460,7 +437,6 @@ const VoiceControl = ({
          processorNodeRef.current.connect(audioContextRef.current.destination);
 
          setIsVoiceListening(true);
-         setRecognitionType("vosk");
          setVoiceStatus("Listening with Vosk");
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
@@ -500,158 +476,35 @@ const VoiceControl = ({
       }
    }, []);
 
-   // Initialize Web Speech API
-   const initializeWebSpeech = useCallback(() => {
-      if (
-         !("webkitSpeechRecognition" in window) &&
-         !("SpeechRecognition" in window)
-      ) {
-         return false;
-      }
-
-      const SpeechRecognition =
-         window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = "en-US";
-
-      recognition.onstart = () => {
-         setIsVoiceListening(true);
-         setRecognitionType("web");
-         setShouldStopVoice(false);
-         isManualStopRef.current = false;
-         setVoiceStatus("Listening with Web Speech API");
-         setVoiceStatusType("info");
-         setShowVoiceStatus(true);
-         setTimeout(() => setShowVoiceStatus(false), 2000);
-      };
-
-      recognition.onend = () => {
-         if (isManualStopRef.current || shouldStopVoice) {
-            setIsVoiceListening(false);
-            setRecognitionType("none");
-            setVoiceStatus("Stopped");
-            setVoiceStatusType("info");
-            setShowVoiceStatus(true);
-            setTimeout(() => setShowVoiceStatus(false), 1500);
-         } else {
-            // Auto-restart for continuous listening
-            restartTimeoutRef.current = setTimeout(() => {
-               if (
-                  !shouldStopVoice &&
-                  !isManualStopRef.current &&
-                  webSpeechRef.current
-               ) {
-                  try {
-                     webSpeechRef.current.start();
-                  } catch {
-                     // Auto-restart failed, silently continue
-                  }
-               }
-            }, 1000);
-         }
-      };
-
-      recognition.onerror = (event) => {
-         console.error("Web Speech recognition error:", event.error);
-
-         if (event.error === "not-allowed") {
-            setVoiceStatus("Microphone access denied");
-            setVoiceStatusType("error");
-            setIsVoiceListening(false);
-            setRecognitionType("none");
-            setShouldStopVoice(true);
-            isManualStopRef.current = true;
-            setShowVoiceStatus(true);
-            setTimeout(() => setShowVoiceStatus(false), 3000);
-         }
-      };
-
-      recognition.onresult = (event) => {
-         let finalTranscript = "";
-         let interimTranscript = "";
-
-         for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-               finalTranscript += event.results[i][0].transcript;
-            } else {
-               interimTranscript += event.results[i][0].transcript;
-            }
-         }
-
-         if (finalTranscript.trim()) {
-            handleTranscript(finalTranscript, true);
-         } else if (interimTranscript.trim()) {
-            handleTranscript(interimTranscript, false);
-         }
-      };
-
-      webSpeechRef.current = recognition;
-      return true;
-   }, [shouldStopVoice, handleTranscript]);
-
-   // Toggle voice recognition
+   // Toggle voice recognition (Vosk only)
    const toggleVoiceRecognition = useCallback(async () => {
       if (isVoiceListening) {
          // Stop recognition
          isManualStopRef.current = true;
-         setShouldStopVoice(true);
-
-         if (restartTimeoutRef.current) {
-            clearTimeout(restartTimeoutRef.current);
-            restartTimeoutRef.current = null;
-         }
-
-         if (recognitionType === "web" && webSpeechRef.current) {
-            webSpeechRef.current.stop();
-         } else if (recognitionType === "vosk") {
-            stopVoskListening();
-            setIsVoiceListening(false);
-            setRecognitionType("none");
-         }
+         stopVoskListening();
+         setIsVoiceListening(false);
 
          setVoiceStatus("Voice recognition stopped");
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
          setTimeout(() => setShowVoiceStatus(false), 1500);
       } else {
-         // Start recognition
+         // Start recognition with Vosk
          isManualStopRef.current = false;
-         setShouldStopVoice(false);
 
-         let webSpeechStarted = false;
-
-         // Try Web Speech API first
-         if (initializeWebSpeech()) {
-            try {
-               webSpeechRef.current.start();
-               webSpeechStarted = true;
-               return;
-            } catch {
-               webSpeechStarted = false;
-            }
-         }
-
-         // Fallback to Vosk if Web Speech failed
-         if (!webSpeechStarted) {
-            const voskInitialized =
-               voskRecognizerRef.current || (await initializeVosk());
-            if (voskInitialized) {
-               await startVoskListening();
-            } else {
-               setVoiceStatus("No voice recognition available");
-               setVoiceStatusType("error");
-               setShowVoiceStatus(true);
-               setTimeout(() => setShowVoiceStatus(false), 3000);
-            }
+         const voskInitialized =
+            voskRecognizerRef.current || (await initializeVosk());
+         if (voskInitialized) {
+            await startVoskListening();
+         } else {
+            setVoiceStatus("Voice recognition unavailable");
+            setVoiceStatusType("error");
+            setShowVoiceStatus(true);
+            setTimeout(() => setShowVoiceStatus(false), 3000);
          }
       }
    }, [
       isVoiceListening,
-      recognitionType,
-      initializeWebSpeech,
       initializeVosk,
       startVoskListening,
       stopVoskListening,
@@ -661,16 +514,6 @@ const VoiceControl = ({
    useEffect(() => {
       return () => {
          isManualStopRef.current = true;
-         setShouldStopVoice(true);
-
-         if (restartTimeoutRef.current) {
-            clearTimeout(restartTimeoutRef.current);
-         }
-
-         if (webSpeechRef.current) {
-            webSpeechRef.current.stop();
-         }
-
          stopVoskListening();
       };
    }, [stopVoskListening]);
@@ -696,14 +539,8 @@ const VoiceControl = ({
          {/* Recognition Type Indicator */}
          {isVoiceListening && (
             <div className="fixed top-16 right-16 z-40">
-               <div
-                  className={`backdrop-blur-md text-xs px-2 py-1 rounded-lg shadow-lg border ${
-                     recognitionType === "web"
-                        ? "bg-blue-500/80 text-white border-blue-400/30"
-                        : "bg-purple-500/80 text-white border-purple-400/30"
-                  }`}
-               >
-                  {recognitionType === "web" ? "Web API" : "Vosk"}
+               <div className="backdrop-blur-md text-xs px-2 py-1 rounded-lg shadow-lg border bg-purple-500/80 text-white border-purple-400/30">
+                  Vosk
                </div>
             </div>
          )}
