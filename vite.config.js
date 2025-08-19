@@ -1,5 +1,5 @@
 import react from "@vitejs/plugin-react";
-import { cpSync, existsSync, rmSync } from "fs";
+import { cpSync, existsSync } from "fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "path";
 import { defineConfig } from "vite";
@@ -9,17 +9,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const copyExtensionUtils = () => {
    return {
       name: "copy-extension-utils",
-      buildStart() {
-         try {
-            const assetsPath = resolve(__dirname, "./../assets");
-            if (existsSync(assetsPath)) {
-               rmSync(assetsPath, { recursive: true, force: true });
-               console.log("✓ Cleaned assets folder");
-            }
-         } catch (error) {
-            console.error("Failed to clean assets folder:", error);
-         }
-      },
       writeBundle() {
          try {
             const sourceSkuPath = resolve(
@@ -28,14 +17,14 @@ const copyExtensionUtils = () => {
             );
             const destSkuPath = resolve(
                __dirname,
-               "./../models/vosk-model-small-en-us-0.15.zip"
+               "./build/models/vosk-model-small-en-us-0.15.zip"
             );
 
             if (existsSync(sourceSkuPath)) {
                cpSync(sourceSkuPath, destSkuPath, { recursive: true });
             }
 
-            console.log("✓ Copied extensionUtils.js to dist/");
+            console.log("✓ Copied extensionUtils.js to build/");
          } catch (error) {
             console.error("Failed to copy extensionUtils.js:", error);
          }
@@ -53,7 +42,8 @@ export default defineConfig({
    },
    build: {
       minify: false,
-      outDir: "./../",
+      emptyOutDir: true,
+      outDir: "./build/",
    },
    publicDir: "public",
    base: "./",
