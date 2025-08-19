@@ -248,6 +248,44 @@ export const createVoiceActions = (
    onSelectOrder,
    ordersLength
 ) => ({
+   firstOrder: {
+      patterns: [
+         /^first\s+order$/i,
+         /^open\s+first$/i,
+         /^go\s+to\s+first$/i,
+         /^go\s+first$/i,
+         /^show\s+first$/i,
+         /^select\s+first$/i,
+         /^first$/i,
+      ],
+      action: () => {
+         if (ordersLength > 0) {
+            onSelectOrder(0);
+            return "Opening first order";
+         } else {
+            throw new Error("No orders available");
+         }
+      },
+   },
+   lastOrder: {
+      patterns: [
+         /^last\s+order$/i,
+         /^open\s+last$/i,
+         /^go\s+to\s+last$/i,
+         /^go\s+last$/i,
+         /^show\s+last$/i,
+         /^select\s+last$/i,
+         /^last$/i,
+      ],
+      action: () => {
+         if (ordersLength > 0) {
+            onSelectOrder(ordersLength - 1);
+            return "Opening last order";
+         } else {
+            throw new Error("No orders available");
+         }
+      },
+   },
    nextOrder: {
       patterns: [
          /next\s+order/i,
@@ -260,7 +298,7 @@ export const createVoiceActions = (
       ],
       action: () => {
          onNextOrder();
-         return "Next order";
+         return "Moving to next order";
       },
    },
    previousOrder: {
@@ -278,11 +316,13 @@ export const createVoiceActions = (
       ],
       action: () => {
          onPrevOrder();
-         return "Previous order";
+         return "Moving to previous order";
       },
    },
    openOrder: {
-      patterns: [/(?:open|show|select|go\s+to|go|goto|order)\s+(.+)/i],
+      patterns: [
+         /(?:open|show|select|go\s+to|go|goto|order)\s+(?!first|last)(.+)/i,
+      ],
       action: (matches) => {
          const orderNumber = extractOrderNumber(matches.input);
 
@@ -291,7 +331,7 @@ export const createVoiceActions = (
 
             if (orderIndex >= 0 && orderIndex < ordersLength) {
                onSelectOrder(orderIndex);
-               return `Opened order ${orderNumber}`;
+               return `Opening order ${orderNumber}`;
             } else {
                throw new Error(
                   `Order ${orderNumber} not found (1-${ordersLength})`
@@ -304,47 +344,65 @@ export const createVoiceActions = (
          }
       },
    },
-   firstOrder: {
-      patterns: [
-         /first\s+order/i,
-         /open\s+first/i,
-         /go\s+to\s+first/i,
-         /go\s+first/i,
-      ],
-      action: () => {
-         if (ordersLength > 0) {
-            onSelectOrder(0);
-            return "First order";
-         } else {
-            throw new Error("No orders available");
-         }
-      },
-   },
-   lastOrder: {
-      patterns: [
-         /last\s+order/i,
-         /open\s+last/i,
-         /go\s+to\s+last/i,
-         /go\s+last/i,
-      ],
-      action: () => {
-         if (ordersLength > 0) {
-            onSelectOrder(ordersLength - 1);
-            return "Last order";
-         } else {
-            throw new Error("No orders available");
-         }
-      },
-   },
 });
+
+/**
+ * Speak text using Web Speech API
+ * @param {string} text - Text to speak
+ * @param {Object} options - Speech options
+ * @param {Function} onStart - Callback when speech starts
+ * @param {Function} onEnd - Callback when speech ends
+ */
+export const speakText = (text, options = {}, onStart = null, onEnd = null) => {
+   if ("speechSynthesis" in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      // Configure speech parameters
+      utterance.rate = options.rate || 1.1; // Slightly faster for better UX
+      utterance.pitch = options.pitch || 1.0;
+      utterance.volume = options.volume || 0.8; // Slightly quieter
+      utterance.lang = "en-US"; // Always English as requested
+
+      // Add event listeners
+      utterance.onstart = () => {
+         if (onStart) onStart();
+      };
+
+      utterance.onend = () => {
+         if (onEnd) onEnd();
+      };
+
+      utterance.onerror = () => {
+         if (onEnd) onEnd(); // Also call onEnd on error to resume listening
+      };
+
+      // Speak the text
+      window.speechSynthesis.speak(utterance);
+
+      return true;
+   }
+   return false;
+};
 
 /**
  * Process voice command transcript and execute actions
  * @param {string} transcript - The recognized transcript
  * @param {Object} voiceActions - Voice actions configuration
+ * @param {boolean} enableSpeech - Whether to enable text-to-speech feedback
+ * @param {Function} onSpeechStart - Callback when speech starts
+ * @param {Function} onSpeechEnd - Callback when speech ends
  * @returns {Object} - Result with success status and message
  */
-export const processVoiceCommand = (transcript, voiceActions) => {
+export const processVoiceCommand = (
+   transcript,
+   voiceActions,
+   enableSpeech = true,
+   onSpeechStart = null,
+   onSpeechEnd = null
+) => {
    // Try to match against all action patterns
    for (const [, actionDef] of Object.entries(voiceActions)) {
       for (const pattern of actionDef.patterns) {
@@ -352,6 +410,12 @@ export const processVoiceCommand = (transcript, voiceActions) => {
          if (matches) {
             try {
                const result = actionDef.action(matches);
+
+               // Speak the result if speech is enabled and command was successful
+               if (enableSpeech && result) {
+                  speakText(result, {}, onSpeechStart, onSpeechEnd);
+               }
+
                return {
                   success: true,
                   message: result,

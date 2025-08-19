@@ -2,8 +2,10 @@ import { Package, Truck } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
 import { getAllOrders } from "../api/ordersApi";
+import { useLanguage } from "../lib/useLanguage";
 
 const HomePage = ({ onNavigateToOrders }) => {
+   const { t } = useLanguage();
    const [states, setStates] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
@@ -70,7 +72,7 @@ const HomePage = ({ onNavigateToOrders }) => {
             <div className="text-center">
                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
                <p className="text-gray-600 dark:text-gray-400">
-                  Loading states...
+                  {t("home.loadingStates")}
                </p>
             </div>
          </div>
@@ -81,7 +83,9 @@ const HomePage = ({ onNavigateToOrders }) => {
       return (
          <div className="text-center py-12">
             <div className="bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md mx-auto">
-               <p className="text-red-700 dark:text-red-400">Error: {error}</p>
+               <p className="text-red-700 dark:text-red-400">
+                  {t("common.error")}: {error}
+               </p>
             </div>
          </div>
       );
@@ -91,7 +95,7 @@ const HomePage = ({ onNavigateToOrders }) => {
       <div className="space-y-6">
          <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-               Saved States
+               {t("home.savedStates")}
             </h1>
          </div>
 
@@ -99,10 +103,10 @@ const HomePage = ({ onNavigateToOrders }) => {
             <div className="text-center py-12">
                <Package size={64} className="mx-auto text-gray-400 mb-4" />
                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  No saved states found
+                  {t("home.noSavedStatesFound")}
                </h3>
                <p className="text-gray-600 dark:text-gray-400">
-                  You haven't created any order states yet.
+                  {t("home.noStatesCreated")}
                </p>
             </div>
          ) : (
@@ -128,10 +132,10 @@ const HomePage = ({ onNavigateToOrders }) => {
                               </div>
                               <div>
                                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                                    RTD
+                                    {t("home.rtd")}
                                  </h4>
                                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                                    {state.rtd?.length || 0} items
+                                    {state.rtd?.length || 0} {t("home.items")}
                                  </p>
                               </div>
                            </div>
@@ -148,10 +152,11 @@ const HomePage = ({ onNavigateToOrders }) => {
                               </div>
                               <div>
                                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                                    Handover
+                                    {t("home.handover")}
                                  </h4>
                                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                                    {state.handover?.length || 0} items
+                                    {state.handover?.length || 0}{" "}
+                                    {t("home.items")}
                                  </p>
                               </div>
                            </div>

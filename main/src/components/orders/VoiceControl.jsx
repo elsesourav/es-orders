@@ -1,5 +1,7 @@
 import { Mic, MicOff } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLanguage } from "../../lib/useLanguage";
+import { useVoiceSettings } from "../../lib/useVoiceSettings";
 import * as Vosk from "../../lib/vosk.js";
 import {
    createVoiceActions,
@@ -19,12 +21,13 @@ const VoiceControl = ({
    onSelectOrder,
    ordersLength,
 }) => {
+   const { t } = useLanguage();
+   const { actionTalkEnabled, showMicButton } = useVoiceSettings();
    const [isVoiceListening, setIsVoiceListening] = useState(false);
-   const [voiceStatus, setVoiceStatus] = useState(
-      "Click to start voice commands"
-   );
+   const [voiceStatus, setVoiceStatus] = useState(t("voice.clickToStart"));
    const [showVoiceStatus, setShowVoiceStatus] = useState(false);
    const [voiceStatusType, setVoiceStatusType] = useState("info"); // "success", "error", "info"
+   const [isSpeaking, setIsSpeaking] = useState(false); // Track if TTS is speaking
 
    // References for Vosk recognition system
    const voskRecognizerRef = useRef(null);
@@ -48,10 +51,42 @@ const VoiceControl = ({
       [onNextOrder, onPrevOrder, onSelectOrder, ordersLength]
    );
 
+   // Temporarily pause voice recognition (mute microphone)
+   const pauseVoiceRecognition = useCallback(() => {
+      if (mediaStreamRef.current) {
+         mediaStreamRef.current.getTracks().forEach((track) => {
+            track.enabled = false;
+         });
+      }
+   }, []);
+
+   // Resume voice recognition (unmute microphone)
+   const resumeVoiceRecognition = useCallback(() => {
+      if (mediaStreamRef.current) {
+         mediaStreamRef.current.getTracks().forEach((track) => {
+            track.enabled = true;
+         });
+      }
+   }, []);
+
    // Process voice commands using the recognition module
    const handleVoiceCommand = useCallback(
       (transcript) => {
-         const result = processVoiceCommand(transcript, voiceActions);
+         const result = processVoiceCommand(
+            transcript,
+            voiceActions,
+            actionTalkEnabled, // Use the setting to control TTS
+            () => {
+               // On speech start: pause voice recognition and update state
+               setIsSpeaking(true);
+               pauseVoiceRecognition();
+            },
+            () => {
+               // On speech end: resume voice recognition and update state
+               setIsSpeaking(false);
+               resumeVoiceRecognition();
+            }
+         );
 
          setVoiceStatus(result.message);
          setVoiceStatusType(result.type);
@@ -77,10 +112,13 @@ const VoiceControl = ({
 
          return result.success;
       },
-      [voiceActions]
-   );
-
-   // Process transcript from either recognition system
+      [
+         voiceActions,
+         actionTalkEnabled,
+         pauseVoiceRecognition,
+         resumeVoiceRecognition,
+      ]
+   ); // Process transcript from either recognition system
    const handleTranscript = useCallback(
       (transcript, isFinal = true) => {
          if (!transcript.trim()) return;
@@ -109,7 +147,7 @@ const VoiceControl = ({
    // Initialize Vosk speech recognition
    const initializeVosk = useCallback(async () => {
       try {
-         setVoiceStatus("Loading...");
+         setVoiceStatus(t("voice.loading"));
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
 
@@ -138,7 +176,7 @@ const VoiceControl = ({
             }
          });
 
-         setVoiceStatus("Mic On");
+         setVoiceStatus(t("voice.micOn"));
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
          setTimeout(() => setShowVoiceStatus(false), 2000);
@@ -146,13 +184,13 @@ const VoiceControl = ({
          return true;
       } catch (error) {
          console.error("Failed to initialize Vosk:", error);
-         setVoiceStatus("Vosk initialization failed");
+         setVoiceStatus(t("voice.voskInitializationFailed"));
          setVoiceStatusType("error");
          setShowVoiceStatus(true);
          setTimeout(() => setShowVoiceStatus(false), 3000);
          return false;
       }
-   }, [handleTranscript]);
+   }, [handleTranscript, t]);
 
    // Start Vosk listening
    const startVoskListening = useCallback(async () => {
@@ -193,7 +231,7 @@ const VoiceControl = ({
          processorNodeRef.current.connect(audioContextRef.current.destination);
 
          setIsVoiceListening(true);
-         setVoiceStatus("Listening...");
+         setVoiceStatus(t("voice.listening"));
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
          setTimeout(() => setShowVoiceStatus(false), 2000);
@@ -201,13 +239,13 @@ const VoiceControl = ({
          return true;
       } catch (error) {
          console.error("Error starting Vosk listening:", error);
-         setVoiceStatus("Microphone access denied");
+         setVoiceStatus(t("voice.microphoneAccessDenied"));
          setVoiceStatusType("error");
          setShowVoiceStatus(true);
          setTimeout(() => setShowVoiceStatus(false), 3000);
          return false;
       }
-   }, []);
+   }, [t]);
 
    // Stop Vosk listening
    const stopVoskListening = useCallback(() => {
@@ -262,7 +300,7 @@ const VoiceControl = ({
       // Reset state
       setIsVoiceListening(false);
       setShowVoiceStatus(false);
-      setVoiceStatus("Click to start voice commands");
+      setVoiceStatus(t("voice.clickToStart"));
       setVoiceStatusType("info");
 
       // Force garbage collection if available (development only)
@@ -271,7 +309,7 @@ const VoiceControl = ({
       }
 
       console.log("Memory cleanup completed");
-   }, [stopVoskListening, cleanupVoskModel]);
+   }, [stopVoskListening, cleanupVoskModel, t]);
 
    // Toggle voice recognition (Vosk only)
    const toggleVoiceRecognition = useCallback(async () => {
@@ -281,7 +319,7 @@ const VoiceControl = ({
          stopVoskListening();
          setIsVoiceListening(false);
 
-         setVoiceStatus("Voice recognition stopped");
+         setVoiceStatus(t("voice.voiceRecognitionStopped"));
          setVoiceStatusType("info");
          setShowVoiceStatus(true);
          setTimeout(() => {
@@ -300,7 +338,7 @@ const VoiceControl = ({
          if (voskInitialized) {
             await startVoskListening();
          } else {
-            setVoiceStatus("Voice recognition unavailable");
+            setVoiceStatus(t("voice.voiceRecognitionUnavailable"));
             setVoiceStatusType("error");
             setShowVoiceStatus(true);
             setTimeout(() => setShowVoiceStatus(false), 3000);
@@ -311,6 +349,7 @@ const VoiceControl = ({
       initializeVosk,
       startVoskListening,
       stopVoskListening,
+      t,
    ]);
 
    // Cleanup on unmount
@@ -323,57 +362,68 @@ const VoiceControl = ({
 
    return (
       <>
-         {/* Fixed Voice Control Section - Bottom Right */}
-         <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 h-10 z-50 flex items-center gap-2">
-            {/* Voice Status - Left side */}
-            <div
-               className={`max-w-xs h-full transition-opacity duration-300 ${
-                  showVoiceStatus && voiceStatus ? "opacity-100" : "opacity-0"
-               }`}
-            >
+         {showMicButton && (
+            <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 h-10 z-50 flex items-center gap-2">
+               {/* Voice Status - Left side */}
                <div
-                  className={`relative backdrop-blur-sm h-full text-sm px-4 py-2 rounded-lg shadow-app-md border transition-colors duration-300 ${
+                  className={`max-w-xs h-full transition-opacity duration-300 ${
+                     showVoiceStatus &&
+                     voiceStatus &&
                      voiceStatusType === "success"
-                        ? "bg-gradient-to-r from-emerald-500/90 to-green-500/90 dark:from-emerald-600/90 dark:to-green-600/90 text-white border-emerald-400 dark:border-emerald-500"
-                        : voiceStatusType === "error"
-                        ? "bg-error/80 dark:bg-error/70 text-white border-error dark:border-error/80"
-                        : "bg-info/80 dark:bg-info/70 text-white border-info dark:border-info/80"
+                        ? "opacity-100"
+                        : showVoiceStatus && voiceStatus
+                        ? "opacity-50"
+                        : "opacity-0"
                   }`}
                >
                   <div
-                     className={`absolute inset-0 rounded-lg ${
+                     className={`relative backdrop-blur-sm h-full text-sm px-4 py-2 rounded-lg shadow-app-md border transition-colors duration-300 ${
                         voiceStatusType === "success"
-                           ? "bg-gradient-to-b from-white/30 via-emerald-200/20 to-transparent"
-                           : "bg-gradient-to-b from-white/20 via-transparent to-transparent"
+                           ? "bg-gradient-to-r from-emerald-500/90 to-green-500/90 dark:from-emerald-600/90 dark:to-green-600/90 text-white border-emerald-400 dark:border-emerald-500"
+                           : voiceStatusType === "error"
+                           ? "bg-error/80 dark:bg-error/70 text-white border-error dark:border-error/80"
+                           : "bg-info/80 dark:bg-info/70 text-white border-info dark:border-info/80"
+                     }`}
+                  >
+                     <div
+                        className={`absolute inset-0 rounded-lg ${
+                           voiceStatusType === "success"
+                              ? "bg-gradient-to-b from-white/30 via-emerald-200/20 to-transparent"
+                              : "bg-gradient-to-b from-white/20 via-transparent to-transparent"
+                        }`}
+                     ></div>
+                     <span className="relative font-medium">{voiceStatus}</span>
+                  </div>
+               </div>
+
+               {/* Voice Control Button - Right side */}
+               <button
+                  onClick={toggleVoiceRecognition}
+                  className={`relative h-full opacity-50 aspect-square rounded-xl backdrop-blur-sm shadow-app-md border transition-all duration-300 ${
+                     isVoiceListening
+                        ? isSpeaking
+                           ? "bg-warning/80 dark:bg-warning/70 text-white border-warning dark:border-warning/80 animate-pulse hover:bg-warning/90 dark:hover:bg-warning/80"
+                           : "bg-error/80 dark:bg-error/70 text-white border-error dark:border-error/80 animate-pulse hover:bg-error/90 dark:hover:bg-error/80"
+                        : "bg-gradient-to-br from-emerald-500/90 to-green-600/90 dark:from-emerald-600/90 dark:to-green-700/90 text-white border-emerald-400 dark:border-emerald-500 hover:from-emerald-600/90 hover:to-green-700/90 dark:hover:from-emerald-700/90 dark:hover:to-green-800/90"
+                  }`}
+               >
+                  <div
+                     className={`absolute inset-0 rounded-xl ${
+                        isVoiceListening
+                           ? isSpeaking
+                              ? "bg-gradient-to-b from-white/20 via-transparent to-transparent"
+                              : "bg-gradient-to-b from-white/20 via-transparent to-transparent"
+                           : "bg-gradient-to-b from-white/30 via-emerald-200/20 to-transparent"
                      }`}
                   ></div>
-                  <span className="relative font-medium">{voiceStatus}</span>
-               </div>
+                  {isVoiceListening ? (
+                     <MicOff className="size-5 mx-auto relative" />
+                  ) : (
+                     <Mic className="size-5 mx-auto relative" />
+                  )}
+               </button>
             </div>
-
-            {/* Voice Control Button - Right side */}
-            <button
-               onClick={toggleVoiceRecognition}
-               className={`relative h-full aspect-square rounded-xl backdrop-blur-sm shadow-app-md border transition-all duration-300 ${
-                  isVoiceListening
-                     ? "bg-error/80 dark:bg-error/70 text-white border-error dark:border-error/80 animate-pulse hover:bg-error/90 dark:hover:bg-error/80"
-                     : "bg-gradient-to-br from-emerald-500/90 to-green-600/90 dark:from-emerald-600/90 dark:to-green-700/90 text-white border-emerald-400 dark:border-emerald-500 hover:from-emerald-600/90 hover:to-green-700/90 dark:hover:from-emerald-700/90 dark:hover:to-green-800/90"
-               }`}
-            >
-               <div
-                  className={`absolute inset-0 rounded-xl ${
-                     isVoiceListening
-                        ? "bg-gradient-to-b from-white/20 via-transparent to-transparent"
-                        : "bg-gradient-to-b from-white/30 via-emerald-200/20 to-transparent"
-                  }`}
-               ></div>
-               {isVoiceListening ? (
-                  <MicOff className="size-5 mx-auto relative" />
-               ) : (
-                  <Mic className="size-5 mx-auto relative" />
-               )}
-            </button>
-         </div>
+         )}
       </>
    );
 };

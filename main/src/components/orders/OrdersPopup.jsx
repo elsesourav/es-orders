@@ -1,5 +1,6 @@
 import { ShoppingBag, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useLanguage } from "../../lib/useLanguage";
 
 const OrdersPopup = ({
    isOpen,
@@ -8,6 +9,7 @@ const OrdersPopup = ({
    selectedOrderIndex,
    onSelectOrder,
 }) => {
+   const { t } = useLanguage();
    const [isVisible, setIsVisible] = useState(false);
    const [isAnimating, setIsAnimating] = useState(false);
 
@@ -51,10 +53,10 @@ const OrdersPopup = ({
                   </div>
                   <div>
                      <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                        Select Order
+                        {t("orders.selectOrder")}
                      </h2>
                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {orders.length} total orders available
+                        {orders.length} {t("orders.totalOrdersAvailable")}
                      </p>
                   </div>
                </div>

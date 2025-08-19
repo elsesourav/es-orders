@@ -1,11 +1,14 @@
 import { Home, Package, Settings } from "lucide-react";
 import iconImage from "../assets/icon.png";
+import { useLanguage } from "../lib/useLanguage";
 
 const ResponsiveNav = ({ activeTab, onTabChange }) => {
+   const { t } = useLanguage();
+
    const navItems = [
-      { id: "home", label: "Home", icon: Home },
-      { id: "orders", label: "Orders", icon: Package },
-      { id: "settings", label: "Settings", icon: Settings },
+      { id: "home", label: t("navigation.home"), icon: Home },
+      { id: "orders", label: t("navigation.orders"), icon: Package },
+      { id: "settings", label: t("navigation.settings"), icon: Settings },
    ];
 
    const handleNavClick = (tabId) => {

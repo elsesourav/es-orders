@@ -1,9 +1,11 @@
 import { Boxes, Package, Tag, Weight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAllProducts } from "../api/productsApi";
+import { useLanguage } from "../lib/useLanguage";
 import { OrdersPopup, Pagination, VoiceControl } from "./orders";
 
 const OrdersPage = () => {
+   const { t } = useLanguage();
    const [stateData, setStateData] = useState(null);
    const [selectedOrderIndex, setSelectedOrderIndex] = useState(null);
    const [selectedItemIndex, setSelectedItemIndex] = useState(0);
@@ -11,10 +13,44 @@ const OrdersPage = () => {
    const [products, setProducts] = useState([]);
    const [product, setProduct] = useState({
       name: "NA",
+      label: "NA",
       weight: "NA",
       unite: "NA",
    });
    const [showOrdersPopup, setShowOrdersPopup] = useState(false);
+
+   // Image loading state and cache
+   const [isImageLoading, setIsImageLoading] = useState(false);
+   const [loadedImages, setLoadedImages] = useState(new Set()); // Cache for loaded images
+
+   // Simple image preloader and cache manager
+   const handleImageLoad = useCallback((imageUrl) => {
+      setLoadedImages((prev) => new Set([...prev, imageUrl]));
+      setIsImageLoading(false);
+   }, []);
+
+   const handleImageError = useCallback(() => {
+      setIsImageLoading(false);
+   }, []);
+
+   const checkAndLoadImage = useCallback(
+      (imageUrl) => {
+         if (!imageUrl) {
+            setIsImageLoading(false);
+            return;
+         }
+
+         // If image is already cached, don't show loading
+         if (loadedImages.has(imageUrl)) {
+            setIsImageLoading(false);
+            return;
+         }
+
+         // Show loading for new images
+         setIsImageLoading(true);
+      },
+      [loadedImages]
+   );
 
    // Touch/swipe state for mobile navigation
    const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
@@ -31,6 +67,7 @@ const OrdersPage = () => {
          if (!products || products.length === 0) {
             return {
                name: "Loading...",
+               label: "Loading...",
                weight: "Loading...",
                unite: "Loading...",
             };
@@ -77,6 +114,7 @@ const OrdersPage = () => {
                      (p) => p.quantity_per_kg
                   );
                   const names = filteredProducts.map((p) => p.name);
+                  const labels = filteredProducts.map((p) => p.label || p.name);
 
                   const weight = calculateWeightInGrams(
                      all_quantity_per_kg,
@@ -86,13 +124,14 @@ const OrdersPage = () => {
 
                   return {
                      name: names.join(", "),
+                     label: labels.join(", "),
                      weight: weight.toFixed(2),
                      unite: unitType,
                   };
                }
             }
          }
-         return { name: "NA", weight: "NA", unite: "NA" };
+         return { name: "NA", label: "NA", weight: "NA", unite: "NA" };
       },
       [products]
    );
@@ -113,9 +152,14 @@ const OrdersPage = () => {
                   orders[newIndex].orderItems[0]
                );
                setProduct(productDetails);
+
+               // Check and handle image loading for new order
+               const imageUrl = orders[newIndex].orderItems[0].primaryImageUrl;
+               checkAndLoadImage(imageUrl);
             } else {
                setProduct({
                   name: "Loading...",
+                  label: "Loading...",
                   weight: "Loading...",
                   unite: "Loading...",
                });
@@ -138,9 +182,14 @@ const OrdersPage = () => {
                   orders[newIndex].orderItems[0]
                );
                setProduct(productDetails);
+
+               // Check and handle image loading for new order
+               const imageUrl = orders[newIndex].orderItems[0].primaryImageUrl;
+               checkAndLoadImage(imageUrl);
             } else {
                setProduct({
                   name: "Loading...",
+                  label: "Loading...",
                   weight: "Loading...",
                   unite: "Loading...",
                });
@@ -161,9 +210,14 @@ const OrdersPage = () => {
             orders[orderIndex].orderItems[0]
          );
          setProduct(productDetails);
+
+         // Check and handle image loading for selected order
+         const imageUrl = orders[orderIndex].orderItems[0].primaryImageUrl;
+         checkAndLoadImage(imageUrl);
       } else {
          setProduct({
             name: "Loading...",
+            label: "Loading...",
             weight: "Loading...",
             unite: "Loading...",
          });
@@ -313,7 +367,9 @@ const OrdersPage = () => {
             <div className="relative opacity-30 flex justify-center items-center gap-2 my-1">
                <div className="px-2 py-0.5 border border-primary-200 dark:border-primary-700 rounded-md">
                   <p className="text-xs font-medium text-primary-700 dark:text-primary-300">
-                     {stateData?.selectedType?.toUpperCase() || "Loading..."}
+                     {stateData?.selectedType
+                        ? t(`home.${stateData.selectedType}`)
+                        : t("common.loading")}
                   </p>
                </div>
                <div className="px-2 py-0.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-md">
@@ -371,7 +427,7 @@ const OrdersPage = () => {
                                                       {parseFloat(
                                                          product.weight
                                                       )}{" "}
-                                                      g
+                                                      {t("orders.grams")}
                                                    </p>
                                                 </div>
                                              </div>
@@ -398,7 +454,8 @@ const OrdersPage = () => {
                                                          "opacity-100 text-white"
                                                       }`}
                                                    >
-                                                      {item.quantity}x
+                                                      {item.quantity}
+                                                      {t("orders.times")}
                                                    </p>
                                                 </div>
                                              </div>
@@ -410,7 +467,8 @@ const OrdersPage = () => {
                                                 </div>
                                                 <div className="min-w-0 flex-1">
                                                    <p className="text-lg font-bold text-info dark:text-blue-300 line-clamp-1 break-words">
-                                                      {product.name}
+                                                      {product.name} •{" "}
+                                                      {product.label}
                                                    </p>
                                                 </div>
                                              </div>
@@ -425,11 +483,23 @@ const OrdersPage = () => {
                                           >
                                              {/* Product Image */}
                                              <div className="my-1 flex justify-center">
-                                                <div className="relative w-full max-w-[min(45vw,45vh)] max-h-[min(45vw,45vh)]">
+                                                <div className="relative w-full max-w-[min(45vw,45vh)] min-h-[min(30vw,30vh)] max-h-[min(45vw,45vh)]">
+                                                   {isImageLoading && (
+                                                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 z-10">
+                                                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                                                      </div>
+                                                   )}
                                                    <img
+                                                      key={item.primaryImageUrl} // Force re-render when URL changes
                                                       src={item.primaryImageUrl}
                                                       alt={item.title}
                                                       className="w-full h-full object-contain bg-gray-100 dark:bg-gray-700 shadow-app-sm rounded-md border border-gray-200 dark:border-gray-600"
+                                                      onLoad={() =>
+                                                         handleImageLoad(
+                                                            item.primaryImageUrl
+                                                         )
+                                                      }
+                                                      onError={handleImageError}
                                                    />
                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent rounded-md"></div>
                                                 </div>
@@ -462,6 +532,17 @@ const OrdersPage = () => {
                                                                setProduct(
                                                                   productDetails
                                                                );
+
+                                                               // Check and handle image loading for selected item
+                                                               const imageUrl =
+                                                                  selectedOrder
+                                                                     .orderItems[
+                                                                     index
+                                                                  ]
+                                                                     .primaryImageUrl;
+                                                               checkAndLoadImage(
+                                                                  imageUrl
+                                                               );
                                                             }}
                                                             className={`flex-shrink-0 size-9 rounded-md border transition-all duration-300 transform text-xs font-medium ${
                                                                selectedItemIndex ===
@@ -491,7 +572,7 @@ const OrdersPage = () => {
 
                                           {/* Product Title */}
                                           <div className="p-2 bg-gray-50 dark:bg-primary-900/20 rounded-md border border-primary-200 dark:border-primary-700">
-                                             <p className="text-xs font-medium text-gray-900 dark:text-white line-clamp-3 leading-relaxed">
+                                             <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-4 leading-relaxed">
                                                 {item.title}
                                              </p>
                                           </div>
@@ -508,12 +589,12 @@ const OrdersPage = () => {
                      <div className="bg-white dark:bg-gray-800 rounded-md p-2 border border-gray-200 dark:border-gray-700">
                         <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
                            <div className="w-1 h-4 bg-primary rounded-full"></div>
-                           Buyer Details
+                           {t("orders.buyerDetails")}
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                            <div className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
                               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-0.5">
-                                 Name
+                                 {t("orders.name")}
                               </p>
                               <p className="text-xs font-semibold text-gray-900 dark:text-white">
                                  {selectedOrder.buyerDetails?.name || "N/A"}
@@ -521,7 +602,7 @@ const OrdersPage = () => {
                            </div>
                            <div className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
                               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-0.5">
-                                 State
+                                 {t("orders.state")}
                               </p>
                               <p className="text-xs font-semibold text-gray-900 dark:text-white">
                                  {selectedOrder.buyerDetails?.address?.state ||
@@ -542,14 +623,14 @@ const OrdersPage = () => {
                   </div>
                   <div className="max-w-sm mx-auto px-4">
                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                        No Orders Found
+                        {t("orders.noOrdersFound")}
                      </h3>
                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        No orders found for{" "}
+                        {t("orders.noOrdersFoundMessage")}{" "}
                         <span className="font-medium text-primary">
                            {stateData?.selectedType}
                         </span>{" "}
-                        state.
+                        {t("orders.state")}.
                      </p>
                   </div>
                </div>

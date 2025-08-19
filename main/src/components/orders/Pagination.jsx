@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "../../lib/useLanguage";
 
 const Pagination = ({
    selectedOrderIndex,
@@ -7,6 +8,8 @@ const Pagination = ({
    onNext,
    onShowPopup,
 }) => {
+   const { t } = useLanguage();
+
    if (totalOrders === 0) return null;
 
    return (
@@ -23,17 +26,17 @@ const Pagination = ({
          >
             <ChevronLeft className="w-4 h-4" />
             <span className="relative w-full text-left font-medium text-sm">
-               Previous
+               {t("common.previous")}
             </span>
          </button>
 
          {/* Current Order Number - Clickable */}
          <button
             onClick={onShowPopup}
-            className="relative w-16 h-10 bg-white/70 dark:bg-gray-700/70 text-primary-700 dark:text-primary-300 rounded-lg font-bold transition-all duration-200 hover:bg-white/90 dark:hover:bg-gray-700/90 hover:border-primary-300/60 dark:hover:border-primary-600/60 active:scale-95 shadow-app-sm border border-primary-300/50 dark:border-primary-600/50 backdrop-blur-sm"
+            className="relative w-20 h-10 bg-white/70 dark:bg-gray-700/70 text-primary-700 dark:text-primary-300 rounded-lg font-bold transition-all duration-200 hover:bg-white/90 dark:hover:bg-gray-700/90 hover:border-primary-300/60 dark:hover:border-primary-600/60 active:scale-95 shadow-app-sm border border-primary-300/50 dark:border-primary-600/50 backdrop-blur-sm"
          >
             <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-transparent rounded-lg"></div>
-            <span className="relative text-lg">
+            <span className="relative text-xl">
                {selectedOrderIndex !== null ? selectedOrderIndex + 1 : "?"}
             </span>
          </button>
@@ -53,7 +56,7 @@ const Pagination = ({
             }`}
          >
             <span className="relative w-full text-right font-medium text-sm">
-               Next
+               {t("common.next")}
             </span>
             <ChevronRight className="w-4 h-4" />
          </button>
