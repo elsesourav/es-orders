@@ -41,6 +41,81 @@ body {
    --scrollbar-thumb-hover: #718096;
 }
 
+/* Font Size Variables and Classes */
+:root {
+   /* Default font sizes (medium) */
+   --text-xs: 0.75rem; /* 12px */
+   --text-sm: 0.875rem; /* 14px */
+   --text-base: 1rem; /* 16px */
+   --text-lg: 1.125rem; /* 18px */
+   --text-xl: 1.25rem; /* 20px */
+   --text-2xl: 1.5rem; /* 24px */
+   --text-3xl: 1.875rem; /* 30px */
+   --text-4xl: 2.25rem; /* 36px */
+}
+
+/* Small font sizes */
+.font-size-small {
+   --text-xs: 0.625rem; /* 10px */
+   --text-sm: 0.75rem; /* 12px */
+   --text-base: 0.875rem; /* 14px */
+   --text-lg: 1rem; /* 16px */
+   --text-xl: 1.125rem; /* 18px */
+   --text-2xl: 1.25rem; /* 20px */
+   --text-3xl: 1.5rem; /* 24px */
+   --text-4xl: 1.875rem; /* 30px */
+}
+
+/* Medium font sizes (default) */
+.font-size-medium {
+   --text-xs: 0.75rem; /* 12px */
+   --text-sm: 0.875rem; /* 14px */
+   --text-base: 1rem; /* 16px */
+   --text-lg: 1.125rem; /* 18px */
+   --text-xl: 1.25rem; /* 20px */
+   --text-2xl: 1.5rem; /* 24px */
+   --text-3xl: 1.875rem; /* 30px */
+   --text-4xl: 2.25rem; /* 36px */
+}
+
+/* Large font sizes */
+.font-size-large {
+   --text-xs: 1rem; /* 16px - much bigger */
+   --text-sm: 1.125rem; /* 18px - much bigger */
+   --text-base: 1.25rem; /* 20px - much bigger */
+   --text-lg: 1.375rem; /* 22px - much bigger */
+   --text-xl: 1.5rem; /* 24px - much bigger */
+   --text-2xl: 1.875rem; /* 30px - much bigger */
+   --text-3xl: 2.5rem; /* 40px - much bigger */
+   --text-4xl: 3rem; /* 48px - much bigger */
+}
+
+/* Override Tailwind font sizes with CSS variables */
+.text-xs {
+   font-size: var(--text-xs) !important;
+}
+.text-sm {
+   font-size: var(--text-sm) !important;
+}
+.text-base {
+   font-size: var(--text-base) !important;
+}
+.text-lg {
+   font-size: var(--text-lg) !important;
+}
+.text-xl {
+   font-size: var(--text-xl) !important;
+}
+.text-2xl {
+   font-size: var(--text-2xl) !important;
+}
+.text-3xl {
+   font-size: var(--text-3xl) !important;
+}
+.text-4xl {
+   font-size: var(--text-4xl) !important;
+}
+
 /* Custom utility classes - keeping only app-specific ones */
 .bg-app-light {
    background-color: var(--color-bg-primary);
@@ -272,7 +347,7 @@ body {
    --color-primary-800: #1e40af;
    --color-primary-900: #1e3a8a;
    --color-primary: #2563eb;
-   
+
    /* Status Colors */
    --color-success-50: #ecfdf5;
    --color-success-100: #d1fae5;
@@ -286,7 +361,7 @@ body {
    --color-success-900: #064e3b;
    --color-success: #10b981;
    --color-success-light: #ecfdf5;
-   
+
    --color-warning-50: #fffbeb;
    --color-warning-100: #fef3c7;
    --color-warning-200: #fde68a;
@@ -299,7 +374,7 @@ body {
    --color-warning-900: #78350f;
    --color-warning: #f59e0b;
    --color-warning-light: #fffbeb;
-   
+
    --color-error-50: #fef2f2;
    --color-error-100: #fee2e2;
    --color-error-200: #fecaca;
@@ -312,7 +387,7 @@ body {
    --color-error-900: #7f1d1d;
    --color-error: #ef4444;
    --color-error-light: #fef2f2;
-   
+
    --color-info-50: #f0fdfa;
    --color-info-100: #ccfbf1;
    --color-info-200: #99f6e4;
@@ -325,14 +400,16 @@ body {
    --color-info-900: #134e4a;
    --color-info: #06b6d4;
    --color-info-light: #f0fdfa;
-   
+
    /* Shadows */
    --shadow-app-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-   --shadow-app-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-   --shadow-app-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-   --shadow-app-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+   --shadow-app-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+   --shadow-app-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+   --shadow-app-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+      0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
-
 
 @layer base {
    * {
@@ -427,4 +504,3 @@ body {
 .custom-scrollbar::-webkit-scrollbar-corner {
    background: transparent;
 }
-

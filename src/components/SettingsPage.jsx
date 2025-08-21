@@ -10,12 +10,14 @@ import {
    Moon,
    Sun,
    Twitter,
+   Type,
    User,
    Volume2,
 } from "lucide-react";
 import { useState } from "react";
 import iconImage from "../assets/icon.png";
 import { useAuth } from "../lib/AuthContext";
+import { useFontSize } from "../lib/useFontSize";
 import { useLanguage } from "../lib/useLanguage";
 import { useVoiceSettings } from "../lib/useVoiceSettings";
 import { ConfirmDialog, CustomAlert } from "./index";
@@ -24,6 +26,7 @@ import { SignIn, SignUp } from "./login";
 const SettingsPage = () => {
    const { user, isAuthenticated, login, register, logout } = useAuth();
    const { currentLanguage, changeLanguage, t } = useLanguage();
+   const { fontSize, changeFontSize } = useFontSize();
    const {
       actionTalkEnabled,
       showMicButton,
@@ -186,23 +189,21 @@ const SettingsPage = () => {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                {t("settings.language")}
             </h2>
-            <div className="flex items-center justify-between">
-               <div className="flex items-center space-x-3">
-                  <div>
-                     <p className="font-medium text-gray-900 dark:text-white">
-                        {t("settings.selectLanguage")}
-                     </p>
-                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {currentLanguage === "en"
-                           ? t("settings.english")
-                           : t("settings.bengali")}
-                     </p>
-                  </div>
+            <div className="space-y-4">
+               <div>
+                  <p className="font-medium text-gray-900 dark:text-white">
+                     {t("settings.selectLanguage")}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                     {currentLanguage === "en"
+                        ? t("settings.english")
+                        : t("settings.bengali")}
+                  </p>
                </div>
                <div className="flex space-x-2">
                   <button
                      onClick={() => changeLanguage("en")}
-                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         currentLanguage === "en"
                            ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-2 border-primary-300 dark:border-primary-600"
                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -212,13 +213,65 @@ const SettingsPage = () => {
                   </button>
                   <button
                      onClick={() => changeLanguage("bn")}
-                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         currentLanguage === "bn"
                            ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-2 border-primary-300 dark:border-primary-600"
                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600"
                      }`}
                   >
                      বাংলা
+                  </button>
+               </div>
+            </div>
+         </div>
+
+         {/* Font Size Settings */}
+         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+               {t("settings.fontSize")}
+            </h2>
+            <div className="space-y-4">
+               <div className="flex items-center space-x-3">
+                  <Type className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <div>
+                     <p className="font-medium text-gray-900 dark:text-white">
+                        {t("settings.selectFontSize")}
+                     </p>
+                     <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {t("settings.fontSizeDescription")}
+                     </p>
+                  </div>
+               </div>
+               <div className="flex space-x-2">
+                  <button
+                     onClick={() => changeFontSize("small")}
+                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        fontSize === "small"
+                           ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-2 border-primary-300 dark:border-primary-600"
+                           : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600"
+                     }`}
+                  >
+                     {t("settings.fontSizeSmall")}
+                  </button>
+                  <button
+                     onClick={() => changeFontSize("medium")}
+                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        fontSize === "medium"
+                           ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-2 border-primary-300 dark:border-primary-600"
+                           : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600"
+                     }`}
+                  >
+                     {t("settings.fontSizeMedium")}
+                  </button>
+                  <button
+                     onClick={() => changeFontSize("large")}
+                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        fontSize === "large"
+                           ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-2 border-primary-300 dark:border-primary-600"
+                           : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600"
+                     }`}
+                  >
+                     {t("settings.fontSizeLarge")}
                   </button>
                </div>
             </div>

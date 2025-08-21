@@ -106,6 +106,12 @@
          "actionTalkDescription": "Enable voice feedback when commands are executed",
          "showMicButton": "Show Microphone Button",
          "showMicButtonDescription": "Display voice control button in orders page",
+         "fontSize": "Font Size",
+         "selectFontSize": "Select your preferred font size",
+         "fontSizeSmall": "Small",
+         "fontSizeMedium": "Medium",
+         "fontSizeLarge": "Large",
+         "fontSizeDescription": "Adjust text size throughout the application",
          "authentication": "Authentication"
       }
    },
@@ -216,6 +222,12 @@
          "actionTalkDescription": "কমান্ড সম্পাদনের সময় ভয়েস ফিডব্যাক সক্ষম করুন",
          "showMicButton": "মাইক্রোফোন বোতাম দেখান",
          "showMicButtonDescription": "অর্ডার পৃষ্ঠায় ভয়েস কন্ট্রোল বোতাম প্রদর্শন করুন",
+         "fontSize": "ফন্ট সাইজ",
+         "selectFontSize": "আপনার পছন্দের ফন্ট সাইজ নির্বাচন করুন",
+         "fontSizeSmall": "ছোট",
+         "fontSizeMedium": "মাঝারি",
+         "fontSizeLarge": "বড়",
+         "fontSizeDescription": "সমগ্র অ্যাপ্লিকেশন জুড়ে টেক্সট সাইজ সামঞ্জস্য করুন",
          "authentication": "প্রমাণীকরণ"
       }
    }
