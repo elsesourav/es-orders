@@ -11,18 +11,41 @@ function IndexPage() {
    const { isAuthenticated, loading } = useAuth();
    const [activeTab, setActiveTab] = useState("home");
 
+   // Clear orders state on app startup/reload
+   useEffect(() => {
+      // Check if this is a fresh app load (not navigation)
+      const navigationFlag = sessionStorage.getItem(
+         "es_orders_navigation_active"
+      );
+
+      if (!navigationFlag) {
+         // This is a fresh app load/reload, clear the orders state
+         console.log("Fresh app load detected - clearing orders state");
+         localStorage.removeItem("es_orders_selected_state");
+         // Set navigation flag for subsequent page changes
+         sessionStorage.setItem("es_orders_navigation_active", "true");
+      }
+   }, []); // Run only once on component mount
+
    // Redirect to settings page if not authenticated
    useEffect(() => {
       if (!loading && !isAuthenticated) {
-         setActiveTab("settings");
+         handleTabChange("settings");
       }
    }, [isAuthenticated, loading]);
+
+   // Custom tab change handler to maintain navigation state
+   const handleTabChange = (newTab) => {
+      // Ensure navigation flag stays active during tab switching
+      sessionStorage.setItem("es_orders_navigation_active", "true");
+      setActiveTab(newTab);
+   };
 
    const renderContent = () => {
       switch (activeTab) {
          case "home":
             return (
-               <HomePage onNavigateToOrders={() => setActiveTab("orders")} />
+               <HomePage onNavigateToOrders={() => handleTabChange("orders")} />
             );
          case "orders":
             // If not authenticated, redirect to settings
@@ -34,7 +57,7 @@ function IndexPage() {
             return <SettingsPage />;
          default:
             return (
-               <HomePage onNavigateToOrders={() => setActiveTab("orders")} />
+               <HomePage onNavigateToOrders={() => handleTabChange("orders")} />
             );
       }
    };
@@ -53,7 +76,7 @@ function IndexPage() {
 
    return (
       <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
-         <ResponsiveNav activeTab={activeTab} onTabChange={setActiveTab} />
+         <ResponsiveNav activeTab={activeTab} onTabChange={handleTabChange} />
          <main className="relative h-full overflow-hidden">
             <div className="max-w-7xl pt-16 md:pt-18 pb-8 px-2 md:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto">
                {renderContent()}

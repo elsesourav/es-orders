@@ -354,37 +354,153 @@ export const createVoiceActions = (
  * @param {Function} onEnd - Callback when speech ends
  */
 export const speakText = (text, options = {}, onStart = null, onEnd = null) => {
-   if ("speechSynthesis" in window) {
-      // Cancel any ongoing speech
-      window.speechSynthesis.cancel();
+   return new Promise((resolve) => {
+      // Check if we're in Android WebView with native TTS
+      if (window.AndroidTTS && window.AndroidTTS.isAvailable()) {
+         console.log("TTS: Using Android native TTS");
+         try {
+            // Set TTS options if provided
+            if (options.rate) {
+               window.AndroidTTS.setRate(options.rate);
+            }
+            if (options.pitch) {
+               window.AndroidTTS.setPitch(options.pitch);
+            }
 
-      const utterance = new SpeechSynthesisUtterance(text);
+            // Start callback
+            if (onStart) onStart();
+            console.log("TTS: Speech started (Android native)");
 
-      // Configure speech parameters
-      utterance.rate = options.rate || 1.1; // Slightly faster for better UX
-      utterance.pitch = options.pitch || 1.0;
-      utterance.volume = options.volume || 0.8; // Slightly quieter
-      utterance.lang = "en-US"; // Always English as requested
+            // Speak the text
+            window.AndroidTTS.speak(text);
 
-      // Add event listeners
-      utterance.onstart = () => {
-         if (onStart) onStart();
-      };
+            // Simulate end callback after estimated duration
+            const estimatedDuration = Math.max(1000, text.length * 80); // 80ms per character
+            setTimeout(() => {
+               console.log("TTS: Speech ended (Android native)");
+               if (onEnd) onEnd();
+               resolve(true);
+            }, estimatedDuration);
+         } catch (error) {
+            console.error("TTS: Android native TTS error:", error);
+            if (onEnd) onEnd();
+            resolve(false);
+         }
+         return;
+      }
 
-      utterance.onend = () => {
+      if (!("speechSynthesis" in window)) {
+         console.warn("Speech synthesis not supported");
          if (onEnd) onEnd();
-      };
+         resolve(false);
+         return;
+      }
 
-      utterance.onerror = () => {
-         if (onEnd) onEnd(); // Also call onEnd on error to resume listening
-      };
+      try {
+         // Cancel any ongoing speech
+         window.speechSynthesis.cancel();
 
-      // Speak the text
-      window.speechSynthesis.speak(utterance);
+         // Wait a moment for cancellation to complete
+         setTimeout(() => {
+            const utterance = new SpeechSynthesisUtterance(text);
 
-      return true;
-   }
-   return false;
+            // Configure speech parameters
+            utterance.rate = options.rate || 1.0; // Normal rate for better clarity
+            utterance.pitch = options.pitch || 1.0;
+            utterance.volume = options.volume || 0.9;
+            utterance.lang = "en-US";
+
+            let hasStarted = false;
+            let hasEnded = false;
+
+            // Add event listeners
+            utterance.onstart = () => {
+               if (!hasStarted) {
+                  hasStarted = true;
+                  console.log("TTS: Speech started");
+                  if (onStart) onStart();
+               }
+            };
+
+            utterance.onend = () => {
+               if (!hasEnded) {
+                  hasEnded = true;
+                  console.log("TTS: Speech ended");
+                  if (onEnd) onEnd();
+                  resolve(true);
+               }
+            };
+
+            utterance.onerror = (event) => {
+               console.error("TTS: Speech error:", event.error);
+               if (!hasEnded) {
+                  hasEnded = true;
+                  if (onEnd) onEnd();
+                  resolve(false);
+               }
+            };
+
+            // Fallback timeout in case events don't fire
+            const timeout = setTimeout(() => {
+               if (!hasEnded) {
+                  console.warn("TTS: Fallback timeout triggered");
+                  hasEnded = true;
+                  window.speechSynthesis.cancel();
+                  if (onEnd) onEnd();
+                  resolve(false);
+               }
+            }, Math.max(2000, text.length * 40)); // Shorter timeout for faster recovery
+
+            // Clear timeout when speech ends properly
+            const originalOnEnd = utterance.onend;
+            utterance.onend = () => {
+               clearTimeout(timeout);
+               if (originalOnEnd) originalOnEnd();
+            };
+
+            const originalOnError = utterance.onerror;
+            utterance.onerror = (event) => {
+               clearTimeout(timeout);
+               if (originalOnError) originalOnError(event);
+            };
+
+            // Additional safety check - monitor speech synthesis state
+            const stateCheckInterval = setInterval(() => {
+               if (!window.speechSynthesis.speaking && !hasEnded) {
+                  console.log(
+                     "TTS: Speech stopped unexpectedly, triggering end callback"
+                  );
+                  hasEnded = true;
+                  clearTimeout(timeout);
+                  clearInterval(stateCheckInterval);
+                  if (onEnd) onEnd();
+                  resolve(true);
+               }
+            }, 100);
+
+            // Clear interval when speech ends properly
+            utterance.onend = () => {
+               clearTimeout(timeout);
+               clearInterval(stateCheckInterval);
+               if (originalOnEnd) originalOnEnd();
+            };
+
+            utterance.onerror = (event) => {
+               clearTimeout(timeout);
+               clearInterval(stateCheckInterval);
+               if (originalOnError) originalOnError(event);
+            };
+
+            // Speak the text
+            console.log("TTS: Starting speech:", text);
+            window.speechSynthesis.speak(utterance);
+         }, 100); // Small delay to ensure cancellation completes
+      } catch (error) {
+         console.error("TTS: Failed to speak:", error);
+         if (onEnd) onEnd();
+         resolve(false);
+      }
+   });
 };
 
 /**
@@ -396,7 +512,7 @@ export const speakText = (text, options = {}, onStart = null, onEnd = null) => {
  * @param {Function} onSpeechEnd - Callback when speech ends
  * @returns {Object} - Result with success status and message
  */
-export const processVoiceCommand = (
+export const processVoiceCommand = async (
    transcript,
    voiceActions,
    enableSpeech = true,
@@ -413,7 +529,8 @@ export const processVoiceCommand = (
 
                // Speak the result if speech is enabled and command was successful
                if (enableSpeech && result) {
-                  speakText(result, {}, onSpeechStart, onSpeechEnd);
+                  console.log("TTS: About to speak:", result);
+                  await speakText(result, {}, onSpeechStart, onSpeechEnd);
                }
 
                return {

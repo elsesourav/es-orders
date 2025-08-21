@@ -13,7 +13,7 @@ const copyExtensionUtils = () => {
          try {
             const sourceSkuPath = resolve(
                __dirname,
-               "./models/vosk-model-small-en-us-0.15.zip"
+               "./public/models/vosk-model-small-en-us-0.15.zip"
             );
             const destSkuPath = resolve(
                __dirname,

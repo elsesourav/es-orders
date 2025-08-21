@@ -53,6 +53,7 @@ const VoiceControl = ({
 
    // Temporarily pause voice recognition (mute microphone)
    const pauseVoiceRecognition = useCallback(() => {
+      console.log("Pausing voice recognition - muting microphone");
       if (mediaStreamRef.current) {
          mediaStreamRef.current.getTracks().forEach((track) => {
             track.enabled = false;
@@ -60,31 +61,40 @@ const VoiceControl = ({
       }
    }, []);
 
-   // Resume voice recognition (unmute microphone)
-   const resumeVoiceRecognition = useCallback(() => {
+   // Force resume voice recognition (for debugging)
+   const forceResumeVoiceRecognition = useCallback(() => {
+      console.log("Force resuming voice recognition");
       if (mediaStreamRef.current) {
          mediaStreamRef.current.getTracks().forEach((track) => {
             track.enabled = true;
          });
+         console.log("Microphone tracks force enabled");
       }
    }, []);
 
    // Process voice commands using the recognition module
    const handleVoiceCommand = useCallback(
-      (transcript) => {
-         const result = processVoiceCommand(
+      async (transcript) => {
+         console.log("Voice command received:", transcript);
+
+         const result = await processVoiceCommand(
             transcript,
             voiceActions,
             actionTalkEnabled, // Use the setting to control TTS
             () => {
                // On speech start: pause voice recognition and update state
+               console.log("TTS: Speech starting, pausing voice recognition");
                setIsSpeaking(true);
                pauseVoiceRecognition();
             },
             () => {
                // On speech end: resume voice recognition and update state
+               console.log("TTS: Speech ended, resuming voice recognition");
                setIsSpeaking(false);
-               resumeVoiceRecognition();
+               // Resume listening immediately
+               setTimeout(() => {
+                  forceResumeVoiceRecognition(); // Use force resume to ensure it works
+               }, 300); // Small delay to ensure speech has fully stopped
             }
          );
 
@@ -116,17 +126,19 @@ const VoiceControl = ({
          voiceActions,
          actionTalkEnabled,
          pauseVoiceRecognition,
-         resumeVoiceRecognition,
+         forceResumeVoiceRecognition,
       ]
-   ); // Process transcript from either recognition system
+   );
+
+   // Process transcript from either recognition system
    const handleTranscript = useCallback(
-      (transcript, isFinal = true) => {
+      async (transcript, isFinal = true) => {
          if (!transcript.trim()) return;
 
          const cleanTranscript = transcript.toLowerCase().trim();
 
          if (isFinal) {
-            const commandProcessed = handleVoiceCommand(cleanTranscript);
+            const commandProcessed = await handleVoiceCommand(cleanTranscript);
 
             // Only show the transcript as info if no command was processed
             if (!commandProcessed) {
@@ -145,6 +157,7 @@ const VoiceControl = ({
    );
 
    // Initialize Vosk speech recognition
+
    const initializeVosk = useCallback(async () => {
       try {
          setVoiceStatus(t("voice.loading"));
@@ -154,10 +167,18 @@ const VoiceControl = ({
          // Generate grammar words using the recognition module
          const grammarWords = generateGrammarWords();
          const grammar = JSON.stringify(grammarWords);
+         let model = null;
 
-         const model = await Vosk.createModel(
-            "./models/vosk-model-small-en-us-0.15.zip"
-         );
+         if (window.isAndroid) {
+            model = await Vosk.createModel(
+               "https://appassets.androidplatform.net/assets/models/vosk-model-small-en-us-0.15.zip"
+            );
+         } else {
+            model = await Vosk.createModel(
+               "/models/vosk-model-small-en-us-0.15.zip"
+            );
+         }
+
          voskModelRef.current = model;
 
          const recognizer = new model.KaldiRecognizer(16000, grammar);
@@ -316,6 +337,13 @@ const VoiceControl = ({
       if (isVoiceListening) {
          // Stop recognition
          isManualStopRef.current = true;
+
+         // Stop any ongoing speech first
+         if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+         }
+         setIsSpeaking(false);
+
          stopVoskListening();
          setIsVoiceListening(false);
 
@@ -332,6 +360,15 @@ const VoiceControl = ({
       } else {
          // Start recognition with Vosk
          isManualStopRef.current = false;
+
+         // Initialize speech synthesis if available
+         if (window.speechSynthesis) {
+            // Trigger speech synthesis initialization
+            const testUtterance = new SpeechSynthesisUtterance("");
+            window.speechSynthesis.speak(testUtterance);
+            window.speechSynthesis.cancel();
+            console.log("Speech synthesis initialized");
+         }
 
          const voskInitialized =
             voskRecognizerRef.current || (await initializeVosk());
@@ -356,9 +393,60 @@ const VoiceControl = ({
    useEffect(() => {
       return () => {
          isManualStopRef.current = true;
+         // Stop any ongoing speech
+         if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+         }
          performMemoryCleanup();
       };
    }, [performMemoryCleanup]);
+
+   // Monitor microphone state and ensure it's enabled when listening
+   useEffect(() => {
+      if (!isVoiceListening || !mediaStreamRef.current) return;
+
+      const checkMicrophoneState = () => {
+         if (mediaStreamRef.current && isVoiceListening && !isSpeaking) {
+            const tracks = mediaStreamRef.current.getTracks();
+            tracks.forEach((track) => {
+               if (!track.enabled) {
+                  console.log("Re-enabling disabled microphone track");
+                  track.enabled = true;
+               }
+            });
+         }
+      };
+
+      // Check microphone state every 2 seconds
+      const interval = setInterval(checkMicrophoneState, 2000);
+
+      return () => clearInterval(interval);
+   }, [isVoiceListening, isSpeaking]);
+
+   // Initialize speech synthesis when component mounts
+   useEffect(() => {
+      // Test if speech synthesis is working
+      if (window.speechSynthesis) {
+         console.log("Speech synthesis available");
+
+         // Wait for voices to load
+         const loadVoices = () => {
+            const voices = window.speechSynthesis.getVoices();
+            console.log("Available voices:", voices.length);
+         };
+
+         if (window.speechSynthesis.getVoices().length > 0) {
+            loadVoices();
+         } else {
+            window.speechSynthesis.addEventListener(
+               "voiceschanged",
+               loadVoices
+            );
+         }
+      } else {
+         console.warn("Speech synthesis not available");
+      }
+   }, []);
 
    return (
       <>
