@@ -1,21 +1,23 @@
-import { ArrowLeft, ArrowRight, Edit2, Plus, Trash2 } from "lucide-react";
+import { Clipboard, Edit2, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ConfirmDialog, CustomAlert } from "../";
 import {
   deleteSkuMapping,
   getAllCategories,
-  getAllSkuMappings,
   getAllVerticals,
   getCategoryProducts,
   getVerticalCategories,
+  searchSkuMappings,
   setSkuMapping,
   updateSkuMapping,
 } from "../../api";
+import { useLanguage } from "../../lib/useLanguage";
 
 const MAX_SEARCH_RESULTS = 20;
 const DEBOUNCE_DELAY = 1000; // 1 second
 
 export default function SkuMappingSection() {
+  const { t } = useLanguage();
   // eslint-disable-next-line no-unused-vars
   const [mappings, setMappings] = useState([]);
   const [filteredMappings, setFilteredMappings] = useState([]);
@@ -88,17 +90,12 @@ export default function SkuMappingSection() {
     try {
       setLoading(true);
       setHasSearched(true);
-      const data = await getAllSkuMappings();
 
-      const searchLower = term.toLowerCase();
-      const results = data.filter(
-        (mapping) =>
-          mapping.old_sku.toLowerCase().includes(searchLower) ||
-          mapping.new_sku.toLowerCase().includes(searchLower)
-      );
+      // Use server-side search API instead of fetching all
+      const results = await searchSkuMappings(term);
 
-      setMappings(data);
-      // Limit to 20 results
+      setMappings(results);
+      // Limit to MAX_SEARCH_RESULTS
       setFilteredMappings(results.slice(0, MAX_SEARCH_RESULTS));
       setLoading(false);
     } catch (e) {
@@ -137,91 +134,147 @@ export default function SkuMappingSection() {
     }, DEBOUNCE_DELAY);
   };
 
+  // Generate new SKU based on selections: {vertical}_{category}_{productSkus}_{quantity}{unit}
+  const generateNewSku = (formData) => {
+    const { verticalName, categoryName, productSkus, quantity, unit } =
+      formData;
+
+    // Generate partial or full SKU preview based on what's filled
+    if (
+      verticalName &&
+      categoryName &&
+      productSkus.length > 0 &&
+      quantity &&
+      unit
+    ) {
+      // Full SKU: all fields filled
+      const productsPart = productSkus.join("-");
+      const newSku = `${verticalName}_${categoryName}_${productsPart}_${quantity}${unit}`;
+      setGeneratedNewSku(newSku);
+      setForm((prev) => ({ ...prev, newSku }));
+    } else if (
+      verticalName &&
+      categoryName &&
+      productSkus.length > 0 &&
+      quantity
+    ) {
+      // Step 4 completed: waiting for unit
+      const productsPart = productSkus.join("-");
+      setGeneratedNewSku(
+        `${verticalName}_${categoryName}_${productsPart}_${quantity}...`
+      );
+    } else if (verticalName && categoryName && productSkus.length > 0) {
+      // Step 3 completed: waiting for quantity
+      const productsPart = productSkus.join("-");
+      setGeneratedNewSku(`${verticalName}_${categoryName}_${productsPart}_...`);
+    } else if (verticalName && categoryName) {
+      // Step 2 completed: waiting for products
+      setGeneratedNewSku(`${verticalName}_${categoryName}_..._...`);
+    } else if (verticalName) {
+      // Step 1 completed: waiting for category
+      setGeneratedNewSku(`${verticalName}_..._..._...`);
+    } else {
+      // Nothing selected yet
+      setGeneratedNewSku("..._..._..._...");
+    }
+  };
+
   // SKU Builder Functions
   const handleVerticalChange = async (verticalId) => {
-    const vertical = verticals.find((v) => v.id === parseInt(verticalId));
-    setNewSkuForm((prev) => ({
-      ...prev,
+    const vertical = verticals.find((v) => v.id === verticalId);
+    const updatedForm = {
       verticalId,
       verticalName: vertical?.name || "",
       categoryId: "",
       categoryName: "",
       productSkus: [],
-    }));
+      quantity: "",
+      unit: "",
+    };
+    setNewSkuForm(updatedForm);
+    setCategoryProducts([]);
+    generateNewSku(updatedForm);
 
     // Fetch categories for this vertical
     try {
       const categoriesData = await getVerticalCategories(verticalId);
       setCategories(categoriesData || []);
+
+      // Auto-advance to step 2 if vertical is selected
+      if (verticalId) {
+        setCurrentStep(2);
+      }
     } catch (e) {
       console.error("Error fetching categories:", e);
     }
   };
 
   const handleCategoryChange = async (categoryId) => {
-    const category = categories.find((c) => c.id === parseInt(categoryId));
-    setNewSkuForm((prev) => ({
-      ...prev,
+    const category = categories.find((c) => c.id === categoryId);
+    const updatedForm = {
+      ...newSkuForm,
       categoryId,
       categoryName: category?.name || "",
       productSkus: [],
-    }));
+      quantity: "",
+      unit: "",
+    };
+    setNewSkuForm(updatedForm);
+    generateNewSku(updatedForm);
 
     // Fetch products for this category
     try {
       const productsData = await getCategoryProducts(categoryId);
       setCategoryProducts(productsData || []);
+
+      // Auto-advance to step 3 if category is selected
+      if (categoryId) {
+        setCurrentStep(3);
+      }
     } catch (e) {
       console.error("Error fetching products:", e);
     }
   };
 
   const handleAddProductSku = (productSku) => {
-    if (!newSkuForm.productSkus.includes(productSku)) {
-      setNewSkuForm((prev) => ({
-        ...prev,
-        productSkus: [...prev.productSkus, productSku],
-      }));
+    if (productSku && !newSkuForm.productSkus.includes(productSku)) {
+      setNewSkuForm((prev) => {
+        const updatedForm = {
+          ...prev,
+          productSkus: [...prev.productSkus, productSku],
+        };
+        generateNewSku(updatedForm);
+        return updatedForm;
+      });
     }
   };
 
   const handleRemoveProductSku = (productSku) => {
-    setNewSkuForm((prev) => ({
-      ...prev,
-      productSkus: prev.productSkus.filter((sku) => sku !== productSku),
-    }));
+    setNewSkuForm((prev) => {
+      const updatedForm = {
+        ...prev,
+        productSkus: prev.productSkus.filter((sku) => sku !== productSku),
+      };
+      generateNewSku(updatedForm);
+      return updatedForm;
+    });
   };
 
   const handleQuantityChange = (quantity) => {
-    setNewSkuForm((prev) => ({ ...prev, quantity }));
+    setNewSkuForm((prev) => {
+      const updatedForm = { ...prev, quantity };
+      generateNewSku(updatedForm);
+      return updatedForm;
+    });
   };
 
   const handleUnitChange = (unit) => {
-    setNewSkuForm((prev) => ({ ...prev, unit }));
+    setNewSkuForm((prev) => {
+      const updatedForm = { ...prev, unit };
+      generateNewSku(updatedForm);
+      return updatedForm;
+    });
   };
-
-  const generateNewSku = useCallback(() => {
-    const { verticalName, categoryName, productSkus, quantity, unit } =
-      newSkuForm;
-
-    if (
-      !verticalName ||
-      !categoryName ||
-      productSkus.length === 0 ||
-      !quantity ||
-      !unit
-    ) {
-      return "";
-    }
-
-    const productsPart = productSkus.join("_");
-    const generatedSku = `${verticalName}_${categoryName}_${productsPart}_${quantity}${unit}`;
-    return generatedSku;
-  }, [newSkuForm]);
-
-  useEffect(() => {
-    setGeneratedNewSku(generateNewSku());
-  }, [generateNewSku]);
 
   const handleNextStep = () => {
     if (currentStep < 5) {
@@ -241,11 +294,26 @@ export default function SkuMappingSection() {
       categoryName: "",
       productSkus: [],
       quantity: "",
-      unit: "",
+      unit: "P",
     });
     setGeneratedNewSku("");
     setCurrentStep(1);
     setCategoryProducts([]);
+  };
+
+  // TODO: ADD PASTE SYSTEM ANDROID ALSO
+  const handlePasteOldSku = async () => {
+    try {
+      if (window?.isAndroid) {
+        const text = await window?.AndroidClipboard.getText();
+        setForm((f) => ({ ...f, oldSku: text.trim() }));
+      } else {
+        const text = await navigator.clipboard.readText();
+        setForm((f) => ({ ...f, oldSku: text.trim() }));
+      }
+    } catch {
+      setAlert({ type: "error", message: t("skuMapping.pasteError") });
+    }
   };
 
   const handleAddMapping = async () => {
@@ -254,12 +322,12 @@ export default function SkuMappingSection() {
     const oldSku = form.oldSku;
 
     if (!oldSku.trim() || !newSku.trim()) {
-      setAlert({ type: "error", message: "Both fields are required" });
+      setAlert({ type: "error", message: t("skuMapping.bothFieldsRequired") });
       return;
     }
     try {
       await setSkuMapping({ oldSku, newSku });
-      setAlert({ type: "success", message: "SKU mapping added successfully" });
+      setAlert({ type: "success", message: t("skuMapping.addSuccess") });
       setShowModal(false);
       setForm({ oldSku: "", newSku: "" });
       resetBuilder();
@@ -274,14 +342,14 @@ export default function SkuMappingSection() {
 
   const handleEditMapping = async () => {
     if (!form.newSku.trim()) {
-      setAlert({ type: "error", message: "New SKU is required" });
+      setAlert({ type: "error", message: t("skuMapping.newSkuRequired") });
       return;
     }
     try {
       await updateSkuMapping(editMapping.old_sku, { newSku: form.newSku });
       setAlert({
         type: "success",
-        message: "SKU mapping updated successfully",
+        message: t("skuMapping.updateSuccess"),
       });
       setShowModal(false);
       setEditMapping(null);
@@ -301,7 +369,7 @@ export default function SkuMappingSection() {
       await deleteSkuMapping(oldSku);
       setAlert({
         type: "success",
-        message: "SKU mapping deleted successfully",
+        message: t("skuMapping.deleteSuccess"),
       });
       // Refresh search results if user has searched
       if (hasSearched && searchTerm) {
@@ -341,32 +409,32 @@ export default function SkuMappingSection() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            SKU Mappings
+            {t("skuMapping.title")}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {hasSearched ? (
               <>
-                {filteredMappings.length} result(s) found
+                {filteredMappings.length} {t("skuMapping.resultsFound")}
                 {filteredMappings.length >= MAX_SEARCH_RESULTS && (
                   <span className="text-orange-500 dark:text-orange-400 ml-2">
-                    (showing first {MAX_SEARCH_RESULTS})
+                    ({t("skuMapping.showingFirst")} {MAX_SEARCH_RESULTS})
                   </span>
                 )}
               </>
             ) : (
-              "Start typing to search SKU mappings"
+              t("skuMapping.searchPrompt")
             )}
           </p>
         </div>
         <button
-          className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 transform hover:-translate-y-0.5"
+          className="flex items-center gap-2 px-4 py-2.5 bg-blue-200 hover:bg-blue-300 dark:bg-blue-700/40 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-400 rounded-lg transition-colors duration-200"
           onClick={() => {
             setShowModal(true);
             setEditMapping(null);
             setForm({ oldSku: "", newSku: "" });
           }}
         >
-          <Plus size={18} /> Add
+          <Plus size={18} /> {t("skuMapping.add")}
         </button>
       </div>
 
@@ -374,7 +442,7 @@ export default function SkuMappingSection() {
       <div className="mb-6">
         <input
           type="text"
-          placeholder="Search by Old SKU or New SKU..."
+          placeholder={t("skuMapping.searchPlaceholder")}
           value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}
           className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
@@ -384,26 +452,24 @@ export default function SkuMappingSection() {
       {/* Table */}
       {loading ? (
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-          Searching...
+          {t("skuMapping.searching")}
         </div>
       ) : !hasSearched ? (
         <div className="text-center text-gray-500 dark:text-gray-400 py-12">
-          <p className="text-lg mb-2">🔍 Search SKU Mappings</p>
-          <p className="text-sm">
-            Type in the search box above to find SKU mappings
-          </p>
+          <p className="text-lg mb-2">{t("skuMapping.searchTitle")}</p>
+          <p className="text-sm">{t("skuMapping.searchDescription")}</p>
         </div>
       ) : filteredMappings.length === 0 ? (
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-          No mappings found matching your search
+          {t("skuMapping.noResults")}
         </div>
       ) : (
         <div className="space-y-2">
           {/* Header Row */}
           <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg font-semibold text-sm text-gray-700 dark:text-gray-300">
-            <div className="flex-1">Old SKU</div>
-            <div className="flex-1">New SKU</div>
-            <div className="w-24 text-center">Actions</div>
+            <div className="flex-1">{t("skuMapping.oldSku")}</div>
+            <div className="flex-1">{t("skuMapping.newSku")}</div>
+            <div className="w-24 text-center">{t("skuMapping.actions")}</div>
           </div>
 
           {/* Data Rows */}
@@ -427,7 +493,7 @@ export default function SkuMappingSection() {
                   <button
                     onClick={() => handleRowAction(mapping)}
                     className="p-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-colors"
-                    title="Edit Mapping"
+                    title={t("skuMapping.edit")}
                   >
                     <Edit2
                       size={16}
@@ -437,7 +503,7 @@ export default function SkuMappingSection() {
                   <button
                     onClick={() => handleDeleteAction(mapping)}
                     className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
-                    title="Delete Mapping"
+                    title={t("skuMapping.delete")}
                   >
                     <Trash2
                       size={16}
@@ -456,37 +522,39 @@ export default function SkuMappingSection() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-xl p-8 border border-gray-200 dark:border-gray-700 w-full max-w-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">
-              {editMapping ? "Edit SKU Mapping" : "Add SKU Mapping"}
+              {editMapping
+                ? t("skuMapping.editTitle")
+                : t("skuMapping.addTitle")}
             </h3>
 
-            {/* Edit Mode - Simple Input Fields */}
+            {/* Edit Mode - Simple Input */}
             {editMapping ? (
               <>
                 {/* Old SKU Input (Disabled) */}
                 <div className="mb-5">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Old SKU <span className="text-red-500">*</span>
+                    {t("skuMapping.oldSku")}
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g., DAHLIA__100__PIECE__3AS7"
+                    placeholder={t("skuMapping.oldSkuPlaceholder")}
                     value={form.oldSku}
                     disabled={true}
-                    className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 opacity-60 cursor-not-allowed"
+                    className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                   />
                   <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Old SKU cannot be changed
+                    {t("skuMapping.oldSkuCannotChange")}
                   </p>
                 </div>
 
                 {/* New SKU Input */}
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    New SKU <span className="text-red-500">*</span>
+                    {t("skuMapping.newSku")}
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g., SED_FLW_DL_100P"
+                    placeholder={t("skuMapping.newSkuPlaceholder")}
                     value={form.newSku}
                     onChange={(e) =>
                       setForm((f) => ({ ...f, newSku: e.target.value }))
@@ -494,7 +562,7 @@ export default function SkuMappingSection() {
                     className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                   />
                   <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Enter the new mapped SKU code
+                    {t("skuMapping.enterNewSku")}
                   </p>
                 </div>
               </>
@@ -502,168 +570,139 @@ export default function SkuMappingSection() {
               /* Add Mode - 5-Step Builder */
               <>
                 {/* Old SKU Input */}
-                <div className="mb-6">
+                <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Old SKU <span className="text-red-500">*</span>
+                    {t("skuMapping.oldSku")}
                   </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., DAHLIA__100__PIECE__3AS7"
-                    value={form.oldSku}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, oldSku: e.target.value }))
-                    }
-                    className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                  />
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Enter the original SKU code to be mapped
-                  </p>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder={t("skuMapping.oldSkuPlaceholder")}
+                      value={form.oldSku}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, oldSku: e.target.value }))
+                      }
+                      className="w-full px-4 py-2.5 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                    />
+                    <button
+                      onClick={handlePasteOldSku}
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                      title={t("skuMapping.pasteFromClipboard")}
+                    >
+                      <Clipboard size={18} />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Generated New SKU Preview */}
-                {generatedNewSku && (
-                  <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                    <div className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">
-                      Generated New SKU:
-                    </div>
-                    <div className="text-lg font-mono font-bold text-green-900 dark:text-green-100">
-                      {generatedNewSku}
-                    </div>
+                {/* New SKU Builder */}
+                <div className="space-y-4 mb-4">
+                  {/* Generated New SKU Display - Always visible at top */}
+                  <div className="p-4 bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-300 dark:border-blue-600/50 rounded-lg">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                      {t("skuMapping.newSkuPreview")}
+                    </p>
+                    <p className="text-xl font-bold text-blue-600 dark:text-blue-400 font-mono break-all">
+                      {generatedNewSku || "..._..._..._..."}
+                    </p>
                   </div>
-                )}
 
-                {/* Step Progress Indicators */}
-                <div className="mb-6 flex items-center justify-between">
-                  {[1, 2, 3, 4, 5].map((step) => (
-                    <div key={step} className="flex items-center">
-                      <button
-                        onClick={() => handleGoToStep(step)}
-                        disabled={
-                          (step === 2 && !newSkuForm.verticalId) ||
-                          (step === 3 && !newSkuForm.categoryId) ||
-                          (step === 4 && newSkuForm.productSkus.length === 0) ||
-                          (step === 5 && !newSkuForm.quantity)
-                        }
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                          currentStep === step
-                            ? "bg-primary-600 text-white shadow-lg scale-110"
-                            : step < currentStep ||
-                              (step === 2 && newSkuForm.verticalId) ||
-                              (step === 3 && newSkuForm.categoryId) ||
-                              (step === 4 &&
-                                newSkuForm.productSkus.length > 0) ||
-                              (step === 5 && newSkuForm.quantity)
-                            ? "bg-green-500 text-white hover:bg-green-600 cursor-pointer"
-                            : "bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed"
-                        }`}
-                      >
-                        {step}
-                      </button>
-                      {step < 5 && (
-                        <div
-                          className={`w-12 h-1 mx-1 ${
-                            step < currentStep
-                              ? "bg-green-500"
-                              : "bg-gray-300 dark:bg-gray-700"
-                          }`}
-                        />
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {t("skuMapping.buildNewSku")} {currentStep}{" "}
+                    {t("skuMapping.of")} 5
+                  </h4>
+
+                  {/* Step 1: Select Vertical */}
+                  {currentStep === 1 && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          {t("skuMapping.step1")}
+                        </label>
+                        <select
+                          value={newSkuForm.verticalId}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              handleVerticalChange(e.target.value);
+                            }
+                          }}
+                          className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                        >
+                          <option value="">
+                            {t("skuMapping.selectVertical")}
+                          </option>
+                          {verticals.map((v) => (
+                            <option key={v.id} value={v.id}>
+                              {v.label} - {v.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 2: Select Category */}
+                  {currentStep === 2 && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          {t("skuMapping.step2")}
+                        </label>
+                        <select
+                          value={newSkuForm.categoryId}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              handleCategoryChange(e.target.value);
+                            }
+                          }}
+                          className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                        >
+                          <option value="">
+                            {t("skuMapping.selectCategory")}
+                          </option>
+                          {categories
+                            .filter(
+                              (c) => c.vertical_id === newSkuForm.verticalId
+                            )
+                            .map((c) => (
+                              <option key={c.id} value={c.id}>
+                                {c.label} - {c.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 3: Select Product SKUs */}
+                  {currentStep === 3 && (
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {t("skuMapping.step3")}
+                      </label>
+
+                      {/* Compact selected products display */}
+                      {newSkuForm.productSkus.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {newSkuForm.productSkus.map((sku, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-600/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded text-xs font-mono"
+                            >
+                              {sku}
+                              <button
+                                onClick={() => handleRemoveProductSku(sku)}
+                                className="hover:text-red-600 dark:hover:text-red-400 font-bold"
+                                title="Remove"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
                       )}
-                    </div>
-                  ))}
-                </div>
 
-                {/* Step 1: Select Vertical */}
-                {currentStep === 1 && (
-                  <div className="mb-6 space-y-4">
-                    <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200">
-                      Step 1: Select Vertical
-                    </h4>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Vertical <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        value={newSkuForm.verticalId}
-                        onChange={(e) => handleVerticalChange(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                      >
-                        <option value="">Choose a vertical</option>
-                        {verticals.map((v) => (
-                          <option key={v.id} value={v.id.toString()}>
-                            {v.label || v.name}
-                          </option>
-                        ))}
-                      </select>
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Select the business vertical for this product
-                      </p>
-                    </div>
-                    <div className="flex justify-end mt-4">
-                      <button
-                        onClick={handleNextStep}
-                        disabled={!newSkuForm.verticalId}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 font-medium shadow-lg shadow-primary-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Next <ArrowRight size={18} />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 2: Select Category */}
-                {currentStep === 2 && (
-                  <div className="mb-6 space-y-4">
-                    <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200">
-                      Step 2: Select Category
-                    </h4>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Category <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        value={newSkuForm.categoryId}
-                        onChange={(e) => handleCategoryChange(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                      >
-                        <option value="">Choose a category</option>
-                        {categories.map((c) => (
-                          <option key={c.id} value={c.id.toString()}>
-                            {c.label || c.name}
-                          </option>
-                        ))}
-                      </select>
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Select a category within {newSkuForm.verticalName}
-                      </p>
-                    </div>
-                    <div className="flex justify-between mt-4">
-                      <button
-                        onClick={() => setCurrentStep(1)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors duration-200 font-medium"
-                      >
-                        <ArrowLeft size={18} /> Back
-                      </button>
-                      <button
-                        onClick={handleNextStep}
-                        disabled={!newSkuForm.categoryId}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 font-medium shadow-lg shadow-primary-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Next <ArrowRight size={18} />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 3: Select Product SKUs */}
-                {currentStep === 3 && (
-                  <div className="mb-6 space-y-4">
-                    <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200">
-                      Step 3: Select Product SKUs
-                    </h4>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Product SKUs <span className="text-red-500">*</span>
-                      </label>
+                      {/* Compact dropdown to add product */}
                       <select
                         value=""
                         onChange={(e) => {
@@ -673,126 +712,117 @@ export default function SkuMappingSection() {
                         }}
                         className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                       >
-                        <option value="">Add product SKUs</option>
+                        <option value="">
+                          {newSkuForm.productSkus.length > 0
+                            ? t("skuMapping.addAnotherProduct")
+                            : t("skuMapping.selectProduct")}
+                        </option>
                         {categoryProducts
                           .filter(
                             (p) => !newSkuForm.productSkus.includes(p.sku)
                           )
                           .map((p) => (
-                            <option key={p.sku} value={p.sku}>
+                            <option key={p.id} value={p.sku}>
                               {p.sku} - {p.name}
                             </option>
                           ))}
                       </select>
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Add one or more product SKUs to this mapping
-                      </p>
-                    </div>
 
-                    {/* Selected Product SKUs */}
-                    {newSkuForm.productSkus.length > 0 && (
-                      <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Selected SKUs ({newSkuForm.productSkus.length}):
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {newSkuForm.productSkus.map((sku) => (
-                            <div
-                              key={sku}
-                              className="flex items-center gap-2 px-3 py-1.5 bg-primary-100 dark:bg-primary-900/30 border border-primary-300 dark:border-primary-700 rounded-lg"
-                            >
-                              <span className="text-sm font-mono text-primary-800 dark:text-primary-200">
-                                {sku}
-                              </span>
-                              <button
-                                onClick={() => handleRemoveProductSku(sku)}
-                                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="flex justify-end mt-2">
+                        <button
+                          onClick={handleNextStep}
+                          disabled={newSkuForm.productSkus.length === 0}
+                          className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {t("skuMapping.next")}
+                        </button>
                       </div>
-                    )}
-
-                    <div className="flex justify-between mt-4">
-                      <button
-                        onClick={() => setCurrentStep(2)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors duration-200 font-medium"
-                      >
-                        <ArrowLeft size={18} /> Back
-                      </button>
-                      <button
-                        onClick={handleNextStep}
-                        disabled={newSkuForm.productSkus.length === 0}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 font-medium shadow-lg shadow-primary-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Next <ArrowRight size={18} />
-                      </button>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Step 4: Enter Quantity */}
-                {currentStep === 4 && (
-                  <div className="mb-6 space-y-4">
-                    <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200">
-                      Step 4: Enter Quantity
-                    </h4>
-                    <NumberInput
-                      label="Quantity"
-                      placeholder="e.g., 100"
-                      value={newSkuForm.quantity}
-                      onChange={handleQuantityChange}
-                      helperText="Enter the quantity for this product"
-                    />
-                    <div className="flex justify-between mt-4">
-                      <button
-                        onClick={() => setCurrentStep(3)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors duration-200 font-medium"
-                      >
-                        <ArrowLeft size={18} /> Back
-                      </button>
-                      <button
-                        onClick={handleNextStep}
-                        disabled={!newSkuForm.quantity}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 font-medium shadow-lg shadow-primary-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Next <ArrowRight size={18} />
-                      </button>
+                  {/* Step 4: Enter Quantity */}
+                  {currentStep === 4 && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          {t("skuMapping.step4")}
+                        </label>
+                        <input
+                          type="number"
+                          placeholder={t("skuMapping.quantityPlaceholder")}
+                          value={newSkuForm.quantity}
+                          onChange={(e) => handleQuantityChange(e.target.value)}
+                          className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                        />
+                      </div>
+                      <div className="flex justify-end">
+                        <button
+                          onClick={handleNextStep}
+                          disabled={!newSkuForm.quantity}
+                          className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {t("skuMapping.next")}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Step 5: Select Unit */}
-                {currentStep === 5 && (
-                  <div className="mb-6 space-y-4">
-                    <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200">
-                      Step 5: Select Unit
-                    </h4>
-                    <SelectInput
-                      label="Unit"
-                      placeholder="Choose a unit"
-                      value={newSkuForm.unit}
-                      onChange={handleUnitChange}
-                      options={[
-                        { value: "P", label: "Piece (P)" },
-                        { value: "G", label: "Gram (G)" },
-                        { value: "KG", label: "Kilogram (KG)" },
-                      ]}
-                      helperText="Select the unit of measurement"
-                    />
-                    <div className="flex justify-between mt-4">
-                      <button
-                        onClick={() => setCurrentStep(4)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors duration-200 font-medium"
-                      >
-                        <ArrowLeft size={18} /> Back
-                      </button>
+                  {/* Step 5: Select Unit */}
+                  {currentStep === 5 && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          {t("skuMapping.step5")}
+                        </label>
+                        <select
+                          value={newSkuForm.unit}
+                          onChange={(e) => handleUnitChange(e.target.value)}
+                          className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                        >
+                          <option value="">{t("skuMapping.selectUnit")}</option>
+                          <option value="P">{t("skuMapping.piece")}</option>
+                          <option value="G">{t("skuMapping.gram")}</option>
+                          <option value="KG">{t("skuMapping.kilogram")}</option>
+                        </select>
+                      </div>
                     </div>
+                  )}
+
+                  {/* Step Progress Indicators */}
+                  <div className="flex items-center justify-center gap-2 pt-2">
+                    {[1, 2, 3, 4, 5].map((step) => (
+                      <button
+                        key={step}
+                        onClick={() => handleGoToStep(step)}
+                        className={`w-8 h-8 rounded-full text-xs font-bold ${
+                          step === currentStep
+                            ? "bg-blue-500 dark:bg-blue-500 text-white"
+                            : step < currentStep ||
+                              (step === 1 && newSkuForm.verticalId) ||
+                              (step === 2 && newSkuForm.categoryId) ||
+                              (step === 3 &&
+                                newSkuForm.productSkus.length > 0) ||
+                              (step === 4 && newSkuForm.quantity) ||
+                              (step === 5 && newSkuForm.unit)
+                            ? "bg-green-600 dark:bg-green-600 text-white cursor-pointer"
+                            : "bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                        }`}
+                        disabled={
+                          !(
+                            step <= currentStep ||
+                            (step === 1 && newSkuForm.verticalId) ||
+                            (step === 2 && newSkuForm.categoryId) ||
+                            (step === 3 && newSkuForm.productSkus.length > 0) ||
+                            (step === 4 && newSkuForm.quantity) ||
+                            (step === 5 && newSkuForm.unit)
+                          )
+                        }
+                      >
+                        {step}
+                      </button>
+                    ))}
                   </div>
-                )}
+                </div>
               </>
             )}
 
@@ -806,7 +836,7 @@ export default function SkuMappingSection() {
                 }}
                 className="px-5 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors duration-200 font-medium"
               >
-                Cancel
+                {t("skuMapping.cancel")}
               </button>
               <button
                 onClick={editMapping ? handleEditMapping : handleAddMapping}
@@ -816,7 +846,9 @@ export default function SkuMappingSection() {
                 }
                 className="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 font-medium shadow-lg shadow-primary-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {editMapping ? "Update" : "Add"} Mapping
+                {editMapping
+                  ? t("skuMapping.updateSku")
+                  : t("skuMapping.addSku")}
               </button>
             </div>
           </div>
@@ -826,8 +858,8 @@ export default function SkuMappingSection() {
       {/* Confirm Dialog */}
       <ConfirmDialog
         open={confirm.open}
-        title="Delete SKU Mapping?"
-        message="Are you sure you want to delete this SKU mapping? This action cannot be undone."
+        title={t("skuMapping.deleteTitle")}
+        message={t("skuMapping.deleteMessage")}
         onConfirm={() => {
           handleDeleteMapping(confirm.id);
           setConfirm({ open: false, type: null, id: null, data: null });

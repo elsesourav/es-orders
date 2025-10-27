@@ -50,5 +50,15 @@ export async function getCategoryProducts(categoryId) {
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return data || [];
+
+  // Map database fields to component-friendly format
+  return (data || []).map((item) => ({
+    id: item.id,
+    category_id: item.category_id,
+    name: item.product_name,
+    sku: item.product_sku,
+    created_by: item.created_by,
+    created_at: item.created_at,
+    updated_at: item.updated_at,
+  }));
 }
