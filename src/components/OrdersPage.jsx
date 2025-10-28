@@ -1,6 +1,7 @@
 import { Boxes, Copy, Package, Tag, Weight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAllProducts } from "../api/productsApi";
+import { getSkuMappingsObject } from "../api/skuMappingsApi";
 import { useLanguage } from "../lib/useLanguage";
 import { OrdersPopup, Pagination, VoiceControl } from "./orders";
 
@@ -11,6 +12,7 @@ const OrdersPage = () => {
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
+  const [skuMappings, setSkuMappings] = useState({});
   const [product, setProduct] = useState({
     name: "NA",
     label: "NA",
@@ -106,7 +108,11 @@ const OrdersPage = () => {
         return weight;
       };
 
-      const sku = item.newSku || item.sku;
+      // Try to get mapped SKU first, fallback to original SKU
+      const originalSku = item.sku;
+      const mappedSku = skuMappings[originalSku];
+      const sku = mappedSku || item.newSku || originalSku;
+
       const parts = sku.split("_");
 
       if (parts.length >= 4) {
@@ -145,7 +151,7 @@ const OrdersPage = () => {
       }
       return { name: "NA", label: "NA", weight: "NA", unite: "NA" };
     },
-    [products]
+    [products, skuMappings]
   );
 
   // Stable navigation functions for voice commands
@@ -331,8 +337,12 @@ const OrdersPage = () => {
     // Fetch all data using Promise.all
     const fetchAllData = async () => {
       try {
-        const productsData = await getAllProducts();
+        const [productsData, skuMappingsData] = await Promise.all([
+          getAllProducts(),
+          getSkuMappingsObject(),
+        ]);
         setProducts(productsData);
+        setSkuMappings(skuMappingsData || {});
       } catch (error) {
         console.error("Error fetching data:", error);
       }
