@@ -1,7 +1,7 @@
 import { Boxes, Copy, Package, Tag, Weight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAllProducts } from "../api/productsApi";
-import { getSkuMappingsObject } from "../api/skuMappingsApi";
+import { getSkuMapping } from "../api/skuMappingsApi";
 import { useLanguage } from "../lib/useLanguage";
 import { OrdersPopup, Pagination, VoiceControl } from "./orders";
 
@@ -334,15 +334,11 @@ const OrdersPage = () => {
       console.log("No state data found in localStorage");
     }
 
-    // Fetch all data using Promise.all
+    // Fetch products data
     const fetchAllData = async () => {
       try {
-        const [productsData, skuMappingsData] = await Promise.all([
-          getAllProducts(),
-          getSkuMappingsObject(),
-        ]);
+        const productsData = await getAllProducts();
         setProducts(productsData);
-        setSkuMappings(skuMappingsData || {});
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -350,6 +346,52 @@ const OrdersPage = () => {
 
     fetchAllData();
   }, []);
+
+  // Fetch SKU mappings only for current order items
+  useEffect(() => {
+    const fetchSkuMappingsForOrders = async () => {
+      if (orders.length === 0) return;
+
+      try {
+        // Collect all unique SKUs from all orders
+        const allSkus = new Set();
+        orders.forEach((order) => {
+          order.orderItems?.forEach((item) => {
+            if (item.sku) {
+              allSkus.add(item.sku);
+            }
+          });
+        });
+
+        // Fetch mappings for all unique SKUs in parallel
+        const skuArray = Array.from(allSkus);
+        const mappingPromises = skuArray.map(async (sku) => {
+          try {
+            const mapping = await getSkuMapping(sku);
+            return mapping ? { sku, newSku: mapping.new_sku } : null;
+          } catch {
+            return null;
+          }
+        });
+
+        const mappingResults = await Promise.all(mappingPromises);
+
+        // Build mappings object
+        const newMappings = {};
+        mappingResults.forEach((result) => {
+          if (result) {
+            newMappings[result.sku] = result.newSku;
+          }
+        });
+
+        setSkuMappings(newMappings);
+      } catch (error) {
+        console.error("Error fetching SKU mappings:", error);
+      }
+    };
+
+    fetchSkuMappingsForOrders();
+  }, [orders]);
 
   // Auto-select first order when both orders and products are loaded
   useEffect(() => {
