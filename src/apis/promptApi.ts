@@ -1,4 +1,5 @@
-import { supabase } from "../lib/supabaseClient";
+import type { ApiUpdate, VisibilityStatus } from "@/types/api";
+import { supabase } from "@lib/supabaseClient";
 import { getVisibleRows, mapLegacyVisibilityRows } from "./_visibility";
 import { getUserId } from "./usersApi";
 
@@ -12,29 +13,21 @@ function getNowIso() {
   return new Date().toISOString();
 }
 
-function toVerticalShape(row) {
-  return {
-    ...row,
-    verticalSku: row?.verticalSku || "",
-  };
-}
-
-export async function createVertical({
-  verticalSku,
-  label,
-  status = "shared",
+export async function createPrompt(input: {
+  name: string;
+  value?: string;
+  status?: VisibilityStatus;
 }) {
   const userId = requireUserId();
   const now = getNowIso();
-
   const { data, error } = await supabase
-    .from("verticals")
+    .from("prompt")
     .insert([
       {
-        verticalSku,
-        label: label || null,
-        status,
-        created_by: userId,
+        name: input.name,
+        value: input.value || null,
+        status: input.status || "shared",
+        user_id: userId,
         created_at: now,
         updated_at: now,
       },
@@ -43,59 +36,45 @@ export async function createVertical({
     .single();
 
   if (error) throw new Error(error.message);
-  return toVerticalShape(data);
+  return mapLegacyVisibilityRows([data], "user_id")[0];
 }
 
-export async function updateVertical(id, updates) {
+export async function updatePrompt(id: string, updates: ApiUpdate) {
   const userId = requireUserId();
-  const patch = {
+  const patch: ApiUpdate = {
     ...updates,
     updated_at: getNowIso(),
   };
-
   const { data, error } = await supabase
-    .from("verticals")
+    .from("prompt")
     .update(patch)
     .eq("id", id)
-    .eq("created_by", userId)
+    .eq("user_id", userId)
     .select("*")
     .single();
 
   if (error) throw new Error(error.message);
-  return toVerticalShape(data);
+  return mapLegacyVisibilityRows([data], "user_id")[0];
 }
 
-export async function deleteVertical(id) {
+export async function deletePrompt(id: string) {
   const userId = requireUserId();
   const { error } = await supabase
-    .from("verticals")
+    .from("prompt")
     .delete()
     .eq("id", id)
-    .eq("created_by", userId);
-
+    .eq("user_id", userId);
   if (error) throw new Error(error.message);
   return { success: true };
 }
 
-export async function getAllVerticals() {
+export async function getAllPrompts() {
   const rows = await getVisibleRows({
-    table: "verticals",
-    ownerColumn: "created_by",
+    table: "prompt",
+    ownerColumn: "user_id",
     currentUserId: getUserId(),
     orderBy: "created_at",
     ascending: false,
   });
-
-  return mapLegacyVisibilityRows(rows, "created_by").map(toVerticalShape);
-}
-
-export async function getVerticalById(id) {
-  const { data, error } = await supabase
-    .from("verticals")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  return data ? toVerticalShape(data) : null;
+  return mapLegacyVisibilityRows(rows, "user_id");
 }

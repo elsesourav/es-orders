@@ -2,14 +2,14 @@ import { Clipboard, Edit2, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ConfirmDialog, CustomAlert } from "../";
 import {
-  deleteSkuMapping,
+  deleteMapSku,
   getAllCategories,
   getAllVerticals,
-  getCategoryProducts,
+  getCategoryBaseItems,
   getVerticalCategories,
-  searchSkuMappings,
-  setSkuMapping,
-  updateSkuMapping,
+  searchMapSkus,
+  updateMapSku,
+  upsertMapSku,
 } from "../../api";
 import { useLanguage } from "../../lib/useLanguage";
 
@@ -92,7 +92,7 @@ export default function SkuMappingSection() {
       setHasSearched(true);
 
       // Use server-side search API instead of fetching all
-      const results = await searchSkuMappings(term);
+      const results = await searchMapSkus(term);
 
       setMappings(results);
       // Limit to MAX_SEARCH_RESULTS
@@ -161,7 +161,7 @@ export default function SkuMappingSection() {
       // Step 4 completed: waiting for unit
       const productsPart = productSkus.join("-");
       setGeneratedNewSku(
-        `${verticalName}_${categoryName}_${productsPart}_${quantity}...`
+        `${verticalName}_${categoryName}_${productsPart}_${quantity}...`,
       );
     } else if (verticalName && categoryName && productSkus.length > 0) {
       // Step 3 completed: waiting for quantity
@@ -184,7 +184,7 @@ export default function SkuMappingSection() {
     const vertical = verticals.find((v) => v.id === verticalId);
     const updatedForm = {
       verticalId,
-      verticalName: vertical?.name || "",
+      verticalName: vertical?.verticalSku || vertical?.name || "",
       categoryId: "",
       categoryName: "",
       productSkus: [],
@@ -214,7 +214,7 @@ export default function SkuMappingSection() {
     const updatedForm = {
       ...newSkuForm,
       categoryId,
-      categoryName: category?.name || "",
+      categoryName: category?.categorySku || category?.name || "",
       productSkus: [],
       quantity: "",
       unit: "",
@@ -224,8 +224,13 @@ export default function SkuMappingSection() {
 
     // Fetch products for this category
     try {
-      const productsData = await getCategoryProducts(categoryId);
-      setCategoryProducts(productsData || []);
+      const productsData = await getCategoryBaseItems(categoryId);
+      const normalizedProducts = (productsData || []).map((item) => ({
+        ...item,
+        sku: item.sku || item.item_sku,
+        name: item.name || item.item_name,
+      }));
+      setCategoryProducts(normalizedProducts);
 
       // Auto-advance to step 3 if category is selected
       if (categoryId) {
@@ -326,7 +331,7 @@ export default function SkuMappingSection() {
       return;
     }
     try {
-      await setSkuMapping({ oldSku, newSku });
+      await upsertMapSku({ oldSku, newSku });
       setAlert({ type: "success", message: t("skuMapping.addSuccess") });
       setShowModal(false);
       setForm({ oldSku: "", newSku: "" });
@@ -346,7 +351,7 @@ export default function SkuMappingSection() {
       return;
     }
     try {
-      await updateSkuMapping(editMapping.old_sku, { newSku: form.newSku });
+      await updateMapSku(editMapping.old_sku, { newSku: form.newSku });
       setAlert({
         type: "success",
         message: t("skuMapping.updateSuccess"),
@@ -366,7 +371,7 @@ export default function SkuMappingSection() {
 
   const handleDeleteMapping = async (oldSku) => {
     try {
-      await deleteSkuMapping(oldSku);
+      await deleteMapSku(oldSku);
       setAlert({
         type: "success",
         message: t("skuMapping.deleteSuccess"),
@@ -633,7 +638,7 @@ export default function SkuMappingSection() {
                           </option>
                           {verticals.map((v) => (
                             <option key={v.id} value={v.id}>
-                              {v.label} - {v.name}
+                              {v.label} - {v.verticalSku || v.name}
                             </option>
                           ))}
                         </select>
@@ -662,11 +667,11 @@ export default function SkuMappingSection() {
                           </option>
                           {categories
                             .filter(
-                              (c) => c.vertical_id === newSkuForm.verticalId
+                              (c) => c.vertical_id === newSkuForm.verticalId,
                             )
                             .map((c) => (
                               <option key={c.id} value={c.id}>
-                                {c.label} - {c.name}
+                                {c.label} - {c.categorySku || c.name}
                               </option>
                             ))}
                         </select>
@@ -719,7 +724,7 @@ export default function SkuMappingSection() {
                         </option>
                         {categoryProducts
                           .filter(
-                            (p) => !newSkuForm.productSkus.includes(p.sku)
+                            (p) => !newSkuForm.productSkus.includes(p.sku),
                           )
                           .map((p) => (
                             <option key={p.id} value={p.sku}>
@@ -798,14 +803,14 @@ export default function SkuMappingSection() {
                           step === currentStep
                             ? "bg-blue-500 dark:bg-blue-500 text-white"
                             : step < currentStep ||
-                              (step === 1 && newSkuForm.verticalId) ||
-                              (step === 2 && newSkuForm.categoryId) ||
-                              (step === 3 &&
-                                newSkuForm.productSkus.length > 0) ||
-                              (step === 4 && newSkuForm.quantity) ||
-                              (step === 5 && newSkuForm.unit)
-                            ? "bg-green-600 dark:bg-green-600 text-white cursor-pointer"
-                            : "bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                                (step === 1 && newSkuForm.verticalId) ||
+                                (step === 2 && newSkuForm.categoryId) ||
+                                (step === 3 &&
+                                  newSkuForm.productSkus.length > 0) ||
+                                (step === 4 && newSkuForm.quantity) ||
+                                (step === 5 && newSkuForm.unit)
+                              ? "bg-green-600 dark:bg-green-600 text-white cursor-pointer"
+                              : "bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                         }`}
                         disabled={
                           !(

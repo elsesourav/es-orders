@@ -1,8 +1,9 @@
 import { Boxes, Copy, Package, Tag, Weight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getAllProducts } from "../api/productsApi";
-import { getSkuMapping } from "../api/skuMappingsApi";
+import { listItems } from "../api/itemsApi";
+import { getMapSkuByOldSku } from "../api/mapSkusApi";
 import { useLanguage } from "../lib/useLanguage";
+import { shopsyModifySkuId } from "../lib/utils";
 import { OrdersPopup, Pagination, VoiceControl } from "./orders";
 
 const OrdersPage = () => {
@@ -67,7 +68,7 @@ const OrdersPage = () => {
       // Show loading for new images
       setIsImageLoading(true);
     },
-    [loadedImages]
+    [loadedImages],
   );
 
   // Touch/swipe state for mobile navigation
@@ -110,8 +111,16 @@ const OrdersPage = () => {
 
       // Try to get mapped SKU first, fallback to original SKU
       const originalSku = item.sku;
-      const mappedSku = skuMappings[originalSku];
-      const sku = mappedSku || item.newSku || originalSku;
+      console.log("Original SKU:", originalSku);
+
+      const _originalSkuModified = shopsyModifySkuId(originalSku);
+
+      const mappedSku = skuMappings[_originalSkuModified];
+      console.log("Mapped SKU:", mappedSku);
+
+      const sku = mappedSku || item.newSku || _originalSkuModified;
+
+      console.log(sku);
 
       const parts = sku.split("_");
 
@@ -124,12 +133,12 @@ const OrdersPage = () => {
           const unitType = match[2];
 
           const filteredProducts = items.map((item) =>
-            products.find((p) => p.sku_id === item)
+            products.find((p) => p.sku_id === item),
           );
 
           if (filteredProducts.length === items.length) {
             const all_quantity_per_kg = filteredProducts.map(
-              (p) => p.quantity_per_kg
+              (p) => p.quantity_per_kg,
             );
             const names = filteredProducts.map((p) => p.name);
             const labels = filteredProducts.map((p) => p.label || p.name);
@@ -137,7 +146,7 @@ const OrdersPage = () => {
             const weight = calculateWeightInGrams(
               all_quantity_per_kg,
               unit,
-              unitType
+              unitType,
             );
 
             return {
@@ -151,7 +160,7 @@ const OrdersPage = () => {
       }
       return { name: "NA", label: "NA", weight: "NA", unite: "NA" };
     },
-    [products, skuMappings]
+    [products, skuMappings],
   );
 
   // Stable navigation functions for voice commands
@@ -167,7 +176,7 @@ const OrdersPage = () => {
 
         if (products.length > 0 && orders[newIndex]?.orderItems?.[0]) {
           const productDetails = updateProductDetails(
-            orders[newIndex].orderItems[0]
+            orders[newIndex].orderItems[0],
           );
           setProduct(productDetails);
 
@@ -197,7 +206,7 @@ const OrdersPage = () => {
 
         if (products.length > 0 && orders[newIndex]?.orderItems?.[0]) {
           const productDetails = updateProductDetails(
-            orders[newIndex].orderItems[0]
+            orders[newIndex].orderItems[0],
           );
           setProduct(productDetails);
 
@@ -225,7 +234,7 @@ const OrdersPage = () => {
 
     if (products.length > 0 && orders[orderIndex]?.orderItems?.[0]) {
       const productDetails = updateProductDetails(
-        orders[orderIndex].orderItems[0]
+        orders[orderIndex].orderItems[0],
       );
       setProduct(productDetails);
 
@@ -248,7 +257,7 @@ const OrdersPage = () => {
   const prevOrder = useCallback(() => prevOrderRef.current(), []);
   const selectOrder = useCallback(
     (orderIndex) => selectOrderRef.current(orderIndex),
-    []
+    [],
   );
 
   // Touch event handlers for swipe navigation
@@ -337,8 +346,12 @@ const OrdersPage = () => {
     // Fetch products data
     const fetchAllData = async () => {
       try {
-        const productsData = await getAllProducts();
-        setProducts(productsData);
+        const productsData = await listItems();
+        const normalizedProducts = (productsData || []).map((item) => ({
+          ...item,
+          sku_id: item.sku_id || item.item_sku,
+        }));
+        setProducts(normalizedProducts);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -367,7 +380,7 @@ const OrdersPage = () => {
         const skuArray = Array.from(allSkus);
         const mappingPromises = skuArray.map(async (sku) => {
           try {
-            const mapping = await getSkuMapping(sku);
+            const mapping = await getMapSkuByOldSku(sku);
             return mapping ? { sku, newSku: mapping.new_sku } : null;
           } catch {
             return null;
@@ -375,6 +388,7 @@ const OrdersPage = () => {
         });
 
         const mappingResults = await Promise.all(mappingPromises);
+        console.log("mappingResults:", mappingResults);
 
         // Build mappings object
         const newMappings = {};
@@ -456,8 +470,8 @@ const OrdersPage = () => {
                 ? swipeDirection === "left"
                   ? "transform -translate-x-2 opacity-80"
                   : swipeDirection === "right"
-                  ? "transform translate-x-2 opacity-80"
-                  : ""
+                    ? "transform translate-x-2 opacity-80"
+                    : ""
                 : "transform translate-x-0 opacity-100"
             }`}
           >
@@ -571,7 +585,7 @@ const OrdersPage = () => {
                                         setSelectedItemIndex(index);
                                         const productDetails =
                                           updateProductDetails(
-                                            selectedOrder.orderItems[index]
+                                            selectedOrder.orderItems[index],
                                           );
                                         setProduct(productDetails);
 
