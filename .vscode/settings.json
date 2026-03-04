@@ -1,23 +1,24 @@
 {
-   "cSpell.words": [
-      "basicinfo",
-      "descform",
-      "Firestore",
-      "fullupdate",
-      "infoform",
-      "KNMX",
-      "LADV",
-      "listinginfo",
-      "mappinginfo",
-      "Millis",
-      "modifystatus",
-      "partialresult",
-      "pricetag",
-      "simpleupdate",
-      "trueinclude",
-      "truestarting",
-      "Unarchived",
-      "verticalandcategory",
-      "vosk"
-   ]
+  "cSpell.words": [
+    "basicinfo",
+    "descform",
+    "esorders",
+    "Firestore",
+    "fullupdate",
+    "infoform",
+    "KNMX",
+    "LADV",
+    "listinginfo",
+    "mappinginfo",
+    "Millis",
+    "modifystatus",
+    "partialresult",
+    "pricetag",
+    "simpleupdate",
+    "trueinclude",
+    "truestarting",
+    "Unarchived",
+    "verticalandcategory",
+    "vosk"
+  ]
 }

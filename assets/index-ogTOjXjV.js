@@ -28109,7 +28109,7 @@ const OrdersPage = () => {
     ] })
   ] });
 };
-const iconImage = "" + new URL("esIcon-DzwIqg08.png", import.meta.url).href;
+const iconImage = "" + new URL("esIcon-DWqk5qvO.png", import.meta.url).href;
 const ResponsiveNav = ({ activeTab, onTabChange }) => {
   const { t } = useLanguage();
   const navItems = [

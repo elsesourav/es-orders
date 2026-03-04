@@ -30,3 +30,5 @@ backup
 *.zip
 *.crx
 *.pem
+
+./esorders
