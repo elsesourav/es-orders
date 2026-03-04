@@ -27232,7 +27232,6 @@ const OrderCard = ({
   const { t } = useLanguage();
   const itemIndex = isActive ? selectedItemIndex : 0;
   const item = ((_a = order == null ? void 0 : order.orderItems) == null ? void 0 : _a[itemIndex]) ?? ((_b = order == null ? void 0 : order.orderItems) == null ? void 0 : _b[0]);
-  console.log(item);
   if (!item) return null;
   const marketplaceInfo = getMarketplaceInfo(item);
   const hasMultipleItems = isActive && order.orderItems.length > 1;
