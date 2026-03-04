@@ -1,55 +1,42 @@
 import react from "@vitejs/plugin-react";
-import { cpSync, existsSync, readFileSync, writeFileSync } from "fs";
+import { cpSync, existsSync, rmSync } from "fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "path";
 import { defineConfig } from "vite";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Custom plugin to copy extension utils
-const copyExtensionUtils = () => {
+const publishRootOutput = () => {
   return {
-    name: "copy-extension-utils",
+    name: "publish-root-output",
     writeBundle() {
       try {
-        const sourceSkuPath = resolve(
-          __dirname,
-          "./public/models/vosk-model-small-en-us-0.15.zip",
-        );
-        const destSkuPath = resolve(
-          __dirname,
-          "./build/models/vosk-model-small-en-us-0.15.zip",
-        );
+        const tempDir = resolve(__dirname, "./.build-temp");
+        const tempIndexPath = resolve(tempDir, "./index.html");
+        const tempAssetsPath = resolve(tempDir, "./assets");
+        const tempModelsPath = resolve(tempDir, "./models");
+        const rootIndexPath = resolve(__dirname, "./index.html");
+        const rootAssetsPath = resolve(__dirname, "./assets");
+        const rootModelsPath = resolve(__dirname, "./models");
 
-        if (existsSync(sourceSkuPath)) {
-          cpSync(sourceSkuPath, destSkuPath, { recursive: true });
+        if (existsSync(tempIndexPath)) {
+          cpSync(tempIndexPath, rootIndexPath, { recursive: true });
         }
 
-        console.log("✓ Copied extensionUtils.js to build/");
+        rmSync(rootAssetsPath, { recursive: true, force: true });
+        if (existsSync(tempAssetsPath)) {
+          cpSync(tempAssetsPath, rootAssetsPath, { recursive: true });
+        }
+
+        rmSync(rootModelsPath, { recursive: true, force: true });
+        if (existsSync(tempModelsPath)) {
+          cpSync(tempModelsPath, rootModelsPath, { recursive: true });
+        }
+
+        rmSync(tempDir, { recursive: true, force: true });
+
+        console.log("✓ Published root index.html + assets/");
       } catch (error) {
-        console.error("Failed to copy extensionUtils.js:", error);
-      }
-    },
-  };
-};
-
-const emitRootIndexHtml = () => {
-  return {
-    name: "emit-root-index-html",
-    writeBundle() {
-      try {
-        const builtIndexPath = resolve(__dirname, "./build/index.html");
-        const rootIndexPath = resolve(__dirname, "./index.html");
-
-        if (!existsSync(builtIndexPath)) return;
-
-        const builtHtml = readFileSync(builtIndexPath, "utf-8");
-        const rootHtml = builtHtml
-          .replaceAll("./assets/", "./build/assets/")
-          .replaceAll('"./extensionUtils.js"', '"./build/extensionUtils.js"');
-
-        writeFileSync(rootIndexPath, rootHtml, "utf-8");
-      } catch (error) {
-        console.error("Failed to emit root index.html:", error);
+        console.error("Failed to publish root output:", error);
       }
     },
   };
@@ -59,7 +46,7 @@ const emitRootIndexHtml = () => {
 export default defineConfig({
   root: "./src",
   envDir: ".",
-  plugins: [react(), copyExtensionUtils(), emitRootIndexHtml()],
+  plugins: [react(), publishRootOutput()],
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
@@ -71,7 +58,7 @@ export default defineConfig({
   build: {
     minify: false,
     emptyOutDir: true,
-    outDir: "../build/",
+    outDir: "../.build-temp",
   },
   publicDir: "../public",
   base: "./",

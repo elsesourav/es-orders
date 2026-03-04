@@ -38,6 +38,8 @@ const OrderCard = ({
   const itemIndex = isActive ? selectedItemIndex : 0;
   const item = order?.orderItems?.[itemIndex] ?? order?.orderItems?.[0];
 
+  console.log(item);
+
   if (!item) return null;
 
   const marketplaceInfo = getMarketplaceInfo(item);
