@@ -256,7 +256,7 @@ const OrderCard = ({
                 <SiFlipkart className="size-6 text-yellow-400" />
               </div>
             ) : (
-              <div className="absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-1 border border-gray-200 shadow-sm">
+              <div className="absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-0.5 border border-gray-200 shadow-sm">
                 <FaShopify className="size-6 text-[#81BF37]" />
               </div>
             ))}
