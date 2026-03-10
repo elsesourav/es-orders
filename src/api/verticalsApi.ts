@@ -37,6 +37,7 @@ export async function createVertical({
         created_by: userId,
         created_at: now,
         updated_at: now,
+        updated_by: userId,
       },
     ])
     .select("*")
@@ -51,12 +52,14 @@ export async function updateVertical(id, updates) {
   const patch = {
     ...updates,
     updated_at: getNowIso(),
+    updated_by: userId,
   };
 
   const { data, error } = await supabase
     .from("verticals")
     .update(patch)
     .eq("id", id)
+    .is("deleted_at", null)
     .eq("created_by", userId)
     .select("*")
     .single();
@@ -67,10 +70,13 @@ export async function updateVertical(id, updates) {
 
 export async function deleteVertical(id) {
   const userId = requireUserId();
+  const now = getNowIso();
+
   const { error } = await supabase
     .from("verticals")
-    .delete()
+    .update({ deleted_at: now, updated_at: now, updated_by: userId })
     .eq("id", id)
+    .is("deleted_at", null)
     .eq("created_by", userId);
 
   if (error) throw new Error(error.message);
@@ -90,12 +96,43 @@ export async function getAllVerticals() {
 }
 
 export async function getVerticalById(id) {
+  const rows = await getVisibleRows({
+    table: "verticals",
+    ownerColumn: "created_by",
+    currentUserId: getUserId(),
+    extraEq: { id },
+  });
+
+  return rows[0] ? toVerticalShape(rows[0]) : null;
+}
+
+export async function listDeletedVerticals() {
+  const userId = requireUserId();
+
   const { data, error } = await supabase
     .from("verticals")
     .select("*")
-    .eq("id", id)
-    .maybeSingle();
+    .eq("created_by", userId)
+    .not("deleted_at", "is", null)
+    .order("updated_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return data ? toVerticalShape(data) : null;
+  return mapLegacyVisibilityRows(data || [], "created_by").map(toVerticalShape);
+}
+
+export async function restoreVertical(id) {
+  const userId = requireUserId();
+  const now = getNowIso();
+
+  const { data, error } = await supabase
+    .from("verticals")
+    .update({ deleted_at: null, updated_at: now, updated_by: userId })
+    .eq("id", id)
+    .eq("created_by", userId)
+    .not("deleted_at", "is", null)
+    .select("*")
+    .single();
+
+  if (error) throw new Error(error.message);
+  return toVerticalShape(data);
 }

@@ -66,7 +66,7 @@ const ResponsiveNav = ({ activeTab, onTabChange }) => {
                   transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent dark:from-white/20 rounded-lg" />
+                <div className="absolute inset-0 bg-linear-to-b from-white/40 via-transparent to-transparent dark:from-white/20 rounded-lg" />
               </div>
 
               {navItems.map((item) => {

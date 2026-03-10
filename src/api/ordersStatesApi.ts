@@ -17,9 +17,19 @@ function mapOrderState(row) {
 
 export async function createOrderState(stateData) {
   const userId = requireUserId();
+  const now = new Date().toISOString();
+
   const { data, error } = await supabase
     .from("orders_states")
-    .insert([{ user_id: userId, state_data: stateData, status: "shared" }])
+    .insert([
+      {
+        user_id: userId,
+        state_data: stateData,
+        status: "shared",
+        updated_at: now,
+        updated_by: userId,
+      },
+    ])
     .select("*")
     .single();
 
@@ -34,30 +44,38 @@ export async function listOrderStates() {
     currentUserId: getUserId(),
     orderBy: "created_at",
     ascending: false,
+    extraEq: { deleted_at: null },
   });
 
   return mapLegacyVisibilityRows(rows, "user_id").map(mapOrderState);
 }
 
 export async function getOrderStateById(id) {
-  const { data, error } = await supabase
-    .from("orders_states")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  const rows = await getVisibleRows({
+    table: "orders_states",
+    ownerColumn: "user_id",
+    currentUserId: getUserId(),
+    extraEq: { id, deleted_at: null },
+  });
 
-  if (error) throw new Error(error.message);
-  return data
-    ? mapOrderState(mapLegacyVisibilityRows([data], "user_id")[0])
+  const row = rows[0];
+  return row
+    ? mapOrderState(mapLegacyVisibilityRows([row], "user_id")[0])
     : null;
 }
 
 export async function updateOrderState(id, stateData) {
   const userId = requireUserId();
+
   const { data, error } = await supabase
     .from("orders_states")
-    .update({ state_data: stateData })
+    .update({
+      state_data: stateData,
+      updated_at: new Date().toISOString(),
+      updated_by: userId,
+    })
     .eq("id", id)
+    .is("deleted_at", null)
     .eq("user_id", userId)
     .select("*")
     .single();
@@ -68,10 +86,13 @@ export async function updateOrderState(id, stateData) {
 
 export async function deleteOrderState(id) {
   const userId = requireUserId();
+  const now = new Date().toISOString();
+
   const { error } = await supabase
     .from("orders_states")
-    .delete()
+    .update({ deleted_at: now, updated_at: now, updated_by: userId })
     .eq("id", id)
+    .is("deleted_at", null)
     .eq("user_id", userId);
 
   if (error) throw new Error(error.message);
@@ -80,9 +101,11 @@ export async function deleteOrderState(id) {
 
 export async function listOrderStatesByDateRange(startDate, endDate) {
   const userId = requireUserId();
+
   const { data, error } = await supabase
     .from("orders_states")
     .select("*")
+    .is("deleted_at", null)
     .eq("user_id", userId)
     .gte("created_at", startDate)
     .lte("created_at", endDate)
@@ -116,12 +139,16 @@ export async function countOrderStates() {
 
 export async function createManyOrderStates(ordersArray) {
   const userId = requireUserId();
+  const now = new Date().toISOString();
+
   if (!ordersArray?.length) return [];
 
   const payload = ordersArray.map((orderData) => ({
     user_id: userId,
     state_data: orderData,
     status: "shared",
+    updated_at: now,
+    updated_by: userId,
   }));
 
   const { data, error } = await supabase
@@ -131,4 +158,35 @@ export async function createManyOrderStates(ordersArray) {
 
   if (error) throw new Error(error.message);
   return mapLegacyVisibilityRows(data || [], "user_id").map(mapOrderState);
+}
+
+export async function listDeletedOrderStates() {
+  const userId = requireUserId();
+
+  const { data, error } = await supabase
+    .from("orders_states")
+    .select("*")
+    .eq("user_id", userId)
+    .not("deleted_at", "is", null)
+    .order("updated_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return mapLegacyVisibilityRows(data || [], "user_id").map(mapOrderState);
+}
+
+export async function restoreOrderState(id) {
+  const userId = requireUserId();
+  const now = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from("orders_states")
+    .update({ deleted_at: null, updated_at: now, updated_by: userId })
+    .eq("id", id)
+    .eq("user_id", userId)
+    .not("deleted_at", "is", null)
+    .select("*")
+    .single();
+
+  if (error) throw new Error(error.message);
+  return mapOrderState(mapLegacyVisibilityRows([data], "user_id")[0]);
 }

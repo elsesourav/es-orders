@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import OrderCard from "./OrderCard";
 import type { OrderPagesListProps } from "./types";
 
+const HOTZONE_DEBUG_MODE = false;
+const SWIPE_DEBUG_LOG = false;
+
 const OrderPagesList = ({
   orders,
   selectedOrderIndex,
@@ -20,18 +23,58 @@ const OrderPagesList = ({
   const FORWARD_RENDER_WINDOW = 5;
   const BACKWARD_RENDER_WINDOW = 2;
   const EDGE_PRELOAD_EXTRA = 2;
+  const SWIPE_NEXT_THRESHOLD = 0.03;
+  const RELEASE_SETTLE_DELAY_MS = 95;
+  const IDLE_SETTLE_DELAY_MS = 120;
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const gestureStartLeftRef = useRef<number | null>(null);
   const isPointerDownRef = useRef(false);
   const isTouchActiveRef = useRef(false);
   const activePointerIdRef = useRef<number | null>(null);
+  const lastDragLogAtRef = useRef(0);
   const lastScrollProgressRef = useRef(0);
   const [isOrderPickerOpen, setIsOrderPickerOpen] = useState(false);
   const [isOrderPickerVisible, setIsOrderPickerVisible] = useState(false);
   const [orderJumpValue, setOrderJumpValue] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [scrollDirection, setScrollDirection] = useState<-1 | 0 | 1>(0);
+
+  const logSwipe = (phase: string, payload: Record<string, unknown>) => {
+    if (!SWIPE_DEBUG_LOG) return;
+    console.log("[OrdersSwipe]", { phase, ...payload });
+  };
+
+  const logDragProgress = (
+    source: "scroll" | "pointermove" | "touchmove",
+    force = false,
+  ) => {
+    const container = containerRef.current;
+    if (!container || !SWIPE_DEBUG_LOG) return;
+
+    const now = Date.now();
+    if (!force && now - lastDragLogAtRef.current < 120) return;
+    lastDragLogAtRef.current = now;
+
+    const width = container.clientWidth || 1;
+    const startLeft =
+      gestureStartLeftRef.current ??
+      (selectedOrderIndex !== null
+        ? selectedOrderIndex * width
+        : container.scrollLeft);
+    const startIndex = Math.round(startLeft / width);
+    const rawIndex = container.scrollLeft / width;
+    const deltaPages = (container.scrollLeft - startLeft) / width;
+
+    logSwipe("drag", {
+      source,
+      startIndex,
+      rawIndex: Number(rawIndex.toFixed(3)),
+      deltaPages: Number(deltaPages.toFixed(3)),
+      scrollLeft: Math.round(container.scrollLeft),
+    });
+  };
 
   const pageRefs = useMemo<(HTMLDivElement | null)[]>(
     () => Array.from({ length: orders.length }, () => null),
@@ -52,6 +95,8 @@ const OrderPagesList = ({
       inline: "nearest",
     });
 
+    gestureStartLeftRef.current = null;
+
     return undefined;
   }, [pageRefs, selectedOrderIndex]);
 
@@ -60,15 +105,67 @@ const OrderPagesList = ({
     if (!container) return;
 
     const width = container.clientWidth || 1;
-    const nextIndex = Math.round(container.scrollLeft / width);
+    const rawIndex = container.scrollLeft / width;
+    const gestureStartLeft = gestureStartLeftRef.current;
+
+    let nextIndex = Math.round(rawIndex);
+
+    if (gestureStartLeft !== null) {
+      const gestureStartIndex = Math.round(gestureStartLeft / width);
+      const gestureDeltaPages =
+        (container.scrollLeft - gestureStartLeft) / width;
+      const absGestureDeltaPages = Math.abs(gestureDeltaPages);
+      const roundedRawIndex = Math.round(rawIndex);
+
+      if (absGestureDeltaPages < SWIPE_NEXT_THRESHOLD) {
+        nextIndex = gestureStartIndex;
+      } else {
+        const directionalStep = gestureDeltaPages > 0 ? 1 : -1;
+
+        // If raw position has crossed one or more page boundaries, respect it.
+        // Otherwise still move at least one page in drag direction.
+        nextIndex =
+          roundedRawIndex === gestureStartIndex
+            ? gestureStartIndex + directionalStep
+            : roundedRawIndex;
+      }
+
+      if (SWIPE_DEBUG_LOG) {
+        const action =
+          nextIndex > gestureStartIndex
+            ? "next"
+            : nextIndex < gestureStartIndex
+              ? "prev"
+              : "stay";
+
+        logSwipe("settle", {
+          startIndex: gestureStartIndex,
+          rawIndex: Number(rawIndex.toFixed(3)),
+          deltaPages: Number(gestureDeltaPages.toFixed(3)),
+          roundedRawIndex,
+          threshold: SWIPE_NEXT_THRESHOLD,
+          action,
+        });
+      }
+    }
+
     const clamped = Math.max(0, Math.min(orders.length - 1, nextIndex));
     const targetLeft = clamped * width;
+
+    if (SWIPE_DEBUG_LOG && gestureStartLeft !== null) {
+      logSwipe("commit", {
+        from: selectedOrderIndex,
+        to: clamped,
+      });
+    }
 
     container.scrollTo({ left: targetLeft, behavior: "smooth" });
 
     if (clamped !== selectedOrderIndex) {
       onSelectOrder(clamped);
     }
+
+    gestureStartLeftRef.current = null;
   };
 
   const scheduleSettle = (delay = 140) => {
@@ -147,17 +244,42 @@ const OrderPagesList = ({
       lastScrollProgressRef.current = nextProgress;
       setScrollProgress(nextProgress);
 
+      if (isPointerDownRef.current || isTouchActiveRef.current) {
+        logDragProgress("scroll");
+      }
+
       if (!isPointerDownRef.current && !isTouchActiveRef.current) {
-        scheduleSettle(140);
+        scheduleSettle(IDLE_SETTLE_DELAY_MS);
       }
     };
 
     const handlePointerDown = (event: PointerEvent) => {
       isPointerDownRef.current = true;
       activePointerIdRef.current = event.pointerId;
+      gestureStartLeftRef.current = container.scrollLeft;
+      lastDragLogAtRef.current = 0;
+      logSwipe("pointerdown", {
+        pointerType: event.pointerType,
+        pointerId: event.pointerId,
+        startIndex: Math.round(
+          container.scrollLeft / (container.clientWidth || 1),
+        ),
+      });
       if (settleTimerRef.current) {
         clearTimeout(settleTimerRef.current);
       }
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (
+        !isPointerDownRef.current ||
+        (activePointerIdRef.current !== null &&
+          event.pointerId !== activePointerIdRef.current)
+      ) {
+        return;
+      }
+
+      logDragProgress("pointermove");
     };
 
     const handlePointerUp = (event: PointerEvent) => {
@@ -167,9 +289,14 @@ const OrderPagesList = ({
       ) {
         return;
       }
+      logDragProgress("pointermove", true);
+      logSwipe("pointerup", {
+        pointerType: event.pointerType,
+        pointerId: event.pointerId,
+      });
       isPointerDownRef.current = false;
       activePointerIdRef.current = null;
-      scheduleSettle(80);
+      scheduleSettle(RELEASE_SETTLE_DELAY_MS);
     };
 
     const handlePointerCancel = (event: PointerEvent) => {
@@ -179,28 +306,61 @@ const OrderPagesList = ({
       ) {
         return;
       }
+      logSwipe("pointercancel", {
+        pointerType: event.pointerType,
+        pointerId: event.pointerId,
+        touchActive: isTouchActiveRef.current,
+      });
       isPointerDownRef.current = false;
       activePointerIdRef.current = null;
-      scheduleSettle(180);
+
+      // On touch devices, pointer events often cancel while touch events continue.
+      // Keep gesture start so touchmove/touchend keep correct delta calculations.
+      if (event.pointerType !== "touch") {
+        gestureStartLeftRef.current = null;
+        scheduleSettle(IDLE_SETTLE_DELAY_MS);
+      }
     };
 
-    const handleTouchStart = () => {
+    const handleTouchStart = (event: TouchEvent) => {
       isTouchActiveRef.current = true;
+      gestureStartLeftRef.current = container.scrollLeft;
+      lastDragLogAtRef.current = 0;
+      logSwipe("touchstart", {
+        touches: event.touches.length,
+        startIndex: Math.round(
+          container.scrollLeft / (container.clientWidth || 1),
+        ),
+      });
       if (settleTimerRef.current) {
         clearTimeout(settleTimerRef.current);
       }
     };
 
-    const handleTouchEnd = () => {
+    const handleTouchMove = () => {
+      if (!isTouchActiveRef.current) return;
+      logDragProgress("touchmove");
+    };
+
+    const handleTouchEnd = (event: TouchEvent) => {
+      logDragProgress("touchmove", true);
+      logSwipe("touchend", {
+        touches: event.touches.length,
+        changedTouches: event.changedTouches.length,
+      });
       isTouchActiveRef.current = false;
-      scheduleSettle(80);
+      scheduleSettle(RELEASE_SETTLE_DELAY_MS);
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
     container.addEventListener("pointerdown", handlePointerDown);
+    container.addEventListener("pointermove", handlePointerMove);
     container.addEventListener("pointerup", handlePointerUp);
     container.addEventListener("pointercancel", handlePointerCancel);
     container.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    container.addEventListener("touchmove", handleTouchMove, {
       passive: true,
     });
     container.addEventListener("touchend", handleTouchEnd, {
@@ -213,28 +373,39 @@ const OrderPagesList = ({
     return () => {
       container.removeEventListener("scroll", handleScroll);
       container.removeEventListener("pointerdown", handlePointerDown);
+      container.removeEventListener("pointermove", handlePointerMove);
       container.removeEventListener("pointerup", handlePointerUp);
       container.removeEventListener("pointercancel", handlePointerCancel);
       container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
       container.removeEventListener("touchend", handleTouchEnd);
       container.removeEventListener("touchcancel", handleTouchEnd);
       if (settleTimerRef.current) {
         clearTimeout(settleTimerRef.current);
       }
     };
-  }, [onSelectOrder, orders.length, selectedOrderIndex]);
+  }, [
+    IDLE_SETTLE_DELAY_MS,
+    RELEASE_SETTLE_DELAY_MS,
+    onSelectOrder,
+    orders.length,
+    selectedOrderIndex,
+    SWIPE_NEXT_THRESHOLD,
+  ]);
 
   if (!orders.length || selectedOrderIndex === null) return null;
 
   return (
-    <div className="h-full p-1 md:p-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20 relative overflow-hidden">
+    <div className="h-full py-1 md:py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20 relative overflow-hidden">
       <div
         ref={containerRef}
-        className="h-full flex items-start overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth overscroll-x-contain"
+        className="h-full flex items-start overflow-x-auto no-scrollbar snap-x snap-mandatory overscroll-x-contain"
         style={{
           scrollSnapType: "x mandatory",
           scrollBehavior: "smooth",
           WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
         }}
       >
         {orders.map((order, index) => {
@@ -279,7 +450,7 @@ const OrderPagesList = ({
               ref={(element) => {
                 pageRefs[index] = element;
               }}
-              className={`flex-none w-full h-full p-1 snap-start rounded-xl ${
+              className={`relative flex-none w-full h-full p-1 snap-start rounded-xl ${
                 isOddPage
                   ? "bg-indigo-50/70 dark:bg-indigo-950/30"
                   : "bg-transparent"
@@ -314,6 +485,56 @@ const OrderPagesList = ({
             </div>
           );
         })}
+      </div>
+
+      <div className="absolute inset-y-0 left-0 right-0 z-40 pointer-events-none">
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            if (selectedOrderIndex > 0) {
+              onSelectOrder(selectedOrderIndex - 1);
+            }
+          }}
+          disabled={selectedOrderIndex <= 0}
+          className={`absolute left-0 top-0 bottom-0 w-[5%] min-w-4 max-w-7 border-r pointer-events-auto transition-colors ${
+            HOTZONE_DEBUG_MODE
+              ? "bg-green-500/20 border-green-500/40"
+              : "bg-transparent border-transparent"
+          } ${selectedOrderIndex > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-40"}`}
+          aria-label="Previous order"
+          title="Previous order"
+        >
+          {HOTZONE_DEBUG_MODE && (
+            <span className="text-[10px] font-semibold text-green-900 dark:text-green-100">
+              PREV
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            if (selectedOrderIndex < orders.length - 1) {
+              onSelectOrder(selectedOrderIndex + 1);
+            }
+          }}
+          disabled={selectedOrderIndex >= orders.length - 1}
+          className={`absolute right-0 top-0 bottom-0 w-[5%] min-w-4 max-w-7 border-l pointer-events-auto transition-colors ${
+            HOTZONE_DEBUG_MODE
+              ? "bg-green-500/20 border-green-500/40"
+              : "bg-transparent border-transparent"
+          } ${selectedOrderIndex < orders.length - 1 ? "cursor-pointer" : "cursor-not-allowed opacity-40"}`}
+          aria-label="Next order"
+          title="Next order"
+        >
+          {HOTZONE_DEBUG_MODE && (
+            <span className="text-[10px] font-semibold text-green-900 dark:text-green-100">
+              NEXT
+            </span>
+          )}
+        </button>
       </div>
 
       {isOrderPickerOpen && (

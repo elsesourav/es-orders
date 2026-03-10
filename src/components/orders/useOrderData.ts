@@ -66,8 +66,13 @@ const useOrderData = () => {
         const results = await Promise.all(
           Array.from(allSkus).map(async (sku) => {
             try {
-              const mapping = await getMapSkuByOldSku(sku);
-              return mapping ? { sku, newSku: mapping.new_sku } : null;
+              const normalizedSku = String(sku || "").trim();
+              if (!normalizedSku) return null;
+
+              const mapping = await getMapSkuByOldSku(normalizedSku);
+              return mapping
+                ? { sku: normalizedSku, newSku: mapping.new_sku }
+                : null;
             } catch {
               return null;
             }

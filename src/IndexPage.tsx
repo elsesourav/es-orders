@@ -65,7 +65,7 @@ function IndexPage() {
   // Show loading spinner while checking authentication
   if (loading) {
     return (
-      <div className="min-h-[100svh] bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-svh bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-600 dark:text-gray-400">Loading...</p>
@@ -75,12 +75,18 @@ function IndexPage() {
   }
 
   return (
-    <div className="h-[100svh] bg-gray-50 dark:bg-gray-900 overflow-hidden">
+    <div className="h-svh bg-gray-50 dark:bg-gray-900 overflow-hidden">
       <ResponsiveNav activeTab={activeTab} onTabChange={handleTabChange} />
       <main className="relative h-full overflow-hidden">
-        <div className="max-w-7xl pt-16 md:pt-18 pb-6 px-2 md:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto overscroll-y-contain">
-          {renderContent()}
-        </div>
+        {activeTab === "orders" ? (
+          <div className="pt-16 md:pt-18 h-full overflow-hidden">
+            {renderContent()}
+          </div>
+        ) : (
+          <div className="max-w-7xl pt-16 md:pt-18 pb-6 px-2 md:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto overscroll-y-contain">
+            {renderContent()}
+          </div>
+        )}
       </main>
     </div>
   );

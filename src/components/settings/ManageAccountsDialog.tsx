@@ -81,7 +81,7 @@ export default function ManageAccountsDialog({
           </button>
         </div>
 
-        <div className="space-y-2 max-h-[60svh] min-h-[min(260px,_50svh)] overflow-y-auto custom-scrollbar">
+        <div className="space-y-2 max-h-[60svh] min-h-[min(260px,50svh)] overflow-y-auto custom-scrollbar">
           {accounts.length === 0 ? (
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {t("settings.noSavedAccounts")}

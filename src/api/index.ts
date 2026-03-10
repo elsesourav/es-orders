@@ -14,22 +14,88 @@ export {
   verifyUserCredentials,
 } from "./usersApi";
 
-export { getAllVerticals } from "./verticalsApi";
+export {
+  createVertical,
+  deleteVertical,
+  getAllVerticals,
+  getVerticalById,
+  listDeletedVerticals,
+  restoreVertical,
+  updateVertical,
+} from "./verticalsApi";
 
 export {
+  addBaseItemToCategory,
+  addMultipleBaseItemsToCategory,
+  createCategory,
+  deleteCategory,
   getAllCategories,
+  getCategoriesWithBaseItem,
   getCategoryBaseItems,
+  getCategoryBaseItemsCount,
+  getCategoryBaseItemsPaginated,
+  getCategoryById,
+  getCategoryProducts,
   getVerticalCategories,
+  listDeletedCategories,
+  listDeletedCategoryBaseItems,
+  removeAllBaseItemsFromCategory,
+  removeBaseItemFromCategory,
+  removeMultipleBaseItemsFromCategory,
+  restoreCategory,
+  restoreCategoryBaseItem,
+  searchCategoryBaseItems,
+  updateCategory,
+  updateCategoryBaseItem,
 } from "./categoriesApi";
 
-export { listItems } from "./itemsApi";
+export {
+  createItem,
+  deleteItem,
+  getItemBySku,
+  getItemsByIds,
+  getItemsBySkus,
+  listDeletedItems,
+  listItems,
+  restoreItem,
+  updateItem,
+} from "./itemsApi";
 
 export {
+  clearMapSkus,
+  countMapSkus,
+  deleteManyMapSkus,
   deleteMapSku,
+  exportMapSkusToJson,
   getMapSkuByOldSku,
+  getMapSkuNewSku,
+  getMapSkusObject,
+  getMapSkusObjectByCache,
+  importMapSkusFromJson,
+  listDeletedMapSkus,
+  listMapSkus,
+  listMapSkusPaginated,
+  replaceAllMapSkus,
+  restoreManyMapSkus,
+  restoreMapSku,
   searchMapSkus,
+  searchMapSkusPaginated,
   updateMapSku,
+  upsertManyMapSkus,
   upsertMapSku,
 } from "./mapSkusApi";
 
-export { listOrderStates } from "./ordersStatesApi";
+export {
+  countOrderStates,
+  createManyOrderStates,
+  createOrderState,
+  deleteOrderState,
+  getOrderStateById,
+  listDeletedOrderStates,
+  listOrderStates,
+  listOrderStatesByDateRange,
+  listRecentOrderStates,
+  restoreOrderState,
+  searchOrderStates,
+  updateOrderState,
+} from "./ordersStatesApi";

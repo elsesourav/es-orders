@@ -1,4 +1,5 @@
 import { Boxes, Copy, Tag, Weight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { FaShopify } from "react-icons/fa";
 import { SiFlipkart } from "react-icons/si";
 import { useLanguage } from "../../lib/useLanguage";
@@ -37,14 +38,118 @@ const OrderCard = ({
   const { t } = useLanguage();
   const itemIndex = isActive ? selectedItemIndex : 0;
   const item = order?.orderItems?.[itemIndex] ?? order?.orderItems?.[0];
+  const [isQuantityBlinkOn, setIsQuantityBlinkOn] = useState(false);
+  const [isItemsBlinkOn, setIsItemsBlinkOn] = useState(false);
 
   if (!item) return null;
 
   const marketplaceInfo = getMarketplaceInfo(item);
-  const hasMultipleItems = isActive && order.orderItems.length > 1;
+  const orderItemsCount = order?.orderItems?.length || 0;
+  const hasMultipleItems = isActive && orderItemsCount > 1;
+  const shouldBlinkQuantity = isActive && Number(item?.quantity || 0) > 1;
+  const shouldBlinkItems = isActive && orderItemsCount > 1;
+  const orderIdentity = String(order?.orderId || order?.order_id || "");
+
+  useEffect(() => {
+    setIsQuantityBlinkOn(false);
+
+    if (!shouldBlinkQuantity) return undefined;
+
+    let pulseInterval: ReturnType<typeof setInterval> | null = null;
+    let loopInterval: ReturnType<typeof setInterval> | null = null;
+
+    const runPulse = () => {
+      let toggleCount = 0;
+
+      if (pulseInterval) {
+        clearInterval(pulseInterval);
+        pulseInterval = null;
+      }
+
+      pulseInterval = setInterval(() => {
+        toggleCount += 1;
+        setIsQuantityBlinkOn((prev) => !prev);
+
+        if (toggleCount >= 6 && pulseInterval) {
+          clearInterval(pulseInterval);
+          pulseInterval = null;
+          setIsQuantityBlinkOn(false);
+        }
+      }, 180);
+    };
+
+    // First blink starts quickly after entering a new page.
+    const firstPulseTimeout = setTimeout(() => {
+      runPulse();
+      loopInterval = setInterval(() => {
+        runPulse();
+      }, 5000);
+    }, 2000);
+
+    return () => {
+      clearTimeout(firstPulseTimeout);
+      if (loopInterval) {
+        clearInterval(loopInterval);
+      }
+      if (pulseInterval) {
+        clearInterval(pulseInterval);
+      }
+      setIsQuantityBlinkOn(false);
+    };
+  }, [shouldBlinkQuantity, orderIdentity, itemIndex, isActive]);
+
+  useEffect(() => {
+    setIsItemsBlinkOn(false);
+
+    if (!shouldBlinkItems) return undefined;
+
+    let pulseInterval: ReturnType<typeof setInterval> | null = null;
+    let loopInterval: ReturnType<typeof setInterval> | null = null;
+
+    const runPulse = () => {
+      let toggleCount = 0;
+
+      if (pulseInterval) {
+        clearInterval(pulseInterval);
+        pulseInterval = null;
+      }
+
+      pulseInterval = setInterval(() => {
+        toggleCount += 1;
+        setIsItemsBlinkOn((prev) => !prev);
+
+        if (toggleCount >= 6 && pulseInterval) {
+          clearInterval(pulseInterval);
+          pulseInterval = null;
+          setIsItemsBlinkOn(false);
+        }
+      }, 180);
+    };
+
+    const firstPulseTimeout = setTimeout(() => {
+      runPulse();
+      loopInterval = setInterval(() => {
+        runPulse();
+      }, 5000);
+    }, 2000);
+
+    return () => {
+      clearTimeout(firstPulseTimeout);
+      if (loopInterval) {
+        clearInterval(loopInterval);
+      }
+      if (pulseInterval) {
+        clearInterval(pulseInterval);
+      }
+      setIsItemsBlinkOn(false);
+    };
+  }, [shouldBlinkItems, orderIdentity, isActive]);
 
   return (
-    <div className="h-full flex flex-col gap-3 overflow-y-auto pr-0.5 no-scrollbar">
+    <div
+      className="relative h-full flex flex-col gap-3 overflow-y-auto pr-0.5 no-scrollbar"
+      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+    >
       {/* ── Product section ───────────────────────────────────────────── */}
       <div className="w-full relative bg-white dark:bg-gray-800 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
         {/* Badges row */}
@@ -74,22 +179,43 @@ const OrderCard = ({
             {/* Quantity */}
             <Badge
               gradient={
-                item.quantity > 1
-                  ? "from-warning/60 to-orange-400/60 dark:from-orange-900/60 dark:to-red-900/80"
-                  : "from-warning/10 to-orange-400/10 dark:from-orange-900/10 dark:to-red-900/10"
+                isQuantityBlinkOn
+                  ? "from-red-600 to-rose-800 dark:from-red-700 dark:to-red-900"
+                  : item.quantity > 1
+                    ? "from-amber-200 to-orange-400 dark:from-orange-400/50 dark:to-red-500/50"
+                    : "from-warning/10 to-orange-400/10 dark:from-orange-900/10 dark:to-red-900/10"
               }
               border={
-                item.quantity > 1
-                  ? "border-warning/80 dark:border-orange-600/60"
-                  : "border-warning/20 dark:border-orange-600/20"
+                isQuantityBlinkOn
+                  ? "outline-4 outline-red-600 dark:outline-red-500"
+                  : item.quantity > 1
+                    ? "outline-warning dark:outline-orange-500"
+                    : "outline-warning/20 dark:outline-orange-600/20"
               }
-              iconBg="bg-warning"
-              iconClass={item.quantity > 1 ? "" : "opacity-60"}
+              iconBg={
+                isQuantityBlinkOn
+                  ? "bg-red-700"
+                  : item.quantity > 1
+                    ? "bg-orange-500"
+                    : "bg-warning"
+              }
+              iconClass={item.quantity > 1 ? "scale-110" : "opacity-60"}
+              className={
+                isQuantityBlinkOn
+                  ? "animate-pulse ring-2 ring-red-500/90 shadow-lg shadow-red-500/40"
+                  : item.quantity > 1
+                    ? "ring-1 ring-orange-400/90 shadow-md shadow-orange-400/30"
+                    : ""
+              }
               icon={<Boxes className="w-3 h-3 text-white" />}
             >
               <p
-                className={`text-lg font-bold text-warning dark:text-orange-300 truncate ${
-                  item.quantity > 1 ? "opacity-100 text-white" : "opacity-60"
+                className={`text-lg font-bold truncate transition-colors duration-150 ${
+                  isQuantityBlinkOn
+                    ? "opacity-100 text-white drop-shadow-[0_0_6px_rgba(127,29,29,0.8)]"
+                    : item.quantity > 1
+                      ? "opacity-100 text-orange-950 dark:text-orange-100"
+                      : "opacity-60 text-warning dark:text-orange-300"
                 }`}
               >
                 {item.quantity}
@@ -105,7 +231,7 @@ const OrderCard = ({
             iconBg="bg-info"
             icon={<Tag className="w-3 h-3 text-white" />}
           >
-            <p className="text-lg font-bold text-info dark:text-blue-300 line-clamp-1 break-words">
+            <p className="text-lg font-bold text-info dark:text-blue-300 line-clamp-1 wrap-break-word">
               {productDetails.name} • {productDetails.label}
             </p>
           </Badge>
@@ -114,7 +240,7 @@ const OrderCard = ({
         {/* Image + item selector */}
         <div
           className={`relative w-full my-2 gap-1 grid grid-cols-1 ${
-            hasMultipleItems ? "grid-cols-[1fr_50px]" : ""
+            hasMultipleItems ? "grid-cols-[1fr_50px] px-10" : ""
           }`}
         >
           <div className="my-1 flex justify-center">
@@ -132,19 +258,27 @@ const OrderCard = ({
                 onLoad={() => isActive && onImageLoad?.(item.primaryImageUrl)}
                 onError={() => isActive && onImageError?.()}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent rounded-md" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/5 via-transparent to-transparent rounded-md" />
             </div>
           </div>
 
           {hasMultipleItems && (
-            <div className="relative p-1 flex flex-col justify-center items-center gap-2 w-full overflow-x-auto custom-scrollbar">
+            <div
+              className={`relative p-1 flex flex-col justify-center items-center gap-2 w-full overflow-y-auto no-scrollbar rounded-md border transition-all duration-200 ${
+                isItemsBlinkOn
+                  ? "border-red-400 bg-red-50/70 dark:bg-red-900/20"
+                  : "border-transparent"
+              }`}
+            >
               {order.orderItems.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => onSelectItem?.(index)}
-                  className={`flex-shrink-0 size-9 rounded-md border transition-all duration-300 transform text-xs font-medium ${
+                  className={`shrink-0 size-9 rounded-md border transition-all duration-300 transform text-xs font-medium ${
                     selectedItemIndex === index
-                      ? "bg-primary dark:bg-primary-600 text-white border-primary-600 dark:border-primary-400 scale-105 font-bold"
+                      ? isItemsBlinkOn
+                        ? "bg-red-500 text-white border-red-400 scale-105 font-bold"
+                        : "bg-primary dark:bg-primary-600 text-white border-primary-600 dark:border-primary-400 scale-105 font-bold"
                       : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:border-primary-300 dark:hover:border-primary-600 hover:scale-105"
                   }`}
                 >
@@ -204,9 +338,9 @@ const Badge = ({
   className = "",
 }) => (
   <div
-    className={`flex items-center gap-2 px-2 py-1 bg-gradient-to-br ${gradient} ${border} rounded-md border ${className}`}
+    className={`flex items-center gap-2 px-2 py-1 bg-linear-to-br ${gradient} ${border} rounded-md border ${className}`}
   >
-    <div className={`p-1 ${iconBg} rounded-md flex-shrink-0 ${iconClass}`}>
+    <div className={`p-1 ${iconBg} rounded-md shrink-0 ${iconClass}`}>
       {icon}
     </div>
     <div className="min-w-0 flex-1">{children}</div>
@@ -215,7 +349,7 @@ const Badge = ({
 
 /** SKU display + copy button row. */
 const SkuRow = ({ sku, marketplaceInfo, onCopy, copied }) => (
-  <div className="mb-2 py-0 px-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
+  <div className="w-[86%] mx-auto mb-2 py-0 px-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
     <div className="flex items-center justify-between gap-2">
       <p className="text-xs flex items-center gap-1 text-gray-600 dark:text-gray-400 flex-1 min-w-0">
         <span className="font-semibold text-gray-900 dark:text-gray-200">
@@ -239,7 +373,7 @@ const SkuRow = ({ sku, marketplaceInfo, onCopy, copied }) => (
       </p>
       <button
         onClick={() => onCopy?.(sku)}
-        className="flex-shrink-0 p-1.5 rounded-md transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95"
+        className="shrink-0 p-1.5 rounded-md transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95"
         title="Copy SKU"
       >
         {copied ? (

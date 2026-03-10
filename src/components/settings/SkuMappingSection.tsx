@@ -1,4 +1,4 @@
-import { Clipboard, Edit2, Plus, Trash2 } from "lucide-react";
+import { Clipboard, Edit2, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   deleteMapSku,
@@ -6,6 +6,8 @@ import {
   getAllVerticals,
   getCategoryBaseItems,
   getVerticalCategories,
+  listDeletedMapSkus,
+  restoreMapSku,
   searchMapSkus,
   updateMapSku,
   upsertMapSku,
@@ -27,6 +29,7 @@ export default function SkuMappingSection() {
   const [editMapping, setEditMapping] = useState(null);
   const [form, setForm] = useState({ oldSku: "", newSku: "" });
   const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState("active");
   const [confirm, setConfirm] = useState({
     open: false,
     type: null,
@@ -79,39 +82,70 @@ export default function SkuMappingSection() {
     };
   }, []);
 
-  // Client-side search with debounce
-  const performSearch = useCallback(async (term) => {
-    if (!term.trim()) {
-      setFilteredMappings([]);
-      setMappings([]);
-      setHasSearched(false);
-      return;
-    }
+  const filterMappingsByTerm = useCallback((rows, term) => {
+    if (!String(term || "").trim()) return rows;
 
-    try {
-      setLoading(true);
-      setHasSearched(true);
-
-      // Use server-side search API instead of fetching all
-      const results = await searchMapSkus(term);
-
-      setMappings(results);
-      // Limit to MAX_SEARCH_RESULTS
-      setFilteredMappings(results.slice(0, MAX_SEARCH_RESULTS));
-      setLoading(false);
-    } catch (e) {
-      setAlert({ type: "error", message: e.message });
-      setLoading(false);
-    }
+    const normalizedTerm = String(term).toLowerCase();
+    return (rows || []).filter((row) => {
+      const oldSku = String(row?.old_sku || "").toLowerCase();
+      const newSku = String(row?.new_sku || "").toLowerCase();
+      return oldSku.includes(normalizedTerm) || newSku.includes(normalizedTerm);
+    });
   }, []);
 
+  const loadMappings = useCallback(
+    async (mode, term) => {
+      const normalizedTerm = String(term || "").trim();
+
+      if (mode === "active" && !normalizedTerm) {
+        setFilteredMappings([]);
+        setMappings([]);
+        setHasSearched(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        if (mode === "deleted") {
+          const deletedRows = await listDeletedMapSkus();
+          const filteredRows = filterMappingsByTerm(
+            deletedRows || [],
+            normalizedTerm,
+          );
+          setHasSearched(true);
+          setMappings(filteredRows);
+          setFilteredMappings(filteredRows.slice(0, MAX_SEARCH_RESULTS));
+          return;
+        }
+
+        const results = await searchMapSkus(normalizedTerm);
+        setHasSearched(true);
+        setMappings(results || []);
+        setFilteredMappings((results || []).slice(0, MAX_SEARCH_RESULTS));
+      } catch (e) {
+        setAlert({ type: "error", message: e.message });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filterMappingsByTerm],
+  );
+
+  const performSearch = useCallback(
+    async (term) => {
+      await loadMappings(viewMode, term);
+    },
+    [loadMappings, viewMode],
+  );
+
   useEffect(() => {
-    if (!searchTerm) {
-      setFilteredMappings([]);
-      setMappings([]);
-      setHasSearched(false);
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
-  }, [searchTerm]);
+    setSearchTerm("");
+    loadMappings(viewMode, "");
+  }, [loadMappings, viewMode]);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -121,11 +155,8 @@ export default function SkuMappingSection() {
       clearTimeout(debounceTimerRef.current);
     }
 
-    // If empty, clear immediately without debounce
     if (!term.trim()) {
-      setFilteredMappings([]);
-      setMappings([]);
-      setHasSearched(false);
+      loadMappings(viewMode, "");
       return;
     }
 
@@ -337,9 +368,8 @@ export default function SkuMappingSection() {
       setShowModal(false);
       setForm({ oldSku: "", newSku: "" });
       resetBuilder();
-      // Refresh search results if user has searched
-      if (hasSearched && searchTerm) {
-        performSearch(searchTerm);
+      if (viewMode === "active") {
+        await loadMappings("active", searchTerm);
       }
     } catch (e) {
       setAlert({ type: "error", message: e.message });
@@ -361,9 +391,8 @@ export default function SkuMappingSection() {
       setEditMapping(null);
       setForm({ oldSku: "", newSku: "" });
       resetBuilder();
-      // Refresh search results if user has searched
-      if (hasSearched && searchTerm) {
-        performSearch(searchTerm);
+      if (viewMode === "active") {
+        await loadMappings("active", searchTerm);
       }
     } catch (e) {
       setAlert({ type: "error", message: e.message });
@@ -377,10 +406,20 @@ export default function SkuMappingSection() {
         type: "success",
         message: t("skuMapping.deleteSuccess"),
       });
-      // Refresh search results if user has searched
-      if (hasSearched && searchTerm) {
-        performSearch(searchTerm);
-      }
+      await loadMappings("active", searchTerm);
+    } catch (e) {
+      setAlert({ type: "error", message: e.message });
+    }
+  };
+
+  const handleRestoreMapping = async (oldSku) => {
+    try {
+      await restoreMapSku(oldSku);
+      setAlert({
+        type: "success",
+        message: t("skuMapping.restoreSuccess"),
+      });
+      await loadMappings("deleted", searchTerm);
     } catch (e) {
       setAlert({ type: "error", message: e.message });
     }
@@ -395,10 +434,39 @@ export default function SkuMappingSection() {
   const handleDeleteAction = (mapping) => {
     setConfirm({
       open: true,
-      type: "single",
+      type: "delete",
       id: mapping.old_sku,
-      data: null,
+      data: mapping,
     });
+  };
+
+  const handleRestoreAction = (mapping) => {
+    setConfirm({
+      open: true,
+      type: "restore",
+      id: mapping.old_sku,
+      data: mapping,
+    });
+  };
+
+  const closeConfirmDialog = () => {
+    setConfirm({ open: false, type: null, id: null, data: null });
+  };
+
+  const handleConfirmAction = () => {
+    if (confirm.type === "restore") {
+      handleRestoreMapping(confirm.id);
+      closeConfirmDialog();
+      return;
+    }
+
+    if (confirm.type === "delete") {
+      handleDeleteMapping(confirm.id);
+      closeConfirmDialog();
+      return;
+    }
+
+    closeConfirmDialog();
   };
 
   return (
@@ -418,7 +486,16 @@ export default function SkuMappingSection() {
             {t("skuMapping.title")}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {hasSearched ? (
+            {viewMode === "deleted" ? (
+              <>
+                {filteredMappings.length} {t("skuMapping.deletedResultsFound")}
+                {filteredMappings.length >= MAX_SEARCH_RESULTS && (
+                  <span className="text-orange-500 dark:text-orange-400 ml-2">
+                    ({t("skuMapping.showingFirst")} {MAX_SEARCH_RESULTS})
+                  </span>
+                )}
+              </>
+            ) : hasSearched ? (
               <>
                 {filteredMappings.length} {t("skuMapping.resultsFound")}
                 {filteredMappings.length >= MAX_SEARCH_RESULTS && (
@@ -432,15 +509,43 @@ export default function SkuMappingSection() {
             )}
           </p>
         </div>
+        {viewMode === "active" && (
+          <button
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-200 hover:bg-blue-300 dark:bg-blue-700/40 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-400 rounded-lg transition-colors duration-200 sm:self-auto"
+            onClick={() => {
+              setShowModal(true);
+              setEditMapping(null);
+              setForm({ oldSku: "", newSku: "" });
+            }}
+          >
+            <Plus size={18} /> {t("skuMapping.add")}
+          </button>
+        )}
+      </div>
+
+      {/* Mode Switch */}
+      <div className="mb-4 inline-flex rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
         <button
-          className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-200 hover:bg-blue-300 dark:bg-blue-700/40 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-400 rounded-lg transition-colors duration-200 sm:self-auto"
-          onClick={() => {
-            setShowModal(true);
-            setEditMapping(null);
-            setForm({ oldSku: "", newSku: "" });
-          }}
+          type="button"
+          onClick={() => setViewMode("active")}
+          className={`px-3 py-2 text-sm font-medium transition-colors ${
+            viewMode === "active"
+              ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+              : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300"
+          }`}
         >
-          <Plus size={18} /> {t("skuMapping.add")}
+          {t("skuMapping.activeMappings")}
+        </button>
+        <button
+          type="button"
+          onClick={() => setViewMode("deleted")}
+          className={`px-3 py-2 text-sm font-medium border-l border-gray-200 dark:border-gray-700 transition-colors ${
+            viewMode === "deleted"
+              ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+              : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300"
+          }`}
+        >
+          {t("skuMapping.deletedMappings")}
         </button>
       </div>
 
@@ -448,7 +553,11 @@ export default function SkuMappingSection() {
       <div className="mb-4">
         <input
           type="text"
-          placeholder={t("skuMapping.searchPlaceholder")}
+          placeholder={
+            viewMode === "deleted"
+              ? t("skuMapping.searchDeletedPlaceholder")
+              : t("skuMapping.searchPlaceholder")
+          }
           value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
@@ -460,14 +569,16 @@ export default function SkuMappingSection() {
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">
           {t("skuMapping.searching")}
         </div>
-      ) : !hasSearched ? (
+      ) : viewMode === "active" && !hasSearched ? (
         <div className="text-center text-gray-500 dark:text-gray-400 py-12">
           <p className="text-lg mb-2">{t("skuMapping.searchTitle")}</p>
           <p className="text-sm">{t("skuMapping.searchDescription")}</p>
         </div>
       ) : filteredMappings.length === 0 ? (
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-          {t("skuMapping.noResults")}
+          {viewMode === "deleted"
+            ? t("skuMapping.noDeletedResults")
+            : t("skuMapping.noResults")}
         </div>
       ) : (
         <div className="space-y-2">
@@ -496,26 +607,41 @@ export default function SkuMappingSection() {
                   {mapping.new_sku}
                 </div>
                 <div className="w-24 flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => handleRowAction(mapping)}
-                    className="p-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-colors"
-                    title={t("skuMapping.edit")}
-                  >
-                    <Edit2
-                      size={16}
-                      className="text-blue-600 dark:text-blue-400"
-                    />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteAction(mapping)}
-                    className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
-                    title={t("skuMapping.delete")}
-                  >
-                    <Trash2
-                      size={16}
-                      className="text-red-600 dark:text-red-400"
-                    />
-                  </button>
+                  {viewMode === "deleted" ? (
+                    <button
+                      onClick={() => handleRestoreAction(mapping)}
+                      className="p-1.5 hover:bg-green-100 dark:hover:bg-green-900/30 rounded transition-colors"
+                      title={t("skuMapping.restore")}
+                    >
+                      <RotateCcw
+                        size={16}
+                        className="text-green-600 dark:text-green-400"
+                      />
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleRowAction(mapping)}
+                        className="p-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-colors"
+                        title={t("skuMapping.edit")}
+                      >
+                        <Edit2
+                          size={16}
+                          className="text-blue-600 dark:text-blue-400"
+                        />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAction(mapping)}
+                        className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
+                        title={t("skuMapping.delete")}
+                      >
+                        <Trash2
+                          size={16}
+                          className="text-red-600 dark:text-red-400"
+                        />
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ))}
@@ -864,15 +990,18 @@ export default function SkuMappingSection() {
       {/* Confirm Dialog */}
       <ConfirmDialog
         open={confirm.open}
-        title={t("skuMapping.deleteTitle")}
-        message={t("skuMapping.deleteMessage")}
-        onConfirm={() => {
-          handleDeleteMapping(confirm.id);
-          setConfirm({ open: false, type: null, id: null, data: null });
-        }}
-        onCancel={() =>
-          setConfirm({ open: false, type: null, id: null, data: null })
+        title={
+          confirm.type === "restore"
+            ? t("skuMapping.restoreTitle")
+            : t("skuMapping.deleteTitle")
         }
+        message={
+          confirm.type === "restore"
+            ? t("skuMapping.restoreMessage")
+            : t("skuMapping.deleteMessage")
+        }
+        onConfirm={handleConfirmAction}
+        onCancel={closeConfirmDialog}
       />
     </div>
   );
