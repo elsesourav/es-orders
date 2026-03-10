@@ -19,13 +19,14 @@ import { getMarketplaceInfo } from "./utils";
  * @param {() => void}            props.onImageError  Image error callback.
  * @param {(index: number) => void} props.onSelectItem Select a different item.
  * @param {(sku: string) => void}   props.onCopySku   Copy SKU to clipboard.
- * @param {boolean} props.copiedSku          Flash state after copy.
+ * @param {string | null} props.copiedSku    Last copied SKU value for flash state.
  */
 const OrderCard = ({
   order,
   productDetails,
   selectedItemIndex,
   isActive,
+  isEvenNumberedCard = false,
   orderNumber = undefined,
   onOrderBadgeClick = undefined,
   isImageLoading,
@@ -49,6 +50,9 @@ const OrderCard = ({
   const shouldBlinkQuantity = isActive && Number(item?.quantity || 0) > 1;
   const shouldBlinkItems = isActive && orderItemsCount > 1;
   const orderIdentity = String(order?.orderId || order?.order_id || "");
+  const sectionSurfaceClass = isEvenNumberedCard
+    ? "bg-black/10 dark:bg-white/10"
+    : "bg-white dark:bg-gray-800";
 
   useEffect(() => {
     setIsQuantityBlinkOn(false);
@@ -151,7 +155,9 @@ const OrderCard = ({
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
       {/* ── Product section ───────────────────────────────────────────── */}
-      <div className="w-full relative bg-white dark:bg-gray-800 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+      <div
+        className={`w-full relative ${sectionSurfaceClass} rounded-lg p-2 border border-gray-200 dark:border-gray-700`}
+      >
         {/* Badges row */}
         <div className="grid gap-2 items-center">
           <div className="grid w-full grid-cols-[1fr_60px_100px] items-center gap-2">
@@ -243,6 +249,18 @@ const OrderCard = ({
             hasMultipleItems ? "grid-cols-[1fr_50px] px-10" : ""
           }`}
         >
+          {/* show flipkart or shopsy icon very left top */}
+          {marketplaceInfo &&
+            (marketplaceInfo.label === "Flipkart" ? (
+              <div className="absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-gray-900/80 p-0.5 border border-gray-700 shadow-sm">
+                <SiFlipkart className="size-6 text-yellow-400" />
+              </div>
+            ) : (
+              <div className="absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-1 border border-gray-200 shadow-sm">
+                <FaShopify className="size-6 text-[#81BF37]" />
+              </div>
+            ))}
+
           <div className="my-1 flex justify-center">
             <div className="relative w-full max-w-[min(45vw,45vh)] min-h-[min(30vw,30vh)] max-h-[min(45vw,45vh)]">
               {isActive && isImageLoading && (
@@ -289,24 +307,33 @@ const OrderCard = ({
           )}
         </div>
 
+        {/* Product title */}
+        <div className="p-2 mb-2 bg-gray-50 dark:bg-primary-900/20 rounded-md border border-primary-200 dark:border-primary-700">
+          <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-4 leading-relaxed">
+            {item.title}
+            {". "}
+            <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
+              Price: ₹{item.price}{" "}
+              {Number(item.price || "0") / Number(item.quantity) > 300
+                ? "❤️"
+                : ""}
+            </span>
+          </p>
+        </div>
+
         {/* SKU row */}
         <SkuRow
+          newSku={item.newSku}
           sku={item.sku}
-          marketplaceInfo={marketplaceInfo}
           onCopy={onCopySku}
           copied={copiedSku}
         />
-
-        {/* Product title */}
-        <div className="p-2 bg-gray-50 dark:bg-primary-900/20 rounded-md border border-primary-200 dark:border-primary-700">
-          <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-4 leading-relaxed">
-            {item.title}
-          </p>
-        </div>
       </div>
 
       {/* ── Buyer details ─────────────────────────────────────────────── */}
-      <div className="bg-white dark:bg-gray-800 rounded-md p-2 border border-gray-200 dark:border-gray-700">
+      <div
+        className={`${sectionSurfaceClass} rounded-md p-2 border border-gray-200 dark:border-gray-700`}
+      >
         <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
           <div className="w-1 h-4 bg-primary rounded-full" />
           {t("orders.buyerDetails")}
@@ -347,56 +374,106 @@ const Badge = ({
   </div>
 );
 
-/** SKU display + copy button row. */
-const SkuRow = ({ sku, marketplaceInfo, onCopy, copied }) => (
-  <div className="w-[86%] mx-auto mb-2 py-0 px-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
-    <div className="flex items-center justify-between gap-2">
-      <p className="text-xs flex items-center gap-1 text-gray-600 dark:text-gray-400 flex-1 min-w-0">
-        <span className="font-semibold text-gray-900 dark:text-gray-200">
-          SKU:
-        </span>{" "}
-        <span className="font-mono text-xs break-all max-w-3xs truncate">
-          {sku}
+/** SKU display + copy buttons in two rows. */
+const SkuRow = ({ sku, newSku, onCopy, copied }) => {
+  const oldSkuValue = String(sku || "").trim();
+  const newSkuValue = String(newSku || "").trim();
+  const [lastCopiedTarget, setLastCopiedTarget] = useState<
+    "New SKU" | "Old SKU" | null
+  >(null);
+  const sameValue = Boolean(
+    newSkuValue && oldSkuValue && newSkuValue === oldSkuValue,
+  );
+
+  const isNewSkuCopied = Boolean(
+    newSkuValue &&
+    copied === newSkuValue &&
+    (!sameValue || lastCopiedTarget === "New SKU"),
+  );
+  const isOldSkuCopied = Boolean(
+    oldSkuValue &&
+    copied === oldSkuValue &&
+    (!sameValue || lastCopiedTarget === "Old SKU"),
+  );
+
+  return (
+    <div className="w-[90%] mx-auto px-1.5 py-0.5 opacity-50 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
+      <div className="grid grid-cols-[40px_minmax(0,1fr)_25px] items-center gap-x-2 gap-y-0.5">
+        <span className="text-[11px] font-semibold text-gray-900 dark:text-gray-200">
+          N SKU:
         </span>
-        {marketplaceInfo && (
-          <span
-            className={`ml-1 inline-flex items-center text-[10px]`}
-            title={marketplaceInfo.label}
-          >
-            {marketplaceInfo.label === "Flipkart" ? (
-              <SiFlipkart className="size-5 text-yellow-300" />
-            ) : (
-              <FaShopify className="size-6 text-[#81BF37]" />
-            )}
-          </span>
-        )}
-      </p>
-      <button
-        onClick={() => onCopy?.(sku)}
-        className="shrink-0 p-1.5 rounded-md transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95"
-        title="Copy SKU"
-      >
-        {copied ? (
-          <svg
-            className="w-4 h-4 text-success"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        ) : (
-          <Copy className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-        )}
-      </button>
+        <span className="font-mono text-xs truncate text-gray-900 dark:text-gray-100">
+          {newSkuValue || "-"}
+        </span>
+        <button
+          onClick={() => {
+            if (newSkuValue) {
+              setLastCopiedTarget("New SKU");
+              onCopy?.(newSkuValue);
+            }
+          }}
+          disabled={!newSkuValue}
+          className="shrink-0 p-1 rounded-md transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          title="Copy New SKU"
+        >
+          {isNewSkuCopied ? (
+            <svg
+              className="w-4 h-4 text-success"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          ) : (
+            <Copy className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+          )}
+        </button>
+
+        <span className="text-[11px] font-semibold text-gray-900 dark:text-gray-200">
+          M SKU:
+        </span>
+        <span className="font-mono text-xs truncate text-gray-900 dark:text-gray-100">
+          {oldSkuValue || "-"}
+        </span>
+        <button
+          onClick={() => {
+            if (oldSkuValue) {
+              setLastCopiedTarget("Old SKU");
+              onCopy?.(oldSkuValue);
+            }
+          }}
+          disabled={!oldSkuValue}
+          className="shrink-0 p-1 rounded-md transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          title="Copy Old SKU"
+        >
+          {isOldSkuCopied ? (
+            <svg
+              className="w-4 h-4 text-success"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          ) : (
+            <Copy className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+          )}
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 /** Simple label/value cell used in buyer details. */
 const InfoCell = ({ label, value }) => (

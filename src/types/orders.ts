@@ -7,6 +7,7 @@ export interface OrderItem {
   product_id?: string;
   productID?: string;
   [key: string]: unknown;
+  price?: string;
 }
 
 export interface BuyerAddress {

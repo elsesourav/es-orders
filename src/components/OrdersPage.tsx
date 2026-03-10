@@ -17,7 +17,8 @@ const OrdersPage = () => {
   const [product, setProduct] = useState(LOADING_PRODUCT);
 
   const [isImageLoading, setIsImageLoading] = useState(false);
-  const [copiedSku, setCopiedSku] = useState(false);
+  const [copiedSku, setCopiedSku] = useState<string | null>(null);
+  const copiedSkuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleImageLoad = useCallback((url) => {
     if (url) {
@@ -80,17 +81,36 @@ const OrdersPage = () => {
   }, []);
 
   const copySku = useCallback(async (sku) => {
+    const safeSku = String(sku || "").trim();
+    if (!safeSku) return;
+
     try {
       if (window?.isAndroid) {
-        await window?.AndroidClipboard.setText(sku);
+        await window?.AndroidClipboard.setText(safeSku);
       } else {
-        await navigator.clipboard.writeText(sku);
+        await navigator.clipboard.writeText(safeSku);
       }
-      setCopiedSku(true);
-      setTimeout(() => setCopiedSku(false), 2000);
+
+      setCopiedSku(safeSku);
+
+      if (copiedSkuTimerRef.current) {
+        clearTimeout(copiedSkuTimerRef.current);
+      }
+
+      copiedSkuTimerRef.current = setTimeout(() => {
+        setCopiedSku((current) => (current === safeSku ? null : current));
+      }, 2000);
     } catch (error) {
       console.error("Failed to copy SKU:", error);
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (copiedSkuTimerRef.current) {
+        clearTimeout(copiedSkuTimerRef.current);
+      }
+    };
   }, []);
 
   const selectOrderRef = useRef<((orderIndex: number) => void) | null>(null);

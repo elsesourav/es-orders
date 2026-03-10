@@ -7,6 +7,7 @@ export interface OrderCardProps {
   productDetails: ProductDetails;
   selectedItemIndex: number;
   isActive: boolean;
+  isEvenNumberedCard?: boolean;
   orderNumber?: number;
   onOrderBadgeClick?: () => void;
   isImageLoading: boolean;
@@ -14,7 +15,7 @@ export interface OrderCardProps {
   onImageError?: () => void;
   onSelectItem?: (index: number) => void;
   onCopySku?: (sku: string) => void;
-  copiedSku: boolean;
+  copiedSku: string | null;
 }
 
 export interface OrderPagesListProps {
@@ -28,6 +29,6 @@ export interface OrderPagesListProps {
   onImageError: () => void;
   onSelectItem: (index: number) => void;
   onCopySku: (sku: string) => void;
-  copiedSku: boolean;
+  copiedSku: string | null;
   resolveProduct: (item: any) => ProductDetails;
 }

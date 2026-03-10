@@ -150,7 +150,7 @@ const HomePage = ({ onNavigateToOrders }) => {
                       <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                         {t("home.rtd")}
                       </h4>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-lg text-gray-600 dark:text-gray-400">
                         {state.rtd?.length || 0} {t("home.items")}
                       </p>
                     </div>
@@ -170,7 +170,7 @@ const HomePage = ({ onNavigateToOrders }) => {
                       <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                         {t("home.handover")}
                       </h4>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-lg text-gray-600 dark:text-gray-400">
                         {state.handover?.length || 0} {t("home.items")}
                       </p>
                     </div>

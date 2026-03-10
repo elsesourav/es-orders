@@ -23,21 +23,29 @@ export default function CustomAlert({
     info: {
       bg: "#6366f1", // primary
       bgLight: "#818cf8", // primary-light
+      text: "#eef2ff",
+      textLight: "#1e1b4b",
       icon: "ℹ️",
     },
     success: {
       bg: "#10b981", // success
       bgLight: "#34d399", // success-light
+      text: "#ecfdf5",
+      textLight: "#052e16",
       icon: "✓",
     },
     error: {
       bg: "#f43f5e", // danger
       bgLight: "#fb7185", // danger-light
+      text: "#fff1f2",
+      textLight: "#4c0519",
       icon: "✕",
     },
     warning: {
       bg: "#f59e0b", // warning
       bgLight: "#fbbf24", // warning-light
+      text: "#1f2937",
+      textLight: "#422006",
       icon: "⚠",
     },
   };
@@ -64,6 +72,8 @@ export default function CustomAlert({
   const alertStyle = {
     "--alert-bg": colors.bg,
     "--alert-bg-light": colors.bgLight,
+    "--alert-text": colors.text,
+    "--alert-text-light": colors.textLight,
   } as CSSProperties;
 
   return (
@@ -87,11 +97,6 @@ export default function CustomAlert({
         />
       </div>
       <style>{`
-        :root {
-          --alert-dark-primary: rgb(40, 41, 42);
-          --alert-dark-secondary: rgb(60, 60, 60);
-        }
-
         .custom-alert {
           position: fixed;
           left: 50%;
@@ -106,14 +111,14 @@ export default function CustomAlert({
           max-width: 480px;
           padding: 16px 20px;
           border-radius: 16px;
-          background: var(--alert-dark-secondary);
-          color: var(--alert-dark-primary);
+          background: var(--alert-bg);
+          color: var(--alert-text);
           font-weight: 500;
           box-shadow: 
             0 10px 40px rgba(0, 0, 0, 0.3),
             0 2px 8px rgba(0, 0, 0, 0.2),
             inset 0 1px 0 rgba(255, 255, 255, 0.1);
-          border: 1px solid var(--alert-dark-primary);
+          border: 1px solid rgba(255, 255, 255, 0.2);
           backdrop-filter: blur(10px);
           transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
           overflow: hidden;
@@ -164,9 +169,9 @@ export default function CustomAlert({
         }
         
         .alert-close {
-          background: var(--alert-dark-primary);
-          border: none;
-          color: var(--alert-dark-secondary);
+          background: rgba(255, 255, 255, 0.18);
+          border: 1px solid rgba(255, 255, 255, 0.24);
+          color: inherit;
           width: 28px;
           height: 28px;
           border-radius: 8px;
@@ -182,7 +187,7 @@ export default function CustomAlert({
         }
         
         .alert-close:hover {
-          background: var(--alert-dark-primary);
+          background: rgba(255, 255, 255, 0.28);
           transform: scale(1.1) rotate(90deg);
         }
         
@@ -197,8 +202,8 @@ export default function CustomAlert({
           height: 4px;
           background: linear-gradient(
             90deg,
-            var(--alert-dark-primary),
-            var(--alert-dark-secondary)
+            rgba(255, 255, 255, 0.85),
+            rgba(255, 255, 255, 0.45)
           );
           animation: progressShrink linear forwards;
           border-radius: 0 0 16px 16px;
@@ -222,7 +227,7 @@ export default function CustomAlert({
         /* Light theme adjustments */
         .light-theme .custom-alert {
           background: var(--alert-bg-light);
-          color: #1e293b;
+          color: var(--alert-text-light);
           box-shadow: 
             0 10px 40px rgba(0, 0, 0, 0.15),
             0 2px 8px rgba(0, 0, 0, 0.1),
@@ -232,7 +237,8 @@ export default function CustomAlert({
         
         .light-theme .alert-close {
           background: rgba(0, 0, 0, 0.1);
-          color: #1e293b;
+          border-color: rgba(0, 0, 0, 0.14);
+          color: inherit;
         }
         
         .light-theme .alert-close:hover {

@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { Swiper as SwiperInstance } from "swiper";
+import "swiper/css";
+import { A11y } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import OrderCard from "./OrderCard";
 import type { OrderPagesListProps } from "./types";
 
 const HOTZONE_DEBUG_MODE = false;
-const SWIPE_DEBUG_LOG = false;
+const SWIPE_TRANSITION_MS = 220;
+const EDGE_RESISTANCE_RATIO = 0.28;
+// Swiper touch ratio. Example: 5px finger move -> 10px swipe movement.
+const TOUCH_SCROLL_MULTIPLIER = 2;
 
 const OrderPagesList = ({
   orders,
@@ -23,162 +30,36 @@ const OrderPagesList = ({
   const FORWARD_RENDER_WINDOW = 5;
   const BACKWARD_RENDER_WINDOW = 2;
   const EDGE_PRELOAD_EXTRA = 2;
-  const SWIPE_NEXT_THRESHOLD = 0.03;
-  const RELEASE_SETTLE_DELAY_MS = 95;
-  const IDLE_SETTLE_DELAY_MS = 120;
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const gestureStartLeftRef = useRef<number | null>(null);
-  const isPointerDownRef = useRef(false);
-  const isTouchActiveRef = useRef(false);
-  const activePointerIdRef = useRef<number | null>(null);
-  const lastDragLogAtRef = useRef(0);
-  const lastScrollProgressRef = useRef(0);
+  const swiperRef = useRef<SwiperInstance | null>(null);
+  const previousSelectedIndexRef = useRef<number | null>(null);
   const [isOrderPickerOpen, setIsOrderPickerOpen] = useState(false);
   const [isOrderPickerVisible, setIsOrderPickerVisible] = useState(false);
   const [orderJumpValue, setOrderJumpValue] = useState("");
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [scrollDirection, setScrollDirection] = useState<-1 | 0 | 1>(0);
 
-  const logSwipe = (phase: string, payload: Record<string, unknown>) => {
-    if (!SWIPE_DEBUG_LOG) return;
-    console.log("[OrdersSwipe]", { phase, ...payload });
-  };
-
-  const logDragProgress = (
-    source: "scroll" | "pointermove" | "touchmove",
-    force = false,
-  ) => {
-    const container = containerRef.current;
-    if (!container || !SWIPE_DEBUG_LOG) return;
-
-    const now = Date.now();
-    if (!force && now - lastDragLogAtRef.current < 120) return;
-    lastDragLogAtRef.current = now;
-
-    const width = container.clientWidth || 1;
-    const startLeft =
-      gestureStartLeftRef.current ??
-      (selectedOrderIndex !== null
-        ? selectedOrderIndex * width
-        : container.scrollLeft);
-    const startIndex = Math.round(startLeft / width);
-    const rawIndex = container.scrollLeft / width;
-    const deltaPages = (container.scrollLeft - startLeft) / width;
-
-    logSwipe("drag", {
-      source,
-      startIndex,
-      rawIndex: Number(rawIndex.toFixed(3)),
-      deltaPages: Number(deltaPages.toFixed(3)),
-      scrollLeft: Math.round(container.scrollLeft),
-    });
-  };
-
-  const pageRefs = useMemo<(HTMLDivElement | null)[]>(
-    () => Array.from({ length: orders.length }, () => null),
-    [orders.length],
-  );
-
   useEffect(() => {
-    if (selectedOrderIndex === null) return undefined;
-    const pageNode = pageRefs[selectedOrderIndex];
-    if (!pageNode) return undefined;
+    if (selectedOrderIndex === null) return;
 
-    lastScrollProgressRef.current = selectedOrderIndex;
-    setScrollProgress(selectedOrderIndex);
-
-    pageNode.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "nearest",
-    });
-
-    gestureStartLeftRef.current = null;
+    const previous = previousSelectedIndexRef.current;
+    if (previous !== null && previous !== selectedOrderIndex) {
+      setScrollDirection(selectedOrderIndex > previous ? 1 : -1);
+    }
+    previousSelectedIndexRef.current = selectedOrderIndex;
 
     return undefined;
-  }, [pageRefs, selectedOrderIndex]);
+  }, [selectedOrderIndex]);
 
-  const settleToNearest = () => {
-    const container = containerRef.current;
-    if (!container) return;
+  useEffect(() => {
+    if (selectedOrderIndex === null) return;
 
-    const width = container.clientWidth || 1;
-    const rawIndex = container.scrollLeft / width;
-    const gestureStartLeft = gestureStartLeftRef.current;
+    const swiper = swiperRef.current;
+    if (!swiper || swiper.destroyed) return;
 
-    let nextIndex = Math.round(rawIndex);
-
-    if (gestureStartLeft !== null) {
-      const gestureStartIndex = Math.round(gestureStartLeft / width);
-      const gestureDeltaPages =
-        (container.scrollLeft - gestureStartLeft) / width;
-      const absGestureDeltaPages = Math.abs(gestureDeltaPages);
-      const roundedRawIndex = Math.round(rawIndex);
-
-      if (absGestureDeltaPages < SWIPE_NEXT_THRESHOLD) {
-        nextIndex = gestureStartIndex;
-      } else {
-        const directionalStep = gestureDeltaPages > 0 ? 1 : -1;
-
-        // If raw position has crossed one or more page boundaries, respect it.
-        // Otherwise still move at least one page in drag direction.
-        nextIndex =
-          roundedRawIndex === gestureStartIndex
-            ? gestureStartIndex + directionalStep
-            : roundedRawIndex;
-      }
-
-      if (SWIPE_DEBUG_LOG) {
-        const action =
-          nextIndex > gestureStartIndex
-            ? "next"
-            : nextIndex < gestureStartIndex
-              ? "prev"
-              : "stay";
-
-        logSwipe("settle", {
-          startIndex: gestureStartIndex,
-          rawIndex: Number(rawIndex.toFixed(3)),
-          deltaPages: Number(gestureDeltaPages.toFixed(3)),
-          roundedRawIndex,
-          threshold: SWIPE_NEXT_THRESHOLD,
-          action,
-        });
-      }
+    if (swiper.activeIndex !== selectedOrderIndex) {
+      swiper.slideTo(selectedOrderIndex, SWIPE_TRANSITION_MS);
     }
-
-    const clamped = Math.max(0, Math.min(orders.length - 1, nextIndex));
-    const targetLeft = clamped * width;
-
-    if (SWIPE_DEBUG_LOG && gestureStartLeft !== null) {
-      logSwipe("commit", {
-        from: selectedOrderIndex,
-        to: clamped,
-      });
-    }
-
-    container.scrollTo({ left: targetLeft, behavior: "smooth" });
-
-    if (clamped !== selectedOrderIndex) {
-      onSelectOrder(clamped);
-    }
-
-    gestureStartLeftRef.current = null;
-  };
-
-  const scheduleSettle = (delay = 140) => {
-    if (settleTimerRef.current) {
-      clearTimeout(settleTimerRef.current);
-    }
-    settleTimerRef.current = setTimeout(() => {
-      if (isPointerDownRef.current || isTouchActiveRef.current) {
-        return;
-      }
-      settleToNearest();
-    }, delay);
-  };
+  }, [selectedOrderIndex]);
 
   const openOrderPicker = () => {
     const startValue =
@@ -225,196 +106,54 @@ const OrderPagesList = ({
     closeOrderPicker();
   };
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return undefined;
+  const handleSlideChange = (swiper: SwiperInstance) => {
+    const nextIndex = swiper.activeIndex;
+    const currentIndex = selectedOrderIndex ?? nextIndex;
 
-    const handleScroll = () => {
-      const width = container.clientWidth || 1;
-      const nextProgress = container.scrollLeft / width;
-      const delta = nextProgress - lastScrollProgressRef.current;
-
-      if (Math.abs(delta) >= 0.01) {
-        const nextDirection: -1 | 1 = delta > 0 ? 1 : -1;
-        setScrollDirection((prev) =>
-          prev === nextDirection ? prev : nextDirection,
-        );
-      }
-
-      lastScrollProgressRef.current = nextProgress;
-      setScrollProgress(nextProgress);
-
-      if (isPointerDownRef.current || isTouchActiveRef.current) {
-        logDragProgress("scroll");
-      }
-
-      if (!isPointerDownRef.current && !isTouchActiveRef.current) {
-        scheduleSettle(IDLE_SETTLE_DELAY_MS);
-      }
-    };
-
-    const handlePointerDown = (event: PointerEvent) => {
-      isPointerDownRef.current = true;
-      activePointerIdRef.current = event.pointerId;
-      gestureStartLeftRef.current = container.scrollLeft;
-      lastDragLogAtRef.current = 0;
-      logSwipe("pointerdown", {
-        pointerType: event.pointerType,
-        pointerId: event.pointerId,
-        startIndex: Math.round(
-          container.scrollLeft / (container.clientWidth || 1),
-        ),
-      });
-      if (settleTimerRef.current) {
-        clearTimeout(settleTimerRef.current);
-      }
-    };
-
-    const handlePointerMove = (event: PointerEvent) => {
-      if (
-        !isPointerDownRef.current ||
-        (activePointerIdRef.current !== null &&
-          event.pointerId !== activePointerIdRef.current)
-      ) {
-        return;
-      }
-
-      logDragProgress("pointermove");
-    };
-
-    const handlePointerUp = (event: PointerEvent) => {
-      if (
-        activePointerIdRef.current !== null &&
-        event.pointerId !== activePointerIdRef.current
-      ) {
-        return;
-      }
-      logDragProgress("pointermove", true);
-      logSwipe("pointerup", {
-        pointerType: event.pointerType,
-        pointerId: event.pointerId,
-      });
-      isPointerDownRef.current = false;
-      activePointerIdRef.current = null;
-      scheduleSettle(RELEASE_SETTLE_DELAY_MS);
-    };
-
-    const handlePointerCancel = (event: PointerEvent) => {
-      if (
-        activePointerIdRef.current !== null &&
-        event.pointerId !== activePointerIdRef.current
-      ) {
-        return;
-      }
-      logSwipe("pointercancel", {
-        pointerType: event.pointerType,
-        pointerId: event.pointerId,
-        touchActive: isTouchActiveRef.current,
-      });
-      isPointerDownRef.current = false;
-      activePointerIdRef.current = null;
-
-      // On touch devices, pointer events often cancel while touch events continue.
-      // Keep gesture start so touchmove/touchend keep correct delta calculations.
-      if (event.pointerType !== "touch") {
-        gestureStartLeftRef.current = null;
-        scheduleSettle(IDLE_SETTLE_DELAY_MS);
-      }
-    };
-
-    const handleTouchStart = (event: TouchEvent) => {
-      isTouchActiveRef.current = true;
-      gestureStartLeftRef.current = container.scrollLeft;
-      lastDragLogAtRef.current = 0;
-      logSwipe("touchstart", {
-        touches: event.touches.length,
-        startIndex: Math.round(
-          container.scrollLeft / (container.clientWidth || 1),
-        ),
-      });
-      if (settleTimerRef.current) {
-        clearTimeout(settleTimerRef.current);
-      }
-    };
-
-    const handleTouchMove = () => {
-      if (!isTouchActiveRef.current) return;
-      logDragProgress("touchmove");
-    };
-
-    const handleTouchEnd = (event: TouchEvent) => {
-      logDragProgress("touchmove", true);
-      logSwipe("touchend", {
-        touches: event.touches.length,
-        changedTouches: event.changedTouches.length,
-      });
-      isTouchActiveRef.current = false;
-      scheduleSettle(RELEASE_SETTLE_DELAY_MS);
-    };
-
-    container.addEventListener("scroll", handleScroll, { passive: true });
-    container.addEventListener("pointerdown", handlePointerDown);
-    container.addEventListener("pointermove", handlePointerMove);
-    container.addEventListener("pointerup", handlePointerUp);
-    container.addEventListener("pointercancel", handlePointerCancel);
-    container.addEventListener("touchstart", handleTouchStart, {
-      passive: true,
-    });
-    container.addEventListener("touchmove", handleTouchMove, {
-      passive: true,
-    });
-    container.addEventListener("touchend", handleTouchEnd, {
-      passive: true,
-    });
-    container.addEventListener("touchcancel", handleTouchEnd, {
-      passive: true,
-    });
-
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-      container.removeEventListener("pointerdown", handlePointerDown);
-      container.removeEventListener("pointermove", handlePointerMove);
-      container.removeEventListener("pointerup", handlePointerUp);
-      container.removeEventListener("pointercancel", handlePointerCancel);
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchmove", handleTouchMove);
-      container.removeEventListener("touchend", handleTouchEnd);
-      container.removeEventListener("touchcancel", handleTouchEnd);
-      if (settleTimerRef.current) {
-        clearTimeout(settleTimerRef.current);
-      }
-    };
-  }, [
-    IDLE_SETTLE_DELAY_MS,
-    RELEASE_SETTLE_DELAY_MS,
-    onSelectOrder,
-    orders.length,
-    selectedOrderIndex,
-    SWIPE_NEXT_THRESHOLD,
-  ]);
+    if (nextIndex !== currentIndex) {
+      setScrollDirection(nextIndex > currentIndex ? 1 : -1);
+      onSelectOrder(nextIndex);
+    }
+  };
 
   if (!orders.length || selectedOrderIndex === null) return null;
 
   return (
     <div className="h-full py-1 md:py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20 relative overflow-hidden">
-      <div
-        ref={containerRef}
-        className="h-full flex items-start overflow-x-auto no-scrollbar snap-x snap-mandatory overscroll-x-contain"
-        style={{
-          scrollSnapType: "x mandatory",
-          scrollBehavior: "smooth",
-          WebkitOverflowScrolling: "touch",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
+      <Swiper
+        modules={[A11y]}
+        className="h-full"
+        slidesPerView={1}
+        speed={SWIPE_TRANSITION_MS}
+        resistance
+        resistanceRatio={EDGE_RESISTANCE_RATIO}
+        threshold={4}
+        touchRatio={TOUCH_SCROLL_MULTIPLIER}
+        touchAngle={35}
+        followFinger
+        allowTouchMove={orders.length > 1}
+        noSwiping
+        noSwipingSelector="button, input, textarea, select, a, [role='button']"
+        touchStartPreventDefault={false}
+        preventClicks={false}
+        preventClicksPropagation={false}
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+
+          if (swiper.activeIndex !== selectedOrderIndex) {
+            swiper.slideTo(selectedOrderIndex, 0, false);
+          }
         }}
+        onSlideChange={handleSlideChange}
       >
         {orders.map((order, index) => {
           const isActive = index === selectedOrderIndex;
           const isOddPage = index % 2 === 1;
-          const distance = Math.abs(scrollProgress - index);
+          const isEvenNumberedCard = (index + 1) % 2 === 0;
+          const distance = Math.abs(selectedOrderIndex - index);
           const scale = Math.max(0.92, 1 - distance * 0.08);
           const opacity = Math.max(0.72, 1 - distance * 0.2);
-          const referenceIndex = Math.round(scrollProgress);
+          const referenceIndex = selectedOrderIndex;
           const remainingRight = orders.length - 1 - referenceIndex;
           const remainingLeft = referenceIndex;
 
@@ -445,47 +184,48 @@ const OrderPagesList = ({
             (index >= renderStart && index <= renderEnd) || isActive;
 
           return (
-            <div
+            <SwiperSlide
               key={`${order.orderId || order.order_id || index}-${index}`}
-              ref={(element) => {
-                pageRefs[index] = element;
-              }}
-              className={`relative flex-none w-full h-full p-1 snap-start rounded-xl ${
-                isOddPage
-                  ? "bg-indigo-50/70 dark:bg-indigo-950/30"
-                  : "bg-transparent"
-              }`}
-              style={{
-                scrollSnapAlign: "start",
-                transform: `scale(${scale})`,
-                opacity,
-                transition: "transform 220ms ease, opacity 220ms ease",
-              }}
+              className="h-full!"
             >
-              {shouldRenderCard ? (
-                <OrderCard
-                  order={order}
-                  productDetails={
-                    isActive ? product : resolveProduct(order.orderItems?.[0])
-                  }
-                  selectedItemIndex={isActive ? selectedItemIndex : 0}
-                  isActive={isActive}
-                  orderNumber={index + 1}
-                  onOrderBadgeClick={isActive ? openOrderPicker : undefined}
-                  isImageLoading={isActive ? isImageLoading : false}
-                  onImageLoad={onImageLoad}
-                  onImageError={onImageError}
-                  onSelectItem={isActive ? onSelectItem : undefined}
-                  onCopySku={onCopySku}
-                  copiedSku={copiedSku}
-                />
-              ) : (
-                <div className="h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/50" />
-              )}
-            </div>
+              <div
+                className={`relative w-full h-full p-1 rounded-xl ${
+                  isOddPage
+                    ? "bg-indigo-50/70 dark:bg-indigo-950/30"
+                    : "bg-transparent"
+                }`}
+                style={{
+                  transform: `scale(${scale})`,
+                  opacity,
+                  transition: "transform 220ms ease, opacity 220ms ease",
+                }}
+              >
+                {shouldRenderCard ? (
+                  <OrderCard
+                    order={order}
+                    productDetails={
+                      isActive ? product : resolveProduct(order.orderItems?.[0])
+                    }
+                    selectedItemIndex={isActive ? selectedItemIndex : 0}
+                    isActive={isActive}
+                    isEvenNumberedCard={isEvenNumberedCard}
+                    orderNumber={index + 1}
+                    onOrderBadgeClick={isActive ? openOrderPicker : undefined}
+                    isImageLoading={isActive ? isImageLoading : false}
+                    onImageLoad={onImageLoad}
+                    onImageError={onImageError}
+                    onSelectItem={isActive ? onSelectItem : undefined}
+                    onCopySku={onCopySku}
+                    copiedSku={copiedSku}
+                  />
+                ) : (
+                  <div className="h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/50" />
+                )}
+              </div>
+            </SwiperSlide>
           );
         })}
-      </div>
+      </Swiper>
 
       <div className="absolute inset-y-0 left-0 right-0 z-40 pointer-events-none">
         <button
