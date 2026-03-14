@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { listItems } from "../../api/itemsApi";
 import { getMapSkuByOldSku } from "../../api/mapSkusApi";
+import { useAuth } from "../../lib/AuthContext";
 import { shopsyModifySkuId } from "../../utils/idAndSkuUtils";
 import {
   calculateWeightInGrams,
@@ -12,14 +13,23 @@ import {
  * Hook that owns all data-fetching and product-resolution logic for orders.
  */
 const useOrderData = () => {
+  const { user } = useAuth();
   const [stateData, setStateData] = useState(null);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [skuMappings, setSkuMappings] = useState({});
 
-  // ── Fetch orders from localStorage + products from API ──────────────
+  // ── Fetch selected orders state from user-scoped localStorage ───────
   useEffect(() => {
-    const storedState = localStorage.getItem("es_orders_selected_state");
+    if (!user?.id) {
+      setStateData(null);
+      setOrders([]);
+      return;
+    }
+
+    const storageKey = `es_orders_selected_state:${user.id}`;
+    const storedState = localStorage.getItem(storageKey);
+
     if (storedState) {
       try {
         const parsedState = JSON.parse(storedState);
@@ -31,9 +41,18 @@ const useOrderData = () => {
         setOrders(ordersArray || []);
       } catch (error) {
         console.error("Error parsing stored state:", error);
+        setStateData(null);
+        setOrders([]);
       }
+      return;
     }
 
+    setStateData(null);
+    setOrders([]);
+  }, [user?.id]);
+
+  // ── Fetch products from API ──────────────────────────────────────────
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await listItems();
@@ -47,6 +66,7 @@ const useOrderData = () => {
         console.error("Error fetching products:", error);
       }
     };
+
     fetchProducts();
   }, []);
 

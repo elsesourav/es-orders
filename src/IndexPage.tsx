@@ -21,7 +21,16 @@ function IndexPage() {
     if (!navigationFlag) {
       // This is a fresh app load/reload, clear the orders state
       console.log("Fresh app load detected - clearing orders state");
-      localStorage.removeItem("es_orders_selected_state");
+
+      const stateKeysToRemove: string[] = [];
+      for (let index = 0; index < localStorage.length; index += 1) {
+        const key = localStorage.key(index);
+        if (key && key.startsWith("es_orders_selected_state")) {
+          stateKeysToRemove.push(key);
+        }
+      }
+      stateKeysToRemove.forEach((key) => localStorage.removeItem(key));
+
       // Set navigation flag for subsequent page changes
       sessionStorage.setItem("es_orders_navigation_active", "true");
     }

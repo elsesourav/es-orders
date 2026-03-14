@@ -24594,8 +24594,8 @@ function shouldShowDeprecationWarning() {
   return parseInt(versionMatch[1], 10) <= 18;
 }
 if (shouldShowDeprecationWarning()) console.warn("⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217");
-const supabaseUrl = "https://ykrfhmzuxcdqrvkzaret.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcmZobXp1eGNkcXJ2a3phcmV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NzE0MDYsImV4cCI6MjA4NzQ0NzQwNn0.449cBkA5FMTlTt18mfleUuTpr3iHhTvZhc8rRDLhGX4";
+const supabaseUrl = "https://fwbasjserzhktdfnzqoq.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3YmFzanNlcnpoa3RkZm56cW9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjAwMzgsImV4cCI6MjA4OTAzNjAzOH0.Kl997Fy7cw4Fxu9jDvy2IgfoPcQRFgqqsA3U2TtkAyA";
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 async function getSharedOwnerIds(userId) {
   if (!userId) return [];
@@ -26829,6 +26829,11 @@ const AuthProvider = ({ children }) => {
           name: nextAccount.name ?? null,
           username: nextAccount.username
         });
+        setUserCookie(
+          nextAccount.id,
+          nextAccount.name ?? null,
+          nextAccount.username
+        );
         saveAccountToCookie(
           nextAccount.id,
           nextAccount.name ?? null,
@@ -26836,6 +26841,7 @@ const AuthProvider = ({ children }) => {
         );
       } else {
         setUser(null);
+        removeUserCookie();
       }
     }
     return { success: true, disconnectedCurrent: isCurrent };
@@ -26924,12 +26930,11 @@ const HomePage = ({ onNavigateToOrders }) => {
   const [states, setStates] = reactExports.useState([]);
   const [loading, setLoading] = reactExports.useState(true);
   const [error, setError] = reactExports.useState(null);
-  const hasFetched = reactExports.useRef(false);
+  const selectedStateStorageKey = (user == null ? void 0 : user.id) ? `es_orders_selected_state:${user.id}` : "es_orders_selected_state";
   reactExports.useEffect(() => {
     const fetchOrders = async () => {
-      if (hasFetched.current) return;
-      hasFetched.current = true;
       try {
+        setError(null);
         setLoading(true);
         const response = await listOrderStates();
         const states2 = (response == null ? void 0 : response.map((item) => {
@@ -26948,16 +26953,17 @@ const HomePage = ({ onNavigateToOrders }) => {
       }
     };
     fetchOrders();
-  }, []);
+  }, [user == null ? void 0 : user.id]);
   const handleRTDClick = (e, state) => {
     e.stopPropagation();
     localStorage.setItem(
-      "es_orders_selected_state",
+      selectedStateStorageKey,
       JSON.stringify({
         ...state,
         selectedType: "rtd"
       })
     );
+    localStorage.removeItem("es_orders_selected_state");
     if (onNavigateToOrders) {
       onNavigateToOrders();
     }
@@ -26965,12 +26971,13 @@ const HomePage = ({ onNavigateToOrders }) => {
   const handleHandoverClick = (e, state) => {
     e.stopPropagation();
     localStorage.setItem(
-      "es_orders_selected_state",
+      selectedStateStorageKey,
       JSON.stringify({
         ...state,
         selectedType: "handover"
       })
     );
+    localStorage.removeItem("es_orders_selected_state");
     if (onNavigateToOrders) {
       onNavigateToOrders();
     }
@@ -33348,12 +33355,19 @@ function shopsyModifySkuId(skuId) {
   return skuId;
 }
 const useOrderData = () => {
+  const { user } = useAuth();
   const [stateData, setStateData] = reactExports.useState(null);
   const [orders, setOrders] = reactExports.useState([]);
   const [products, setProducts] = reactExports.useState([]);
   const [skuMappings, setSkuMappings] = reactExports.useState({});
   reactExports.useEffect(() => {
-    const storedState = localStorage.getItem("es_orders_selected_state");
+    if (!(user == null ? void 0 : user.id)) {
+      setStateData(null);
+      setOrders([]);
+      return;
+    }
+    const storageKey = `es_orders_selected_state:${user.id}`;
+    const storedState = localStorage.getItem(storageKey);
     if (storedState) {
       try {
         const parsedState = JSON.parse(storedState);
@@ -33362,8 +33376,15 @@ const useOrderData = () => {
         setOrders(ordersArray || []);
       } catch (error) {
         console.error("Error parsing stored state:", error);
+        setStateData(null);
+        setOrders([]);
       }
+      return;
     }
+    setStateData(null);
+    setOrders([]);
+  }, [user == null ? void 0 : user.id]);
+  reactExports.useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await listItems();
@@ -36097,7 +36118,14 @@ function IndexPage() {
     );
     if (!navigationFlag) {
       console.log("Fresh app load detected - clearing orders state");
-      localStorage.removeItem("es_orders_selected_state");
+      const stateKeysToRemove = [];
+      for (let index = 0; index < localStorage.length; index += 1) {
+        const key = localStorage.key(index);
+        if (key && key.startsWith("es_orders_selected_state")) {
+          stateKeysToRemove.push(key);
+        }
+      }
+      stateKeysToRemove.forEach((key) => localStorage.removeItem(key));
       sessionStorage.setItem("es_orders_navigation_active", "true");
     }
   }, []);

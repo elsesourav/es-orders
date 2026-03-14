@@ -1,6 +1,6 @@
 import { Package, Truck } from "lucide-react";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { listOrderStates } from "../api/ordersStatesApi";
 import { useAuth } from "../lib/AuthContext";
 import { useLanguage } from "../lib/useLanguage";
@@ -11,14 +11,15 @@ const HomePage = ({ onNavigateToOrders }) => {
   const [states, setStates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const hasFetched = useRef(false);
+
+  const selectedStateStorageKey = user?.id
+    ? `es_orders_selected_state:${user.id}`
+    : "es_orders_selected_state";
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (hasFetched.current) return;
-      hasFetched.current = true;
-
       try {
+        setError(null);
         setLoading(true);
         const response = await listOrderStates();
 
@@ -38,17 +39,18 @@ const HomePage = ({ onNavigateToOrders }) => {
     };
 
     fetchOrders();
-  }, []);
+  }, [user?.id]);
 
   const handleRTDClick = (e, state) => {
     e.stopPropagation();
     localStorage.setItem(
-      "es_orders_selected_state",
+      selectedStateStorageKey,
       JSON.stringify({
         ...state,
         selectedType: "rtd",
       }),
     );
+    localStorage.removeItem("es_orders_selected_state");
     if (onNavigateToOrders) {
       onNavigateToOrders();
     }
@@ -57,12 +59,13 @@ const HomePage = ({ onNavigateToOrders }) => {
   const handleHandoverClick = (e, state) => {
     e.stopPropagation();
     localStorage.setItem(
-      "es_orders_selected_state",
+      selectedStateStorageKey,
       JSON.stringify({
         ...state,
         selectedType: "handover",
       }),
     );
+    localStorage.removeItem("es_orders_selected_state");
     if (onNavigateToOrders) {
       onNavigateToOrders();
     }

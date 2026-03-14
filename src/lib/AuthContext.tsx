@@ -5,7 +5,9 @@ import {
   getUserCookie,
   removeAllAuthCookies,
   removeSavedAccountFromCookie,
+  removeUserCookie,
   saveAccountToCookie,
+  setUserCookie,
   signin,
   signup,
   verifyUserCredentials,
@@ -202,6 +204,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           name: nextAccount.name ?? null,
           username: nextAccount.username,
         });
+        setUserCookie(
+          nextAccount.id,
+          nextAccount.name ?? null,
+          nextAccount.username,
+        );
         saveAccountToCookie(
           nextAccount.id,
           nextAccount.name ?? null,
@@ -209,6 +216,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         );
       } else {
         setUser(null);
+        removeUserCookie();
       }
     }
 
