@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { listItems } from "../../api/itemsApi";
 import { getMapSkuByOldSku } from "../../api/mapSkusApi";
+import { listOrderStates } from "../../api/ordersStatesApi";
 import { useAuth } from "../../lib/AuthContext";
+import type { Order, SelectedOrdersState } from "../../types/orders";
 import { shopsyModifySkuId } from "../../utils/idAndSkuUtils";
 import {
   calculateWeightInGrams,
@@ -12,44 +14,83 @@ import {
 /**
  * Hook that owns all data-fetching and product-resolution logic for orders.
  */
-const useOrderData = () => {
+const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
   const { user } = useAuth();
-  const [stateData, setStateData] = useState(null);
-  const [orders, setOrders] = useState([]);
+  const [stateData, setStateData] = useState<SelectedOrdersState | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState([]);
   const [skuMappings, setSkuMappings] = useState({});
 
-  // ── Fetch selected orders state from user-scoped localStorage ───────
+  // ── Resolve selected orders state from memory or API ─────────────────
   useEffect(() => {
-    if (!user?.id) {
-      setStateData(null);
-      setOrders([]);
-      return;
-    }
+    let isCancelled = false;
+    const currentUserId = String(user?.id || "");
 
-    const storageKey = `es_orders_selected_state:${user.id}`;
-    const storedState = localStorage.getItem(storageKey);
+    const applySelectedState = (nextState: SelectedOrdersState | null) => {
+      if (isCancelled) return;
 
-    if (storedState) {
+      setStateData(nextState);
+
+      const ordersArray =
+        nextState?.selectedType === "handover"
+          ? nextState.handover
+          : nextState?.rtd;
+
+      setOrders(Array.isArray(ordersArray) ? ordersArray : []);
+    };
+
+    const fetchLatestState = async () => {
       try {
-        const parsedState = JSON.parse(storedState);
-        setStateData(parsedState);
-        const ordersArray =
-          parsedState.selectedType === "rtd"
-            ? parsedState.rtd
-            : parsedState.handover;
-        setOrders(ordersArray || []);
+        const savedStates = await listOrderStates();
+        const ownStates = (savedStates || []).filter(
+          (item) =>
+            String(item?.user_id ?? item?.created_by ?? "") === currentUserId,
+        );
+        const latestState = ownStates?.[0];
+
+        if (!latestState) {
+          applySelectedState(null);
+          return;
+        }
+
+        const rawSelectedType = latestState?.order_data?.states?.selectedType;
+        const selectedType =
+          rawSelectedType === "handover" || rawSelectedType === "rtd"
+            ? rawSelectedType
+            : "rtd";
+
+        applySelectedState({
+          ...latestState?.order_data?.states,
+          id: latestState?.id,
+          timestamp: latestState?.order_data?.timestamp,
+          userId: String(latestState?.user_id ?? latestState?.created_by ?? ""),
+          selectedType,
+        });
       } catch (error) {
-        console.error("Error parsing stored state:", error);
-        setStateData(null);
-        setOrders([]);
+        console.error("Error fetching latest order state:", error);
+        applySelectedState(null);
       }
-      return;
+    };
+
+    if (!user?.id) {
+      applySelectedState(null);
+    } else {
+      const selectedStateMatchesUser =
+        !!selectedState && selectedState.userId === user.id;
+
+      if (selectedStateMatchesUser && selectedState) {
+        applySelectedState(selectedState);
+      } else {
+        // Clear previous account state immediately to avoid stale UI while fetching.
+        applySelectedState(null);
+        fetchLatestState();
+      }
     }
 
-    setStateData(null);
-    setOrders([]);
-  }, [user?.id]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedState, user?.id]);
 
   // ── Fetch products from API ──────────────────────────────────────────
   useEffect(() => {
@@ -72,7 +113,10 @@ const useOrderData = () => {
 
   // ── Fetch SKU mappings for all orders ───────────────────────────────
   useEffect(() => {
-    if (orders.length === 0) return;
+    if (orders.length === 0) {
+      setSkuMappings({});
+      return;
+    }
 
     const fetchMappings = async () => {
       try {

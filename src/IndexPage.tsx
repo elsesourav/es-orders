@@ -6,35 +6,17 @@ import {
   SettingsPage,
 } from "./components";
 import { useAuth } from "./lib/AuthContext";
+import type { SelectedOrdersState } from "./types/orders";
 
 function IndexPage() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
+  const [selectedOrdersState, setSelectedOrdersState] =
+    useState<SelectedOrdersState | null>(null);
 
-  // Clear orders state on app startup/reload
   useEffect(() => {
-    // Check if this is a fresh app load (not navigation)
-    const navigationFlag = sessionStorage.getItem(
-      "es_orders_navigation_active",
-    );
-
-    if (!navigationFlag) {
-      // This is a fresh app load/reload, clear the orders state
-      console.log("Fresh app load detected - clearing orders state");
-
-      const stateKeysToRemove: string[] = [];
-      for (let index = 0; index < localStorage.length; index += 1) {
-        const key = localStorage.key(index);
-        if (key && key.startsWith("es_orders_selected_state")) {
-          stateKeysToRemove.push(key);
-        }
-      }
-      stateKeysToRemove.forEach((key) => localStorage.removeItem(key));
-
-      // Set navigation flag for subsequent page changes
-      sessionStorage.setItem("es_orders_navigation_active", "true");
-    }
-  }, []); // Run only once on component mount
+    setSelectedOrdersState(null);
+  }, [user?.id]);
 
   // Redirect to settings page if not authenticated
   useEffect(() => {
@@ -43,31 +25,36 @@ function IndexPage() {
     }
   }, [isAuthenticated, loading]);
 
-  // Custom tab change handler to maintain navigation state
   const handleTabChange = (newTab) => {
-    // Ensure navigation flag stays active during tab switching
-    sessionStorage.setItem("es_orders_navigation_active", "true");
     setActiveTab(newTab);
   };
+
+  const handleNavigateToOrders = (state: SelectedOrdersState) => {
+    setSelectedOrdersState(state);
+    handleTabChange("orders");
+  };
+
+  const selectedOrdersStateForCurrentUser =
+    user?.id && selectedOrdersState?.userId === user.id
+      ? selectedOrdersState
+      : null;
 
   const renderContent = () => {
     switch (activeTab) {
       case "home":
-        return (
-          <HomePage onNavigateToOrders={() => handleTabChange("orders")} />
-        );
+        return <HomePage onNavigateToOrders={handleNavigateToOrders} />;
       case "orders":
         // If not authenticated, redirect to settings
         if (!isAuthenticated) {
           return <SettingsPage />;
         }
-        return <OrdersPage />;
+        return (
+          <OrdersPage selectedOrdersState={selectedOrdersStateForCurrentUser} />
+        );
       case "settings":
         return <SettingsPage />;
       default:
-        return (
-          <HomePage onNavigateToOrders={() => handleTabChange("orders")} />
-        );
+        return <HomePage onNavigateToOrders={handleNavigateToOrders} />;
     }
   };
 

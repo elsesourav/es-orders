@@ -43,3 +43,9 @@ export interface StateData {
   handover?: Order[];
   [key: string]: unknown;
 }
+
+export interface SelectedOrdersState extends StateData {
+  id?: string | number;
+  userId: string;
+  selectedType?: "rtd" | "handover";
+}

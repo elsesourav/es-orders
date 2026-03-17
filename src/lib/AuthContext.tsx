@@ -184,7 +184,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       savedPassword,
     );
     setSavedAccounts(updated);
-
     return { success: true };
   };
 

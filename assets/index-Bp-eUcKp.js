@@ -26930,22 +26930,26 @@ const HomePage = ({ onNavigateToOrders }) => {
   const [states, setStates] = reactExports.useState([]);
   const [loading, setLoading] = reactExports.useState(true);
   const [error, setError] = reactExports.useState(null);
-  const selectedStateStorageKey = (user == null ? void 0 : user.id) ? `es_orders_selected_state:${user.id}` : "es_orders_selected_state";
   reactExports.useEffect(() => {
     const fetchOrders = async () => {
       try {
         setError(null);
         setLoading(true);
         const response = await listOrderStates();
-        const states2 = (response == null ? void 0 : response.map((item) => {
+        const currentUserId = String((user == null ? void 0 : user.id) || "");
+        const ownStates = (response || []).filter(
+          (item) => String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "") === currentUserId
+        );
+        const nextStates = (ownStates == null ? void 0 : ownStates.map((item) => {
           var _a, _b;
           return {
             ...(_a = item == null ? void 0 : item.order_data) == null ? void 0 : _a.states,
             id: item == null ? void 0 : item.id,
-            timestamp: (_b = item == null ? void 0 : item.order_data) == null ? void 0 : _b.timestamp
+            timestamp: (_b = item == null ? void 0 : item.order_data) == null ? void 0 : _b.timestamp,
+            userId: String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "")
           };
         })) || [];
-        setStates(states2);
+        setStates(nextStates);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -26956,31 +26960,19 @@ const HomePage = ({ onNavigateToOrders }) => {
   }, [user == null ? void 0 : user.id]);
   const handleRTDClick = (e, state) => {
     e.stopPropagation();
-    localStorage.setItem(
-      selectedStateStorageKey,
-      JSON.stringify({
-        ...state,
-        selectedType: "rtd"
-      })
-    );
-    localStorage.removeItem("es_orders_selected_state");
-    if (onNavigateToOrders) {
-      onNavigateToOrders();
-    }
+    onNavigateToOrders == null ? void 0 : onNavigateToOrders({
+      ...state,
+      selectedType: "rtd",
+      userId: (user == null ? void 0 : user.id) ?? state.userId
+    });
   };
   const handleHandoverClick = (e, state) => {
     e.stopPropagation();
-    localStorage.setItem(
-      selectedStateStorageKey,
-      JSON.stringify({
-        ...state,
-        selectedType: "handover"
-      })
-    );
-    localStorage.removeItem("es_orders_selected_state");
-    if (onNavigateToOrders) {
-      onNavigateToOrders();
-    }
+    onNavigateToOrders == null ? void 0 : onNavigateToOrders({
+      ...state,
+      selectedType: "handover",
+      userId: (user == null ? void 0 : user.id) ?? state.userId
+    });
   };
   if (loading) {
     return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center", children: [
@@ -33354,36 +33346,62 @@ function shopsyModifySkuId(skuId) {
   }
   return skuId;
 }
-const useOrderData = () => {
+const useOrderData = (selectedState = null) => {
   const { user } = useAuth();
   const [stateData, setStateData] = reactExports.useState(null);
   const [orders, setOrders] = reactExports.useState([]);
   const [products, setProducts] = reactExports.useState([]);
   const [skuMappings, setSkuMappings] = reactExports.useState({});
   reactExports.useEffect(() => {
-    if (!(user == null ? void 0 : user.id)) {
-      setStateData(null);
-      setOrders([]);
-      return;
-    }
-    const storageKey = `es_orders_selected_state:${user.id}`;
-    const storedState = localStorage.getItem(storageKey);
-    if (storedState) {
+    let isCancelled = false;
+    const currentUserId = String((user == null ? void 0 : user.id) || "");
+    const applySelectedState = (nextState) => {
+      if (isCancelled) return;
+      setStateData(nextState);
+      const ordersArray = (nextState == null ? void 0 : nextState.selectedType) === "handover" ? nextState.handover : nextState == null ? void 0 : nextState.rtd;
+      setOrders(Array.isArray(ordersArray) ? ordersArray : []);
+    };
+    const fetchLatestState = async () => {
+      var _a, _b, _c, _d;
       try {
-        const parsedState = JSON.parse(storedState);
-        setStateData(parsedState);
-        const ordersArray = parsedState.selectedType === "rtd" ? parsedState.rtd : parsedState.handover;
-        setOrders(ordersArray || []);
+        const savedStates = await listOrderStates();
+        const ownStates = (savedStates || []).filter(
+          (item) => String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "") === currentUserId
+        );
+        const latestState = ownStates == null ? void 0 : ownStates[0];
+        if (!latestState) {
+          applySelectedState(null);
+          return;
+        }
+        const rawSelectedType = (_b = (_a = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _a.states) == null ? void 0 : _b.selectedType;
+        const selectedType = rawSelectedType === "handover" || rawSelectedType === "rtd" ? rawSelectedType : "rtd";
+        applySelectedState({
+          ...(_c = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _c.states,
+          id: latestState == null ? void 0 : latestState.id,
+          timestamp: (_d = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _d.timestamp,
+          userId: String((latestState == null ? void 0 : latestState.user_id) ?? (latestState == null ? void 0 : latestState.created_by) ?? ""),
+          selectedType
+        });
       } catch (error) {
-        console.error("Error parsing stored state:", error);
-        setStateData(null);
-        setOrders([]);
+        console.error("Error fetching latest order state:", error);
+        applySelectedState(null);
       }
-      return;
+    };
+    if (!(user == null ? void 0 : user.id)) {
+      applySelectedState(null);
+    } else {
+      const selectedStateMatchesUser = !!selectedState && selectedState.userId === user.id;
+      if (selectedStateMatchesUser && selectedState) {
+        applySelectedState(selectedState);
+      } else {
+        applySelectedState(null);
+        fetchLatestState();
+      }
     }
-    setStateData(null);
-    setOrders([]);
-  }, [user == null ? void 0 : user.id]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedState, user == null ? void 0 : user.id]);
   reactExports.useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -33401,7 +33419,10 @@ const useOrderData = () => {
     fetchProducts();
   }, []);
   reactExports.useEffect(() => {
-    if (orders.length === 0) return;
+    if (orders.length === 0) {
+      setSkuMappings({});
+      return;
+    }
     const fetchMappings = async () => {
       try {
         const allSkus = /* @__PURE__ */ new Set();
@@ -33478,9 +33499,9 @@ const useOrderData = () => {
 };
 const sessionImageCache = /* @__PURE__ */ new Set();
 const inFlightImageLoads = /* @__PURE__ */ new Map();
-const OrdersPage = () => {
+const OrdersPage = ({ selectedOrdersState = null }) => {
   const { t } = useLanguage();
-  const { stateData, orders, products, resolveProduct } = useOrderData();
+  const { stateData, orders, products, resolveProduct } = useOrderData(selectedOrdersState);
   const [selectedOrderIndex, setSelectedOrderIndex] = reactExports.useState(null);
   const [selectedItemIndex, setSelectedItemIndex] = reactExports.useState(0);
   const [product, setProduct] = reactExports.useState(LOADING_PRODUCT);
@@ -33565,6 +33586,16 @@ const OrdersPage = () => {
       }
     };
   }, []);
+  reactExports.useEffect(() => {
+    if (copiedSkuTimerRef.current) {
+      clearTimeout(copiedSkuTimerRef.current);
+      copiedSkuTimerRef.current = null;
+    }
+    setCopiedSku(null);
+    setSelectedOrderIndex(null);
+    setSelectedItemIndex(0);
+    setProduct(LOADING_PRODUCT);
+  }, [stateData == null ? void 0 : stateData.id, stateData == null ? void 0 : stateData.selectedType, stateData == null ? void 0 : stateData.timestamp]);
   const selectOrderRef = reactExports.useRef(null);
   selectOrderRef.current = (orderIndex) => {
     var _a;
@@ -36110,47 +36141,38 @@ const ThemeProvider = ({ children }) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(ThemeContext.Provider, { value: { isDark, toggleTheme }, children });
 };
 function IndexPage() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const [activeTab, setActiveTab] = reactExports.useState("home");
+  const [selectedOrdersState, setSelectedOrdersState] = reactExports.useState(null);
   reactExports.useEffect(() => {
-    const navigationFlag = sessionStorage.getItem(
-      "es_orders_navigation_active"
-    );
-    if (!navigationFlag) {
-      console.log("Fresh app load detected - clearing orders state");
-      const stateKeysToRemove = [];
-      for (let index = 0; index < localStorage.length; index += 1) {
-        const key = localStorage.key(index);
-        if (key && key.startsWith("es_orders_selected_state")) {
-          stateKeysToRemove.push(key);
-        }
-      }
-      stateKeysToRemove.forEach((key) => localStorage.removeItem(key));
-      sessionStorage.setItem("es_orders_navigation_active", "true");
-    }
-  }, []);
+    setSelectedOrdersState(null);
+  }, [user == null ? void 0 : user.id]);
   reactExports.useEffect(() => {
     if (!loading && !isAuthenticated) {
       handleTabChange("settings");
     }
   }, [isAuthenticated, loading]);
   const handleTabChange = (newTab) => {
-    sessionStorage.setItem("es_orders_navigation_active", "true");
     setActiveTab(newTab);
   };
+  const handleNavigateToOrders = (state) => {
+    setSelectedOrdersState(state);
+    handleTabChange("orders");
+  };
+  const selectedOrdersStateForCurrentUser = (user == null ? void 0 : user.id) && (selectedOrdersState == null ? void 0 : selectedOrdersState.userId) === user.id ? selectedOrdersState : null;
   const renderContent = () => {
     switch (activeTab) {
       case "home":
-        return /* @__PURE__ */ jsxRuntimeExports.jsx(HomePage, { onNavigateToOrders: () => handleTabChange("orders") });
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(HomePage, { onNavigateToOrders: handleNavigateToOrders });
       case "orders":
         if (!isAuthenticated) {
           return /* @__PURE__ */ jsxRuntimeExports.jsx(SettingsPage, {});
         }
-        return /* @__PURE__ */ jsxRuntimeExports.jsx(OrdersPage, {});
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(OrdersPage, { selectedOrdersState: selectedOrdersStateForCurrentUser });
       case "settings":
         return /* @__PURE__ */ jsxRuntimeExports.jsx(SettingsPage, {});
       default:
-        return /* @__PURE__ */ jsxRuntimeExports.jsx(HomePage, { onNavigateToOrders: () => handleTabChange("orders") });
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(HomePage, { onNavigateToOrders: handleNavigateToOrders });
     }
   };
   if (loading) {

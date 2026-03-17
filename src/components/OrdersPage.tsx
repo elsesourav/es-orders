@@ -1,6 +1,7 @@
 import { Package } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguage } from "../lib/useLanguage";
+import type { SelectedOrdersState } from "../types/orders";
 import OrderPagesList from "./orders/OrderPagesList";
 import useOrderData from "./orders/useOrderData";
 import { LOADING_PRODUCT } from "./orders/utils";
@@ -8,9 +9,14 @@ import { LOADING_PRODUCT } from "./orders/utils";
 const sessionImageCache = new Set<string>();
 const inFlightImageLoads = new Map<string, Promise<void>>();
 
-const OrdersPage = () => {
+interface OrdersPageProps {
+  selectedOrdersState?: SelectedOrdersState | null;
+}
+
+const OrdersPage = ({ selectedOrdersState = null }: OrdersPageProps) => {
   const { t } = useLanguage();
-  const { stateData, orders, products, resolveProduct } = useOrderData();
+  const { stateData, orders, products, resolveProduct } =
+    useOrderData(selectedOrdersState);
 
   const [selectedOrderIndex, setSelectedOrderIndex] = useState(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
@@ -112,6 +118,17 @@ const OrdersPage = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (copiedSkuTimerRef.current) {
+      clearTimeout(copiedSkuTimerRef.current);
+      copiedSkuTimerRef.current = null;
+    }
+    setCopiedSku(null);
+    setSelectedOrderIndex(null);
+    setSelectedItemIndex(0);
+    setProduct(LOADING_PRODUCT);
+  }, [stateData?.id, stateData?.selectedType, stateData?.timestamp]);
 
   const selectOrderRef = useRef<((orderIndex: number) => void) | null>(null);
   selectOrderRef.current = (orderIndex) => {

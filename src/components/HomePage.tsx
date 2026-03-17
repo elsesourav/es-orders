@@ -4,17 +4,18 @@ import { useEffect, useState } from "react";
 import { listOrderStates } from "../api/ordersStatesApi";
 import { useAuth } from "../lib/AuthContext";
 import { useLanguage } from "../lib/useLanguage";
+import type { SelectedOrdersState } from "../types/orders";
 
-const HomePage = ({ onNavigateToOrders }) => {
+interface HomePageProps {
+  onNavigateToOrders?: (state: SelectedOrdersState) => void;
+}
+
+const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const [states, setStates] = useState([]);
+  const [states, setStates] = useState<SelectedOrdersState[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const selectedStateStorageKey = user?.id
-    ? `es_orders_selected_state:${user.id}`
-    : "es_orders_selected_state";
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -22,15 +23,21 @@ const HomePage = ({ onNavigateToOrders }) => {
         setError(null);
         setLoading(true);
         const response = await listOrderStates();
+        const currentUserId = String(user?.id || "");
+        const ownStates = (response || []).filter(
+          (item) =>
+            String(item?.user_id ?? item?.created_by ?? "") === currentUserId,
+        );
 
-        const states =
-          response?.map((item) => ({
+        const nextStates: SelectedOrdersState[] =
+          ownStates?.map((item) => ({
             ...item?.order_data?.states,
             id: item?.id,
             timestamp: item?.order_data?.timestamp,
+            userId: String(item?.user_id ?? item?.created_by ?? ""),
           })) || [];
 
-        setStates(states);
+        setStates(nextStates);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -41,34 +48,23 @@ const HomePage = ({ onNavigateToOrders }) => {
     fetchOrders();
   }, [user?.id]);
 
-  const handleRTDClick = (e, state) => {
+  const handleRTDClick = (e, state: SelectedOrdersState) => {
     e.stopPropagation();
-    localStorage.setItem(
-      selectedStateStorageKey,
-      JSON.stringify({
-        ...state,
-        selectedType: "rtd",
-      }),
-    );
-    localStorage.removeItem("es_orders_selected_state");
-    if (onNavigateToOrders) {
-      onNavigateToOrders();
-    }
+    onNavigateToOrders?.({
+      ...state,
+      selectedType: "rtd",
+      userId: user?.id ?? state.userId,
+    });
   };
 
-  const handleHandoverClick = (e, state) => {
+  const handleHandoverClick = (e, state: SelectedOrdersState) => {
     e.stopPropagation();
-    localStorage.setItem(
-      selectedStateStorageKey,
-      JSON.stringify({
-        ...state,
-        selectedType: "handover",
-      }),
-    );
-    localStorage.removeItem("es_orders_selected_state");
-    if (onNavigateToOrders) {
-      onNavigateToOrders();
-    }
+
+    onNavigateToOrders?.({
+      ...state,
+      selectedType: "handover",
+      userId: user?.id ?? state.userId,
+    });
   };
 
   if (loading) {
