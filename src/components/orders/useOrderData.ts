@@ -11,6 +11,59 @@ import {
   LOADING_PRODUCT,
 } from "./utils";
 
+const QUANTITY_PART_REGEX = /^(\d+)([a-zA-Z]+)$/;
+
+type ParsedCompositeSku = {
+  itemIds: string[];
+  unit: number;
+  unitType: string;
+  quantityPart: string;
+  itemIdsPart: string;
+  format: "ids-then-qty" | "qty-then-ids";
+};
+
+function parseCompositeSku(value: unknown): ParsedCompositeSku | null {
+  const parts = String(value || "")
+    .split("_")
+    .filter(Boolean);
+
+  if (parts.length < 4) return null;
+
+  const directMatch = parts[3].match(QUANTITY_PART_REGEX);
+  if (directMatch) {
+    return {
+      itemIds: parts[2].split("-").filter(Boolean),
+      unit: parseInt(directMatch[1], 10),
+      unitType: directMatch[2],
+      quantityPart: parts[3],
+      itemIdsPart: parts[2],
+      format: "ids-then-qty",
+    };
+  }
+
+  // Newer shared states are often in this format: PREFIX_PREFIX_10000P_abc
+  const swappedMatch = parts[2].match(QUANTITY_PART_REGEX);
+  if (swappedMatch) {
+    return {
+      itemIds: parts[3].split("-").filter(Boolean),
+      unit: parseInt(swappedMatch[1], 10),
+      unitType: swappedMatch[2],
+      quantityPart: parts[2],
+      itemIdsPart: parts[3],
+      format: "qty-then-ids",
+    };
+  }
+
+  return null;
+}
+
+function normalizeText(value: unknown) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
 /**
  * Hook that owns all data-fetching and product-resolution logic for orders.
  */
@@ -92,24 +145,41 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
     };
   }, [selectedState, user?.id]);
 
-  // ── Fetch products from API ──────────────────────────────────────────
+  // ── Fetch products from API (refresh on account switch) ─────────────
   useEffect(() => {
+    let isCancelled = false;
+
     const fetchProducts = async () => {
+      if (!user?.id) {
+        setProducts([]);
+        return;
+      }
+
+      // Prevent stale previous-account products while new account data loads.
+      setProducts([]);
+
       try {
         const data = await listItems();
-        setProducts(
-          (data || []).map((item) => ({
-            ...item,
-            sku_id: item.sku_id || item.item_sku,
-          })),
-        );
+        if (isCancelled) return;
+
+        const normalizedProducts = (data || []).map((item) => ({
+          ...item,
+          sku_id: item.sku_id || item.item_sku,
+        }));
+
+        setProducts(normalizedProducts);
       } catch (error) {
+        if (isCancelled) return;
         console.error("Error fetching products:", error);
       }
     };
 
     fetchProducts();
-  }, []);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [user?.id]);
 
   // ── Fetch SKU mappings for all orders ───────────────────────────────
   useEffect(() => {
@@ -161,37 +231,76 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
   // ── Resolve product details from an order item ──────────────────────
   const resolveProduct = useCallback(
     (item) => {
-      if (!products.length) return LOADING_PRODUCT;
+      if (!products.length) {
+        return LOADING_PRODUCT;
+      }
 
       const originalSku = item.sku;
       const modified = shopsyModifySkuId(originalSku);
       const sku = skuMappings[modified] || item.newSku || modified;
-      const parts = sku.split("_");
 
-      if (parts.length >= 4) {
-        const itemIds = parts[2].split("-");
-        const quantity = parts[3];
-        const match = quantity.match(/^(\d+)([a-zA-Z]+)$/);
+      const parsedSku = parseCompositeSku(sku);
 
-        if (match) {
-          const unit = parseInt(match[1]);
-          const unitType = match[2];
-          const matched = itemIds.map((id) =>
-            products.find((p) => p.sku_id === id),
+      if (parsedSku) {
+        const matched = parsedSku.itemIds.map((id) =>
+          products.find(
+            (p) =>
+              normalizeText(p.sku_id) === normalizeText(id) ||
+              normalizeText(p.item_sku) === normalizeText(id),
+          ),
+        );
+
+        if (matched.every(Boolean)) {
+          const weight = calculateWeightInGrams(
+            matched.map((p) => p.quantity_per_kg),
+            parsedSku.unit,
+            parsedSku.unitType,
           );
+          return {
+            name: matched.map((p) => p.name).join(", "),
+            label: matched.map((p) => p.label || p.name).join(", "),
+            weight: weight.toFixed(2),
+            unite: parsedSku.unitType,
+          };
+        }
 
-          if (matched.every(Boolean)) {
-            const weight = calculateWeightInGrams(
-              matched.map((p) => p.quantity_per_kg),
-              unit,
-              unitType,
+        // Fallback: match by order item title when SKU token ids are not present in items table.
+        const normalizedTitle = normalizeText(item?.title);
+        if (normalizedTitle) {
+          const titleMatch = products.find((p) => {
+            const productName = normalizeText(p?.name);
+            const productLabel = normalizeText(p?.label);
+
+            return (
+              productName === normalizedTitle ||
+              productLabel === normalizedTitle ||
+              normalizedTitle.includes(productName) ||
+              productName.includes(normalizedTitle) ||
+              (productLabel && normalizedTitle.includes(productLabel)) ||
+              (productLabel && productLabel.includes(normalizedTitle))
             );
-            return {
-              name: matched.map((p) => p.name).join(", "),
-              label: matched.map((p) => p.label || p.name).join(", "),
-              weight: weight.toFixed(2),
-              unite: unitType,
-            };
+          });
+
+          if (titleMatch) {
+            const qtyPerKgValue = Number(titleMatch.quantity_per_kg);
+            const isPieceMode = parsedSku.unitType.toLowerCase() === "p";
+            const canComputePieceWeight = !isPieceMode || qtyPerKgValue > 0;
+
+            if (canComputePieceWeight) {
+              const weight = calculateWeightInGrams(
+                [titleMatch.quantity_per_kg],
+                parsedSku.unit,
+                parsedSku.unitType,
+              );
+
+              return {
+                name: titleMatch.name || item?.title || DEFAULT_PRODUCT.name,
+                label:
+                  titleMatch.label || titleMatch.name || DEFAULT_PRODUCT.label,
+                weight: weight.toFixed(2),
+                unite: parsedSku.unitType,
+              };
+            }
           }
         }
       }
