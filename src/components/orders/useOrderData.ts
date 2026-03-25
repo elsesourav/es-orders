@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { listItems } from "../../api/itemsApi";
-import { getMapSkuByOldSku } from "../../api/mapSkusApi";
+import { getMapSkusObject } from "../../api/mapSkusApi";
 import { listOrderStates } from "../../api/ordersStatesApi";
 import { useAuth } from "../../lib/AuthContext";
 import type { Order, SelectedOrdersState } from "../../types/orders";
@@ -55,6 +55,19 @@ function parseCompositeSku(value: unknown): ParsedCompositeSku | null {
   }
 
   return null;
+}
+
+function parseItemTokens(value: unknown): string[] {
+  const raw = String(value || "").trim();
+  if (!raw) return [];
+
+  const bracketMatch = raw.match(/^\[(.+)\]$/);
+  const tokenSource = bracketMatch ? bracketMatch[1] : raw;
+
+  return tokenSource
+    .split("-")
+    .map((token) => token.trim())
+    .filter(Boolean);
 }
 
 function normalizeText(value: unknown) {
@@ -183,42 +196,30 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
 
   // ── Fetch SKU mappings for all orders ───────────────────────────────
   useEffect(() => {
-    if (orders.length === 0) {
+    if (!user?.id || orders.length === 0) {
       setSkuMappings({});
       return;
     }
 
     const fetchMappings = async () => {
       try {
-        const allSkus = new Set();
-        orders.forEach((order) =>
-          order.orderItems?.forEach(
-            (item) => item.sku && allSkus.add(item.sku),
-          ),
-        );
+        const fullMap = await getMapSkusObject();
+        const allSkus = new Set<string>();
 
-        const results = await Promise.all(
-          Array.from(allSkus).map(async (sku) => {
-            try {
-              const normalizedSku = String(sku || "").trim();
-              if (!normalizedSku) return null;
-
-              const mapping = await getMapSkuByOldSku(normalizedSku);
-              return mapping
-                ? { sku: normalizedSku, newSku: mapping.new_sku }
-                : null;
-            } catch {
-              return null;
-            }
-          }),
-        );
+        orders.forEach((order) => {
+          order.orderItems?.forEach((item) => {
+            const key = String(item?.sku || "").trim();
+            if (key) allSkus.add(key);
+          });
+        });
 
         const mappings: Record<string, string> = {};
-        results.forEach((r) => {
-          if (r && typeof r.sku === "string") {
-            mappings[r.sku] = String(r.newSku || "");
+        allSkus.forEach((sku) => {
+          if (Object.prototype.hasOwnProperty.call(fullMap || {}, sku)) {
+            mappings[sku] = String(fullMap[sku] || "");
           }
         });
+
         setSkuMappings(mappings);
       } catch (error) {
         console.error("Error fetching SKU mappings:", error);
@@ -226,7 +227,7 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
     };
 
     fetchMappings();
-  }, [orders]);
+  }, [orders, user?.id]);
 
   // ── Resolve product details from an order item ──────────────────────
   const resolveProduct = useCallback(
@@ -242,7 +243,11 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
       const parsedSku = parseCompositeSku(sku);
 
       if (parsedSku) {
-        const matched = parsedSku.itemIds.map((id) =>
+        const parsedItemIds = parsedSku.itemIds.flatMap((token) =>
+          parseItemTokens(token),
+        );
+
+        const matched = parsedItemIds.map((id) =>
           products.find(
             (p) =>
               normalizeText(p.sku_id) === normalizeText(id) ||

@@ -26865,8 +26865,8 @@ const AuthProvider = ({ children }) => {
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsx(AuthContext.Provider, { value, children });
 };
-const en = { "common": { "loading": "Loading...", "error": "Error", "success": "Success", "cancel": "Cancel", "confirm": "Confirm", "yes": "Yes", "no": "No", "next": "Next", "previous": "Previous", "save": "Save", "delete": "Delete", "edit": "Edit", "close": "Close", "ok": "OK" }, "navigation": { "home": "Home", "orders": "Orders", "account": "Account", "settings": "Settings" }, "auth": { "signIn": "Sign In", "signUp": "Sign Up", "signOut": "Sign Out", "logout": "Logout", "name": "Name", "username": "Username", "password": "Password", "confirmPassword": "Confirm Password", "signInToAccount": "Sign in to your account", "createAccount": "Create your account", "alreadyHaveAccount": "Already have an account?", "dontHaveAccount": "Don't have an account?", "authentication": "Authentication", "signInToAccess": "Sign in to access your orders and sync data", "yourAccountInfo": "Your account information", "confirmLogout": "Confirm Logout", "confirmLogoutMessage": "Are you sure you want to logout? You'll need to sign in again to access your account.", "confirmSignOut": "Confirm Sign Out", "confirmSignOutMessage": "Are you sure you want to sign out? You'll need to sign in again to access your orders.", "successfullyLoggedOut": "Successfully logged out" }, "home": { "savedStates": "Saved States", "noSavedStatesFound": "No saved states found", "noStatesCreated": "You haven't created any order states yet.", "loadingStates": "Loading states...", "rtd": "RTD", "handover": "Handover", "items": "items", "orders": "orders" }, "orders": { "selectOrder": "Select Order", "totalOrdersAvailable": "total orders available", "buyerDetails": "Buyer Details", "name": "Name", "state": "State", "noOrdersFound": "No Orders Found", "noOrdersFoundMessage": "No orders found for", "orderItems": "Order Items", "quantity": "Quantity", "weight": "Weight", "unit": "Unit", "sku": "SKU", "price": "Price", "total": "Total", "grams": "g", "times": "x" }, "voice": { "clickToStart": "Click to start voice commands", "loading": "Loading...", "micOn": "Mic On", "listening": "Listening...", "voiceRecognitionStopped": "Voice recognition stopped", "voiceRecognitionUnavailable": "Voice recognition unavailable", "microphoneAccessDenied": "Microphone access denied", "voskInitializationFailed": "Vosk initialization failed", "commandProcessed": "Command processed", "commandNotRecognized": "Command not recognized", "navigatedToNext": "Navigated to next order", "navigatedToPrevious": "Navigated to previous order", "selectedOrder": "Selected order", "noNextOrder": "No next order available", "noPreviousOrder": "No previous order available", "invalidOrderNumber": "Invalid order number" }, "settings": { "appInformation": "App Information", "orderManagementSystem": "Order Management System", "version": "Version 1.1.0", "authenticationRequired": "Authentication Required", "appearance": "Appearance", "darkMode": "Dark Mode", "toggleTheme": "Toggle between light and dark theme", "language": "Language", "selectLanguage": "Select your preferred language", "english": "English", "bengali": "বাংলা", "voiceSettings": "Voice Settings", "actionTalk": "Action Talk", "actionTalkDescription": "Enable voice feedback when commands are executed", "showMicButton": "Show Microphone Button", "showMicButtonDescription": "Display voice control button in orders page", "fontSize": "Font Size", "selectFontSize": "Select your preferred font size", "fontSizeSmall": "Small", "fontSizeMedium": "Medium", "fontSizeLarge": "Large", "fontSizeDescription": "Adjust text size throughout the application", "authentication": "Authentication", "switchAccount": "Switch Account", "switch": "Switch", "switchTo": "Switch to", "switchFailed": "Switch failed.", "switchedTo": "Switched to", "accountCenter": "Account Center", "openAccountCenter": "Open Account Center", "manageAccounts": "Manage Accounts", "addAccount": "Add Account", "add": "Add", "addingAccount": "Adding...", "disconnect": "Disconnect", "disconnectAccount": "Disconnect Account", "disconnectFailed": "Disconnect failed.", "disconnected": "Disconnected", "logoutAll": "Logout All", "logoutAllAccounts": "Logout All Accounts", "logoutAllConfirm": "Logout all saved accounts from this device?", "noSavedAccounts": "No saved accounts.", "unnamed": "Unnamed", "current": "Current", "accountLoginSuccess": "Successfully logged in!", "accountAdded": "Added", "accountUnableToAdd": "Unable to add account.", "accountUsernameRequired": "Username is required", "accountPasswordRequired": "Password is required" }, "skuMapping": { "title": "SKU Mappings", "activeMappings": "Active", "deletedMappings": "Deleted", "searchPlaceholder": "Search by Old SKU or New SKU...", "searchDeletedPlaceholder": "Search deleted mappings by Old SKU or New SKU...", "searchPrompt": "Start typing to search SKU mappings", "searchTitle": "🔍 Search SKU Mappings", "searchDescription": "Type in the search box above to find SKU mappings", "resultsFound": "result(s) found", "deletedResultsFound": "deleted mapping(s) found", "showingFirst": "showing first", "searching": "Searching...", "noResults": "No mappings found matching your search", "noDeletedResults": "No deleted mappings found", "add": "Add", "oldSku": "Old SKU", "newSku": "New SKU", "actions": "Actions", "edit": "Edit Mapping", "delete": "Delete Mapping", "restore": "Restore Mapping", "addTitle": "Add SKU Mapping", "editTitle": "Edit SKU Mapping", "oldSkuPlaceholder": "e.g., DAHLIA__100__PIECE__3AS7", "newSkuPlaceholder": "e.g., SED_FLW_DL_100P", "oldSkuCannotChange": "Old SKU cannot be changed", "enterNewSku": "Enter the new mapped SKU code", "pasteFromClipboard": "Paste from clipboard", "pasteError": "Failed to paste from clipboard", "newSkuPreview": "New SKU Preview:", "buildNewSku": "Build New SKU - Step", "of": "of", "step1": "Step 1: Select Vertical", "step2": "Step 2: Select Category", "step3": "Step 3: Select Product SKU", "step4": "Step 4: Enter Quantity", "step5": "Step 5: Select Unit", "selectVertical": "-- Select Vertical --", "selectCategory": "-- Select Category --", "selectProduct": "-- Select Product --", "addAnotherProduct": "+ Add Another Product", "next": "Next →", "quantityPlaceholder": "e.g., 100", "selectUnit": "-- Select Unit --", "piece": "P (Piece)", "gram": "G (Gram)", "kilogram": "KG (Kilogram)", "cancel": "Cancel", "update": "Update", "updateSku": "Update SKU", "addSku": "Add SKU", "deleteTitle": "Delete SKU Mapping?", "deleteMessage": "Are you sure you want to delete this SKU mapping? This action cannot be undone.", "restoreTitle": "Restore SKU Mapping?", "restoreMessage": "Do you want to restore this SKU mapping back to active list?", "bothFieldsRequired": "Both fields are required", "newSkuRequired": "New SKU is required", "addSuccess": "SKU mapping added successfully", "updateSuccess": "SKU mapping updated successfully", "deleteSuccess": "SKU mapping deleted successfully", "restoreSuccess": "SKU mapping restored successfully" } };
-const bn = { "common": { "loading": "লোড হচ্ছে...", "error": "ত্রুটি", "success": "সফল", "cancel": "বাতিল", "confirm": "নিশ্চিত", "yes": "হ্যাঁ", "no": "না", "next": "পরবর্তী", "previous": "পূর্ববর্তী", "save": "সংরক্ষণ", "delete": "মুছুন", "edit": "সম্পাদনা", "close": "বন্ধ", "ok": "ঠিক আছে" }, "navigation": { "home": "হোম", "orders": "অর্ডার", "account": "অ্যাকাউন্ট", "settings": "সেটিংস" }, "auth": { "signIn": "সাইন ইন", "signUp": "সাইন আপ", "signOut": "সাইন আউট", "logout": "লগআউট", "name": "নাম", "username": "ব্যবহারকারীর নাম", "password": "পাসওয়ার্ড", "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন", "signInToAccount": "আপনার অ্যাকাউন্টে সাইন ইন করুন", "createAccount": "আপনার অ্যাকাউন্ট তৈরি করুন", "alreadyHaveAccount": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?", "dontHaveAccount": "অ্যাকাউন্ট নেই?", "authentication": "প্রমাণীকরণ", "signInToAccess": "আপনার অর্ডার এবং ডেটা সিঙ্ক অ্যাক্সেস করতে সাইন ইন করুন", "yourAccountInfo": "আপনার অ্যাকাউন্টের তথ্য", "confirmLogout": "লগআউট নিশ্চিত করুন", "confirmLogoutMessage": "আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান? আপনার অ্যাকাউন্ট অ্যাক্সেস করতে আবার সাইন ইন করতে হবে।", "confirmSignOut": "সাইন আউট নিশ্চিত করুন", "confirmSignOutMessage": "আপনি কি নিশ্চিত যে আপনি সাইন আউট করতে চান? আপনার অর্ডার অ্যাক্সেস করতে আবার সাইন ইন করতে হবে।", "successfullyLoggedOut": "সফলভাবে লগআউট হয়েছে" }, "home": { "savedStates": "সংরক্ষিত স্টেট", "noSavedStatesFound": "কোন সংরক্ষিত স্টেট পাওয়া যায়নি", "noStatesCreated": "আপনি এখনও কোন অর্ডার স্টেট তৈরি করেননি।", "loadingStates": "স্টেট লোড হচ্ছে...", "rtd": "আরটিডি", "handover": "হস্তান্তর", "items": "আইটেম", "orders": "অর্ডার" }, "orders": { "selectOrder": "অর্ডার নির্বাচন করুন", "totalOrdersAvailable": "মোট অর্ডার উপলব্ধ", "buyerDetails": "ক্রেতার বিবরণ", "name": "নাম", "state": "রাজ্য", "noOrdersFound": "কোন অর্ডার পাওয়া যায়নি", "noOrdersFoundMessage": "এর জন্য কোন অর্ডার পাওয়া যায়নি", "orderItems": "অর্ডার আইটেম", "quantity": "পরিমাণ", "weight": "ওজন", "unit": "একক", "sku": "এসকিউ", "price": "মূল্য", "total": "মোট", "grams": "গ্রাম", "times": " টা" }, "voice": { "clickToStart": "ভয়েস কমান্ড শুরু করতে ক্লিক করুন", "loading": "লোড হচ্ছে...", "micOn": "মাইক চালু", "listening": "শুনছি...", "voiceRecognitionStopped": "ভয়েস রিকগনিশন বন্ধ", "voiceRecognitionUnavailable": "ভয়েস রিকগনিশন উপলব্ধ নয়", "microphoneAccessDenied": "মাইক্রোফোন অ্যাক্সেস অস্বীকৃত", "voskInitializationFailed": "Vosk ইনিশিয়ালাইজেশন ব্যর্থ", "commandProcessed": "কমান্ড প্রক্রিয়াজাত", "commandNotRecognized": "কমান্ড স্বীকৃত নয়", "navigatedToNext": "পরবর্তী অর্ডারে নেভিগেট করা হয়েছে", "navigatedToPrevious": "পূর্ববর্তী অর্ডারে নেভিগেট করা হয়েছে", "selectedOrder": "অর্ডার নির্বাচিত", "noNextOrder": "কোন পরবর্তী অর্ডার উপলব্ধ নয়", "noPreviousOrder": "কোন পূর্ববর্তী অর্ডার উপলব্ধ নয়", "invalidOrderNumber": "অবৈধ অর্ডার নম্বর" }, "settings": { "appInformation": "অ্যাপের তথ্য", "orderManagementSystem": "অর্ডার ব্যবস্থাপনা সিস্টেম", "version": "সংস্করণ ১.১.০", "authenticationRequired": "প্রমাণীকরণ প্রয়োজন", "appearance": "চেহারা", "darkMode": "ডার্ক মোড", "toggleTheme": "হালকা এবং গাঢ় থিমের মধ্যে টগল করুন", "language": "ভাষা", "selectLanguage": "আপনার পছন্দের ভাষা নির্বাচন করুন", "english": "English", "bengali": "বাংলা", "voiceSettings": "ভয়েস সেটিংস", "actionTalk": "অ্যাকশন টক", "actionTalkDescription": "কমান্ড সম্পাদনের সময় ভয়েস ফিডব্যাক সক্ষম করুন", "showMicButton": "মাইক্রোফোন বোতাম দেখান", "showMicButtonDescription": "অর্ডার পৃষ্ঠায় ভয়েস কন্ট্রোল বোতাম প্রদর্শন করুন", "fontSize": "ফন্ট সাইজ", "selectFontSize": "আপনার পছন্দের ফন্ট সাইজ নির্বাচন করুন", "fontSizeSmall": "ছোট", "fontSizeMedium": "মাঝারি", "fontSizeLarge": "বড়", "fontSizeDescription": "সমগ্র অ্যাপ্লিকেশন জুড়ে টেক্সট সাইজ সামঞ্জস্য করুন", "authentication": "প্রমাণীকরণ", "switchAccount": "অ্যাকাউন্ট বদলান", "switch": "বদলান", "switchTo": "এতে বদলান", "switchFailed": "অ্যাকাউন্ট বদলানো যায়নি।", "switchedTo": "বদলানো হয়েছে", "accountCenter": "অ্যাকাউন্ট সেন্টার", "openAccountCenter": "অ্যাকাউন্ট সেন্টার খুলুন", "manageAccounts": "অ্যাকাউন্ট ব্যবস্থাপনা", "addAccount": "অ্যাকাউন্ট যোগ করুন", "add": "যোগ করুন", "addingAccount": "যোগ করা হচ্ছে...", "disconnect": "সংযোগ বিচ্ছিন্ন করুন", "disconnectAccount": "অ্যাকাউন্ট সংযোগ বিচ্ছিন্ন", "disconnectFailed": "সংযোগ বিচ্ছিন্ন করা যায়নি।", "disconnected": "সংযোগ বিচ্ছিন্ন হয়েছে", "logoutAll": "সব লগআউট", "logoutAllAccounts": "সব অ্যাকাউন্ট লগআউট", "logoutAllConfirm": "এই ডিভাইস থেকে সব সংরক্ষিত অ্যাকাউন্ট লগআউট করবেন?", "noSavedAccounts": "কোনো সংরক্ষিত অ্যাকাউন্ট নেই।", "unnamed": "নামহীন", "current": "বর্তমান", "accountLoginSuccess": "সফলভাবে লগইন হয়েছে!", "accountAdded": "যোগ হয়েছে", "accountUnableToAdd": "অ্যাকাউন্ট যোগ করা যায়নি।", "accountUsernameRequired": "ব্যবহারকারীর নাম প্রয়োজন", "accountPasswordRequired": "পাসওয়ার্ড প্রয়োজন" }, "skuMapping": { "title": "এসকেইউ ম্যাপিং", "activeMappings": "সক্রিয়", "deletedMappings": "মুছে ফেলা", "searchPlaceholder": "পুরাতন এসকেইউ বা নতুন এসকেইউ দ্বারা অনুসন্ধান করুন...", "searchDeletedPlaceholder": "মুছে ফেলা ম্যাপিং পুরাতন এসকেইউ বা নতুন এসকেইউ দিয়ে খুঁজুন...", "searchPrompt": "এসকেইউ ম্যাপিং অনুসন্ধান করতে টাইপ করা শুরু করুন", "searchTitle": "🔍 এসকেইউ ম্যাপিং অনুসন্ধান করুন", "searchDescription": "এসকেইউ ম্যাপিং খুঁজতে উপরের অনুসন্ধান বক্সে টাইপ করুন", "resultsFound": "ফলাফল পাওয়া গেছে", "deletedResultsFound": "মুছে ফেলা ম্যাপিং পাওয়া গেছে", "showingFirst": "প্রথম দেখাচ্ছে", "searching": "অনুসন্ধান করা হচ্ছে...", "noResults": "আপনার অনুসন্ধানের সাথে মিলে এমন কোনো ম্যাপিং পাওয়া যায়নি", "noDeletedResults": "কোনো মুছে ফেলা ম্যাপিং পাওয়া যায়নি", "add": "যোগ করুন", "oldSku": "পুরাতন এসকেইউ", "newSku": "নতুন এসকেইউ", "actions": "কর্ম", "edit": "ম্যাপিং সম্পাদনা করুন", "delete": "ম্যাপিং মুছুন", "restore": "ম্যাপিং পুনরুদ্ধার করুন", "addTitle": "এসকেইউ ম্যাপিং যোগ করুন", "editTitle": "এসকেইউ ম্যাপিং সম্পাদনা করুন", "oldSkuPlaceholder": "যেমন, DAHLIA__100__PIECE__3AS7", "newSkuPlaceholder": "যেমন, SED_FLW_DL_100P", "oldSkuCannotChange": "পুরাতন এসকেইউ পরিবর্তন করা যাবে না", "enterNewSku": "নতুন ম্যাপ করা এসকেইউ কোড লিখুন", "pasteFromClipboard": "ক্লিপবোর্ড থেকে পেস্ট করুন", "pasteError": "ক্লিপবোর্ড থেকে পেস্ট করতে ব্যর্থ", "newSkuPreview": "নতুন এসকেইউ পূর্বরূপ:", "buildNewSku": "নতুন এসকেইউ তৈরি করুন - ধাপ", "of": "এর", "step1": "ধাপ ১: ভার্টিকাল নির্বাচন করুন", "step2": "ধাপ ২: ক্যাটাগরি নির্বাচন করুন", "step3": "ধাপ ৩: পণ্য এসকেইউ নির্বাচন করুন", "step4": "ধাপ ৪: পরিমাণ লিখুন", "step5": "ধাপ ৫: একক নির্বাচন করুন", "selectVertical": "-- ভার্টিকাল নির্বাচন করুন --", "selectCategory": "-- ক্যাটাগরি নির্বাচন করুন --", "selectProduct": "-- পণ্য নির্বাচন করুন --", "addAnotherProduct": "+ আরেকটি পণ্য যোগ করুন", "next": "পরবর্তী →", "quantityPlaceholder": "যেমন, ১০০", "selectUnit": "-- একক নির্বাচন করুন --", "piece": "P (পিস)", "gram": "G (গ্রাম)", "kilogram": "KG (কিলোগ্রাম)", "cancel": "বাতিল", "update": "আপডেট", "updateSku": "এসকেইউ আপডেট করুন", "addSku": "এসকেইউ যোগ করুন", "deleteTitle": "এসকেইউ ম্যাপিং মুছবেন?", "deleteMessage": "আপনি কি নিশ্চিত যে আপনি এই এসকেইউ ম্যাপিং মুছতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।", "restoreTitle": "এসকেইউ ম্যাপিং পুনরুদ্ধার করবেন?", "restoreMessage": "এই এসকেইউ ম্যাপিং কি সক্রিয় তালিকায় ফিরিয়ে আনতে চান?", "bothFieldsRequired": "উভয় ক্ষেত্র প্রয়োজন", "newSkuRequired": "নতুন এসকেইউ প্রয়োজন", "addSuccess": "এসকেইউ ম্যাপিং সফলভাবে যোগ করা হয়েছে", "updateSuccess": "এসকেইউ ম্যাপিং সফলভাবে আপডেট করা হয়েছে", "deleteSuccess": "এসকেইউ ম্যাপিং সফলভাবে মুছে ফেলা হয়েছে", "restoreSuccess": "এসকেইউ ম্যাপিং সফলভাবে পুনরুদ্ধার হয়েছে" } };
+const en = { "common": { "loading": "Loading...", "error": "Error", "success": "Success", "cancel": "Cancel", "confirm": "Confirm", "yes": "Yes", "no": "No", "next": "Next", "previous": "Previous", "save": "Save", "delete": "Delete", "edit": "Edit", "close": "Close", "ok": "OK" }, "navigation": { "home": "Home", "orders": "Orders", "account": "Account", "settings": "Settings" }, "auth": { "signIn": "Sign In", "signUp": "Sign Up", "signOut": "Sign Out", "logout": "Logout", "name": "Name", "username": "Username", "password": "Password", "confirmPassword": "Confirm Password", "signInToAccount": "Sign in to your account", "createAccount": "Create your account", "alreadyHaveAccount": "Already have an account?", "dontHaveAccount": "Don't have an account?", "authentication": "Authentication", "signInToAccess": "Sign in to access your orders and sync data", "yourAccountInfo": "Your account information", "confirmLogout": "Confirm Logout", "confirmLogoutMessage": "Are you sure you want to logout? You'll need to sign in again to access your account.", "confirmSignOut": "Confirm Sign Out", "confirmSignOutMessage": "Are you sure you want to sign out? You'll need to sign in again to access your orders.", "successfullyLoggedOut": "Successfully logged out" }, "home": { "savedStates": "Saved States", "noSavedStatesFound": "No saved states found", "noStatesCreated": "You haven't created any order states yet.", "loadingStates": "Loading states...", "rtd": "RTD", "handover": "Handover", "items": "items", "orders": "orders" }, "orders": { "selectOrder": "Select Order", "totalOrdersAvailable": "total orders available", "buyerDetails": "Buyer Details", "name": "Name", "state": "State", "noOrdersFound": "No Orders Found", "noOrdersFoundMessage": "No orders found for", "orderItems": "Order Items", "quantity": "Quantity", "weight": "Weight", "unit": "Unit", "sku": "SKU", "price": "Price", "total": "Total", "pieces": "Pieces", "grams": "g", "kilograms": "Kilograms", "times": "x" }, "voice": { "clickToStart": "Click to start voice commands", "loading": "Loading...", "micOn": "Mic On", "listening": "Listening...", "voiceRecognitionStopped": "Voice recognition stopped", "voiceRecognitionUnavailable": "Voice recognition unavailable", "microphoneAccessDenied": "Microphone access denied", "voskInitializationFailed": "Vosk initialization failed", "commandProcessed": "Command processed", "commandNotRecognized": "Command not recognized", "navigatedToNext": "Navigated to next order", "navigatedToPrevious": "Navigated to previous order", "selectedOrder": "Selected order", "noNextOrder": "No next order available", "noPreviousOrder": "No previous order available", "invalidOrderNumber": "Invalid order number" }, "settings": { "appInformation": "App Information", "orderManagementSystem": "Order Management System", "version": "Version 1.1.0", "authenticationRequired": "Authentication Required", "appearance": "Appearance", "simpleOrdersView": "Simple Orders View", "simpleOrdersViewDescription": "Simplify order card details in Orders page", "darkMode": "Dark Mode", "toggleTheme": "Toggle between light and dark theme", "language": "Language", "selectLanguage": "Select your preferred language", "english": "English", "bengali": "বাংলা", "voiceSettings": "Voice Settings", "actionTalk": "Action Talk", "actionTalkDescription": "Enable voice feedback when commands are executed", "showMicButton": "Show Microphone Button", "showMicButtonDescription": "Display voice control button in orders page", "fontSize": "Font Size", "selectFontSize": "Select your preferred font size", "fontSizeSmall": "Small", "fontSizeMedium": "Medium", "fontSizeLarge": "Large", "fontSizeDescription": "Adjust text size throughout the application", "authentication": "Authentication", "switchAccount": "Switch Account", "switch": "Switch", "switchTo": "Switch to", "switchFailed": "Switch failed.", "switchedTo": "Switched to", "accountCenter": "Account Center", "openAccountCenter": "Open Account Center", "manageAccounts": "Manage Accounts", "addAccount": "Add Account", "add": "Add", "addingAccount": "Adding...", "disconnect": "Disconnect", "disconnectAccount": "Disconnect Account", "disconnectFailed": "Disconnect failed.", "disconnected": "Disconnected", "logoutAll": "Logout All", "logoutAllAccounts": "Logout All Accounts", "logoutAllConfirm": "Logout all saved accounts from this device?", "noSavedAccounts": "No saved accounts.", "unnamed": "Unnamed", "current": "Current", "accountLoginSuccess": "Successfully logged in!", "accountAdded": "Added", "accountUnableToAdd": "Unable to add account.", "accountUsernameRequired": "Username is required", "accountPasswordRequired": "Password is required" }, "skuMapping": { "title": "SKU Mappings", "activeMappings": "Active", "deletedMappings": "Deleted", "searchPlaceholder": "Search by Old SKU or New SKU...", "searchDeletedPlaceholder": "Search deleted mappings by Old SKU or New SKU...", "searchPrompt": "Start typing to search SKU mappings", "searchTitle": "🔍 Search SKU Mappings", "searchDescription": "Type in the search box above to find SKU mappings", "resultsFound": "result(s) found", "deletedResultsFound": "deleted mapping(s) found", "showingFirst": "showing first", "searching": "Searching...", "noResults": "No mappings found matching your search", "noDeletedResults": "No deleted mappings found", "add": "Add", "oldSku": "Old SKU", "newSku": "New SKU", "actions": "Actions", "edit": "Edit Mapping", "delete": "Delete Mapping", "restore": "Restore Mapping", "addTitle": "Add SKU Mapping", "editTitle": "Edit SKU Mapping", "oldSkuPlaceholder": "e.g., DAHLIA__100__PIECE__3AS7", "newSkuPlaceholder": "e.g., SED_FLW_DL_100P", "oldSkuCannotChange": "Old SKU cannot be changed", "enterNewSku": "Enter the new mapped SKU code", "pasteFromClipboard": "Paste from clipboard", "pasteError": "Failed to paste from clipboard", "newSkuPreview": "New SKU Preview:", "buildNewSku": "Build New SKU - Step", "of": "of", "step1": "Step 1: Select Vertical", "step2": "Step 2: Select Category", "step3": "Step 3: Select Product SKU", "step4": "Step 4: Enter Quantity", "step5": "Step 5: Select Unit", "selectVertical": "-- Select Vertical --", "selectCategory": "-- Select Category --", "selectProduct": "-- Select Product --", "addAnotherProduct": "+ Add Another Product", "next": "Next →", "quantityPlaceholder": "e.g., 100", "selectUnit": "-- Select Unit --", "piece": "P (Piece)", "gram": "G (Gram)", "kilogram": "KG (Kilogram)", "cancel": "Cancel", "update": "Update", "updateSku": "Update SKU", "addSku": "Add SKU", "deleteTitle": "Delete SKU Mapping?", "deleteMessage": "Are you sure you want to delete this SKU mapping? This action cannot be undone.", "restoreTitle": "Restore SKU Mapping?", "restoreMessage": "Do you want to restore this SKU mapping back to active list?", "bothFieldsRequired": "Both fields are required", "newSkuRequired": "New SKU is required", "addSuccess": "SKU mapping added successfully", "updateSuccess": "SKU mapping updated successfully", "deleteSuccess": "SKU mapping deleted successfully", "restoreSuccess": "SKU mapping restored successfully" } };
+const bn = { "common": { "loading": "লোড হচ্ছে...", "error": "ত্রুটি", "success": "সফল", "cancel": "বাতিল", "confirm": "নিশ্চিত", "yes": "হ্যাঁ", "no": "না", "next": "পরবর্তী", "previous": "পূর্ববর্তী", "save": "সংরক্ষণ", "delete": "মুছুন", "edit": "সম্পাদনা", "close": "বন্ধ", "ok": "ঠিক আছে" }, "navigation": { "home": "হোম", "orders": "অর্ডার", "account": "অ্যাকাউন্ট", "settings": "সেটিংস" }, "auth": { "signIn": "সাইন ইন", "signUp": "সাইন আপ", "signOut": "সাইন আউট", "logout": "লগআউট", "name": "নাম", "username": "ব্যবহারকারীর নাম", "password": "পাসওয়ার্ড", "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন", "signInToAccount": "আপনার অ্যাকাউন্টে সাইন ইন করুন", "createAccount": "আপনার অ্যাকাউন্ট তৈরি করুন", "alreadyHaveAccount": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?", "dontHaveAccount": "অ্যাকাউন্ট নেই?", "authentication": "প্রমাণীকরণ", "signInToAccess": "আপনার অর্ডার এবং ডেটা সিঙ্ক অ্যাক্সেস করতে সাইন ইন করুন", "yourAccountInfo": "আপনার অ্যাকাউন্টের তথ্য", "confirmLogout": "লগআউট নিশ্চিত করুন", "confirmLogoutMessage": "আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান? আপনার অ্যাকাউন্ট অ্যাক্সেস করতে আবার সাইন ইন করতে হবে।", "confirmSignOut": "সাইন আউট নিশ্চিত করুন", "confirmSignOutMessage": "আপনি কি নিশ্চিত যে আপনি সাইন আউট করতে চান? আপনার অর্ডার অ্যাক্সেস করতে আবার সাইন ইন করতে হবে।", "successfullyLoggedOut": "সফলভাবে লগআউট হয়েছে" }, "home": { "savedStates": "সংরক্ষিত স্টেট", "noSavedStatesFound": "কোন সংরক্ষিত স্টেট পাওয়া যায়নি", "noStatesCreated": "আপনি এখনও কোন অর্ডার স্টেট তৈরি করেননি।", "loadingStates": "স্টেট লোড হচ্ছে...", "rtd": "আরটিডি", "handover": "হস্তান্তর", "items": "আইটেম", "orders": "অর্ডার" }, "orders": { "selectOrder": "অর্ডার নির্বাচন করুন", "totalOrdersAvailable": "মোট অর্ডার উপলব্ধ", "buyerDetails": "ক্রেতার বিবরণ", "name": "নাম", "state": "রাজ্য", "noOrdersFound": "কোন অর্ডার পাওয়া যায়নি", "noOrdersFoundMessage": "এর জন্য কোন অর্ডার পাওয়া যায়নি", "orderItems": "অর্ডার আইটেম", "quantity": "পরিমাণ", "weight": "ওজন", "unit": "একক", "sku": "এসকিউ", "price": "মূল্য", "total": "মোট", "pieces": "পিস", "grams": "গ্রাম", "kilograms": "কিলোগ্রাম", "times": " টা" }, "voice": { "clickToStart": "ভয়েস কমান্ড শুরু করতে ক্লিক করুন", "loading": "লোড হচ্ছে...", "micOn": "মাইক চালু", "listening": "শুনছি...", "voiceRecognitionStopped": "ভয়েস রিকগনিশন বন্ধ", "voiceRecognitionUnavailable": "ভয়েস রিকগনিশন উপলব্ধ নয়", "microphoneAccessDenied": "মাইক্রোফোন অ্যাক্সেস অস্বীকৃত", "voskInitializationFailed": "Vosk ইনিশিয়ালাইজেশন ব্যর্থ", "commandProcessed": "কমান্ড প্রক্রিয়াজাত", "commandNotRecognized": "কমান্ড স্বীকৃত নয়", "navigatedToNext": "পরবর্তী অর্ডারে নেভিগেট করা হয়েছে", "navigatedToPrevious": "পূর্ববর্তী অর্ডারে নেভিগেট করা হয়েছে", "selectedOrder": "অর্ডার নির্বাচিত", "noNextOrder": "কোন পরবর্তী অর্ডার উপলব্ধ নয়", "noPreviousOrder": "কোন পূর্ববর্তী অর্ডার উপলব্ধ নয়", "invalidOrderNumber": "অবৈধ অর্ডার নম্বর" }, "settings": { "appInformation": "অ্যাপের তথ্য", "orderManagementSystem": "অর্ডার ব্যবস্থাপনা সিস্টেম", "version": "সংস্করণ ১.১.০", "authenticationRequired": "প্রমাণীকরণ প্রয়োজন", "appearance": "চেহারা", "simpleOrdersView": "সিম্পল অর্ডার ভিউ", "simpleOrdersViewDescription": "অর্ডার পেজে সরল কার্ড ভিউ চালু বা বন্ধ করুন", "darkMode": "ডার্ক মোড", "toggleTheme": "হালকা এবং গাঢ় থিমের মধ্যে টগল করুন", "language": "ভাষা", "selectLanguage": "আপনার পছন্দের ভাষা নির্বাচন করুন", "english": "English", "bengali": "বাংলা", "voiceSettings": "ভয়েস সেটিংস", "actionTalk": "অ্যাকশন টক", "actionTalkDescription": "কমান্ড সম্পাদনের সময় ভয়েস ফিডব্যাক সক্ষম করুন", "showMicButton": "মাইক্রোফোন বোতাম দেখান", "showMicButtonDescription": "অর্ডার পৃষ্ঠায় ভয়েস কন্ট্রোল বোতাম প্রদর্শন করুন", "fontSize": "ফন্ট সাইজ", "selectFontSize": "আপনার পছন্দের ফন্ট সাইজ নির্বাচন করুন", "fontSizeSmall": "ছোট", "fontSizeMedium": "মাঝারি", "fontSizeLarge": "বড়", "fontSizeDescription": "সমগ্র অ্যাপ্লিকেশন জুড়ে টেক্সট সাইজ সামঞ্জস্য করুন", "authentication": "প্রমাণীকরণ", "switchAccount": "অ্যাকাউন্ট বদলান", "switch": "বদলান", "switchTo": "এতে বদলান", "switchFailed": "অ্যাকাউন্ট বদলানো যায়নি।", "switchedTo": "বদলানো হয়েছে", "accountCenter": "অ্যাকাউন্ট সেন্টার", "openAccountCenter": "অ্যাকাউন্ট সেন্টার খুলুন", "manageAccounts": "অ্যাকাউন্ট ব্যবস্থাপনা", "addAccount": "অ্যাকাউন্ট যোগ করুন", "add": "যোগ করুন", "addingAccount": "যোগ করা হচ্ছে...", "disconnect": "সংযোগ বিচ্ছিন্ন করুন", "disconnectAccount": "অ্যাকাউন্ট সংযোগ বিচ্ছিন্ন", "disconnectFailed": "সংযোগ বিচ্ছিন্ন করা যায়নি।", "disconnected": "সংযোগ বিচ্ছিন্ন হয়েছে", "logoutAll": "সব লগআউট", "logoutAllAccounts": "সব অ্যাকাউন্ট লগআউট", "logoutAllConfirm": "এই ডিভাইস থেকে সব সংরক্ষিত অ্যাকাউন্ট লগআউট করবেন?", "noSavedAccounts": "কোনো সংরক্ষিত অ্যাকাউন্ট নেই।", "unnamed": "নামহীন", "current": "বর্তমান", "accountLoginSuccess": "সফলভাবে লগইন হয়েছে!", "accountAdded": "যোগ হয়েছে", "accountUnableToAdd": "অ্যাকাউন্ট যোগ করা যায়নি।", "accountUsernameRequired": "ব্যবহারকারীর নাম প্রয়োজন", "accountPasswordRequired": "পাসওয়ার্ড প্রয়োজন" }, "skuMapping": { "title": "এসকেইউ ম্যাপিং", "activeMappings": "সক্রিয়", "deletedMappings": "মুছে ফেলা", "searchPlaceholder": "পুরাতন এসকেইউ বা নতুন এসকেইউ দ্বারা অনুসন্ধান করুন...", "searchDeletedPlaceholder": "মুছে ফেলা ম্যাপিং পুরাতন এসকেইউ বা নতুন এসকেইউ দিয়ে খুঁজুন...", "searchPrompt": "এসকেইউ ম্যাপিং অনুসন্ধান করতে টাইপ করা শুরু করুন", "searchTitle": "🔍 এসকেইউ ম্যাপিং অনুসন্ধান করুন", "searchDescription": "এসকেইউ ম্যাপিং খুঁজতে উপরের অনুসন্ধান বক্সে টাইপ করুন", "resultsFound": "ফলাফল পাওয়া গেছে", "deletedResultsFound": "মুছে ফেলা ম্যাপিং পাওয়া গেছে", "showingFirst": "প্রথম দেখাচ্ছে", "searching": "অনুসন্ধান করা হচ্ছে...", "noResults": "আপনার অনুসন্ধানের সাথে মিলে এমন কোনো ম্যাপিং পাওয়া যায়নি", "noDeletedResults": "কোনো মুছে ফেলা ম্যাপিং পাওয়া যায়নি", "add": "যোগ করুন", "oldSku": "পুরাতন এসকেইউ", "newSku": "নতুন এসকেইউ", "actions": "কর্ম", "edit": "ম্যাপিং সম্পাদনা করুন", "delete": "ম্যাপিং মুছুন", "restore": "ম্যাপিং পুনরুদ্ধার করুন", "addTitle": "এসকেইউ ম্যাপিং যোগ করুন", "editTitle": "এসকেইউ ম্যাপিং সম্পাদনা করুন", "oldSkuPlaceholder": "যেমন, DAHLIA__100__PIECE__3AS7", "newSkuPlaceholder": "যেমন, SED_FLW_DL_100P", "oldSkuCannotChange": "পুরাতন এসকেইউ পরিবর্তন করা যাবে না", "enterNewSku": "নতুন ম্যাপ করা এসকেইউ কোড লিখুন", "pasteFromClipboard": "ক্লিপবোর্ড থেকে পেস্ট করুন", "pasteError": "ক্লিপবোর্ড থেকে পেস্ট করতে ব্যর্থ", "newSkuPreview": "নতুন এসকেইউ পূর্বরূপ:", "buildNewSku": "নতুন এসকেইউ তৈরি করুন - ধাপ", "of": "এর", "step1": "ধাপ ১: ভার্টিকাল নির্বাচন করুন", "step2": "ধাপ ২: ক্যাটাগরি নির্বাচন করুন", "step3": "ধাপ ৩: পণ্য এসকেইউ নির্বাচন করুন", "step4": "ধাপ ৪: পরিমাণ লিখুন", "step5": "ধাপ ৫: একক নির্বাচন করুন", "selectVertical": "-- ভার্টিকাল নির্বাচন করুন --", "selectCategory": "-- ক্যাটাগরি নির্বাচন করুন --", "selectProduct": "-- পণ্য নির্বাচন করুন --", "addAnotherProduct": "+ আরেকটি পণ্য যোগ করুন", "next": "পরবর্তী →", "quantityPlaceholder": "যেমন, ১০০", "selectUnit": "-- একক নির্বাচন করুন --", "piece": "P (পিস)", "gram": "G (গ্রাম)", "kilogram": "KG (কিলোগ্রাম)", "cancel": "বাতিল", "update": "আপডেট", "updateSku": "এসকেইউ আপডেট করুন", "addSku": "এসকেইউ যোগ করুন", "deleteTitle": "এসকেইউ ম্যাপিং মুছবেন?", "deleteMessage": "আপনি কি নিশ্চিত যে আপনি এই এসকেইউ ম্যাপিং মুছতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।", "restoreTitle": "এসকেইউ ম্যাপিং পুনরুদ্ধার করবেন?", "restoreMessage": "এই এসকেইউ ম্যাপিং কি সক্রিয় তালিকায় ফিরিয়ে আনতে চান?", "bothFieldsRequired": "উভয় ক্ষেত্র প্রয়োজন", "newSkuRequired": "নতুন এসকেইউ প্রয়োজন", "addSuccess": "এসকেইউ ম্যাপিং সফলভাবে যোগ করা হয়েছে", "updateSuccess": "এসকেইউ ম্যাপিং সফলভাবে আপডেট করা হয়েছে", "deleteSuccess": "এসকেইউ ম্যাপিং সফলভাবে মুছে ফেলা হয়েছে", "restoreSuccess": "এসকেইউ ম্যাপিং সফলভাবে পুনরুদ্ধার হয়েছে" } };
 const translations = {
   en,
   bn
@@ -32431,6 +32431,44 @@ function FaShopify(props) {
 function SiFlipkart(props) {
   return GenIcon({ "attr": { "role": "img", "viewBox": "0 0 24 24" }, "child": [{ "tag": "path", "attr": { "d": "M3.833 1.333a.993.993 0 0 0-.333.061V1c0-.551.449-1 1-1h14.667c.551 0 1 .449 1 1v.333H3.833zm17.334 2.334H2.833c-.551 0-1 .449-1 1V23c0 .551.449 1 1 1h7.3l1.098-5.645h-2.24c-.051 0-5.158-.241-5.158-.241l4.639-.327-.078-.366-1.978-.285 1.882-.158-.124-.449-3.075-.467s3.341-.373 3.392-.373h3.232l.247-1.331c.289-1.616.945-2.807 1.973-3.693 1.033-.892 2.344-1.332 3.937-1.332.643 0 1.053.151 1.231.463.118.186.201.516.279.859.074.352.14.671.095.903-.057.345-.461.465-1.197.465h-.253c-1.327 0-2.134.763-2.405 2.31l-.243 1.355h1.54c.574 0 .781.402.622 1.306-.17.941-.539 1.36-1.111 1.36H14.9L13.804 24h7.362c.551 0 1-.449 1-1V4.667a1 1 0 0 0-.999-1zM20.5 2.333A.334.334 0 0 0 20.167 2H3.833a.334.334 0 0 0-.333.333V3h17v-.667z" }, "child": [] }] })(props);
 }
+const SIMPLE_ORDERS_VIEW_KEY = "es_orders_simple_orders_view";
+const SIMPLE_ORDERS_VIEW_EVENT = "es_orders_simple_orders_view_change";
+function readSimpleOrdersView() {
+  const raw = localStorage.getItem(SIMPLE_ORDERS_VIEW_KEY);
+  if (raw === null) return true;
+  return raw === "true";
+}
+const useSimpleOrdersView = () => {
+  const [isSimpleOrdersViewEnabled, setIsSimpleOrdersViewEnabled] = reactExports.useState(() => readSimpleOrdersView());
+  reactExports.useEffect(() => {
+    const syncFromStorage = () => {
+      setIsSimpleOrdersViewEnabled(readSimpleOrdersView());
+    };
+    const handleStorage = (event) => {
+      if (event.key && event.key !== SIMPLE_ORDERS_VIEW_KEY) return;
+      syncFromStorage();
+    };
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener(SIMPLE_ORDERS_VIEW_EVENT, syncFromStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener(SIMPLE_ORDERS_VIEW_EVENT, syncFromStorage);
+    };
+  }, []);
+  const setSimpleOrdersViewEnabled = reactExports.useCallback((enabled) => {
+    localStorage.setItem(SIMPLE_ORDERS_VIEW_KEY, String(enabled));
+    setIsSimpleOrdersViewEnabled(enabled);
+    window.dispatchEvent(new Event(SIMPLE_ORDERS_VIEW_EVENT));
+  }, []);
+  const toggleSimpleOrdersView = reactExports.useCallback(() => {
+    setSimpleOrdersViewEnabled(!isSimpleOrdersViewEnabled);
+  }, [isSimpleOrdersViewEnabled, setSimpleOrdersViewEnabled]);
+  return {
+    isSimpleOrdersViewEnabled,
+    setSimpleOrdersViewEnabled,
+    toggleSimpleOrdersView
+  };
+};
 const calculateWeightInGrams = (allQuantityPerKg, unit, unitType) => {
   const type = unitType.toLowerCase();
   let weight = 0;
@@ -32475,6 +32513,25 @@ const LOADING_PRODUCT = {
   weight: "Loading...",
   unite: "Loading..."
 };
+function formatIndianNumber(x) {
+  if (x === "" || x === void 0 || x === null) return "";
+  const num = Number(x);
+  if (isNaN(num)) return x;
+  const [intPart, decPart] = x.toString().split(".");
+  const formattedInt = new Intl.NumberFormat("en-IN").format(Number(intPart));
+  return decPart !== void 0 ? `${formattedInt}.${decPart}` : formattedInt;
+}
+const QUANTITY_PART_REGEX$1 = /^(\d+(?:\.\d+)?)([a-zA-Z]+)$/;
+const getSimpleQuantityFromSku = (value, getTranslatedUnitLabel) => {
+  const parts = String(value || "").split("_").map((part) => part.replace(/[\[\](){}]/g, "")).filter(Boolean);
+  const quantityPartCandidate = parts.find((part) => QUANTITY_PART_REGEX$1.test(part)) || "";
+  const match = String(quantityPartCandidate).match(QUANTITY_PART_REGEX$1);
+  if (!match) return "N/A";
+  const qty = formatIndianNumber(match[1]);
+  const unit = match[2].toUpperCase();
+  const detailUnit = getTranslatedUnitLabel(unit);
+  return `${qty} - ${detailUnit}`;
+};
 const OrderCard = ({
   order,
   productDetails,
@@ -32491,7 +32548,8 @@ const OrderCard = ({
   copiedSku
 }) => {
   var _a, _b, _c, _d, _e, _f;
-  const { t } = useLanguage();
+  const { t, isBengali } = useLanguage();
+  const { isSimpleOrdersViewEnabled } = useSimpleOrdersView();
   const itemIndex = isActive ? selectedItemIndex : 0;
   const item = ((_a = order == null ? void 0 : order.orderItems) == null ? void 0 : _a[itemIndex]) ?? ((_b = order == null ? void 0 : order.orderItems) == null ? void 0 : _b[0]);
   const [isQuantityBlinkOn, setIsQuantityBlinkOn] = reactExports.useState(false);
@@ -32503,6 +32561,12 @@ const OrderCard = ({
   const shouldBlinkQuantity = isActive && Number((item == null ? void 0 : item.quantity) || 0) > 1;
   const shouldBlinkItems = isActive && orderItemsCount > 1;
   const orderIdentity = String((order == null ? void 0 : order.orderId) || (order == null ? void 0 : order.order_id) || "");
+  const simpleSkuQuantity = getSimpleQuantityFromSku(item == null ? void 0 : item.newSku, (unit) => {
+    if (unit === "P") return t("orders.pieces");
+    if (unit === "G") return t("orders.grams");
+    if (unit === "KG") return t("orders.kilograms");
+    return unit;
+  });
   const sectionSurfaceClass = isEvenNumberedCard ? "bg-black/10 dark:bg-white/10" : "bg-white dark:bg-gray-800";
   reactExports.useEffect(() => {
     setIsQuantityBlinkOn(false);
@@ -32649,11 +32713,7 @@ const OrderCard = ({
                     border: "border-info/20 dark:border-blue-700/50",
                     iconBg: "bg-info",
                     icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Tag, { className: "w-3 h-3 text-white" }),
-                    children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-lg font-bold text-info dark:text-blue-300 line-clamp-1 wrap-break-word", children: [
-                      productDetails.name,
-                      " • ",
-                      productDetails.label
-                    ] })
+                    children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-lg font-bold text-info dark:text-blue-300 line-clamp-1 wrap-break-word", children: isBengali ? productDetails.label : `${productDetails.name} • ${productDetails.label}` })
                   }
                 )
               ] }),
@@ -32662,7 +32722,7 @@ const OrderCard = ({
                 {
                   className: `relative w-full my-2 gap-1 grid grid-cols-1 ${hasMultipleItems ? "grid-cols-[1fr_50px] px-10" : ""}`,
                   children: [
-                    marketplaceInfo && (marketplaceInfo.label === "Flipkart" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-gray-900/80 p-0.5 border border-gray-700 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SiFlipkart, { className: "size-6 text-yellow-400" }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-0.5 border border-gray-200 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaShopify, { className: "size-6 text-[#81BF37]" }) })),
+                    marketplaceInfo && (marketplaceInfo.label === "Flipkart" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-gray-900/80 p-0.5 border border-gray-700 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SiFlipkart, { className: "size-6 text-yellow-400" }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-1 border border-gray-200 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaShopify, { className: "size-6 text-[#81BF37]" }) })),
                     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full max-w-[min(45vw,45vh)] min-h-[min(30vw,30vh)] max-h-[min(45vw,45vh)]", children: [
                       isActive && isImageLoading && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 z-10", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" }) }),
                       /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -32696,10 +32756,9 @@ const OrderCard = ({
                   ]
                 }
               ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "p-2 mb-2 bg-gray-50 dark:bg-primary-900/20 rounded-md border border-primary-200 dark:border-primary-700", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm font-medium text-gray-900 dark:text-white line-clamp-4 leading-relaxed", children: [
-                item.title,
-                ". ",
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-sm font-bold text-primary-600 dark:text-primary-400", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "p-2 mb-2 bg-gray-50 dark:bg-primary-900/20 rounded-md border border-primary-200 dark:border-primary-700", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `text-sm font-medium text-gray-900 dark:text-white line-clamp-6 leading-relaxed ${isSimpleOrdersViewEnabled ? "flex justify-evenly text-md" : "text-sm"}`, children: [
+                isSimpleOrdersViewEnabled ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-secondary-600 dark:text-secondary-400", children: simpleSkuQuantity }) : item.title,
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-bold text-primary-600 dark:text-primary-400", children: [
                   "Price: ₹",
                   item.price,
                   " ",
@@ -32709,6 +32768,7 @@ const OrderCard = ({
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 SkuRow,
                 {
+                  simpleMode: isSimpleOrdersViewEnabled,
                   newSku: item.newSku,
                   sku: item.sku,
                   onCopy: onCopySku,
@@ -32762,7 +32822,7 @@ const Badge = ({
     ]
   }
 );
-const SkuRow = ({ sku, newSku, onCopy, copied }) => {
+const SkuRow = ({ sku, newSku, onCopy, copied, simpleMode = false }) => {
   const oldSkuValue = String(sku || "").trim();
   const newSkuValue = String(newSku || "").trim();
   const [lastCopiedTarget, setLastCopiedTarget] = reactExports.useState(null);
@@ -32775,6 +32835,44 @@ const SkuRow = ({ sku, newSku, onCopy, copied }) => {
   const isOldSkuCopied = Boolean(
     oldSkuValue && copied === oldSkuValue && (!sameValue || lastCopiedTarget === "Old SKU")
   );
+  if (simpleMode) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-[90%] mx-auto px-1.5 py-0.5 opacity-50 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-[40px_minmax(0,1fr)_25px] items-center gap-x-2 gap-y-0.5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[11px] font-semibold text-gray-900 dark:text-gray-200", children: "SKU:" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-xs truncate text-gray-900 dark:text-gray-100", children: oldSkuValue || "-" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          onClick: () => {
+            if (oldSkuValue) {
+              setLastCopiedTarget("Old SKU");
+              onCopy == null ? void 0 : onCopy(oldSkuValue);
+            }
+          },
+          disabled: !oldSkuValue,
+          className: "shrink-0 p-1 rounded-md transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed",
+          title: "Copy SKU",
+          children: isOldSkuCopied ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "svg",
+            {
+              className: "w-4 h-4 text-success",
+              fill: "none",
+              stroke: "currentColor",
+              viewBox: "0 0 24 24",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "path",
+                {
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: 2,
+                  d: "M5 13l4 4L19 7"
+                }
+              )
+            }
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "w-4 h-4 text-gray-600 dark:text-gray-300" })
+        }
+      )
+    ] }) });
+  }
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-[90%] mx-auto px-1.5 py-0.5 opacity-50 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-[40px_minmax(0,1fr)_25px] items-center gap-x-2 gap-y-0.5", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[11px] font-semibold text-gray-900 dark:text-gray-200", children: "N SKU:" }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-xs truncate text-gray-900 dark:text-gray-100", children: newSkuValue || "-" }),
@@ -33153,6 +33251,7 @@ async function listItems() {
   return mapLegacyVisibilityRows(rows, "created_by");
 }
 const TABLE = "map_skus";
+let mapSkusCache = null;
 const SHOPSY_PREFIX_REGEX = /^(SPY_|SHY_|SH_)/i;
 const CHAIN_CONFLICT_ERROR_PREFIX = "[chain_conflict]";
 const SELF_MAP_ERROR_PREFIX = "[self_map]";
@@ -33163,6 +33262,9 @@ function requireUserId() {
 }
 function getNowIso() {
   return (/* @__PURE__ */ new Date()).toISOString();
+}
+function clearMapSkusCache() {
+  mapSkusCache = null;
 }
 const normalizeSkuValue = (value) => String(value || "").trim();
 const normalizeSkuForComparison = (value) => normalizeSkuValue(value).replace(SHOPSY_PREFIX_REGEX, "").toUpperCase();
@@ -33199,10 +33301,14 @@ async function listMapSkus() {
   const userId = requireUserId();
   return fetchAllMapSkusForUser(userId);
 }
-async function getMapSkuByOldSku(oldSku) {
-  const userId = requireUserId();
-  if (!oldSku) throw new Error("old_sku is required");
-  return getActiveMapSkuRowByOldSku(userId, oldSku);
+async function getMapSkusObject() {
+  if (mapSkusCache) return mapSkusCache;
+  const rows = await listMapSkus();
+  mapSkusCache = rows.reduce((acc, row) => {
+    acc[row.old_sku] = row.new_sku;
+    return acc;
+  }, {});
+  return mapSkusCache;
 }
 async function upsertMapSku({
   oldSku,
@@ -33258,6 +33364,7 @@ async function upsertMapSku({
     { onConflict: "user_id,old_sku" }
   ).select("*").single();
   if (error) throw new Error(error.message);
+  clearMapSkusCache();
   return data;
 }
 async function updateMapSku(oldSku, updates) {
@@ -33306,6 +33413,7 @@ async function updateMapSku(oldSku, updates) {
     updated_by: userId
   }).eq("user_id", userId).is("deleted_at", null).eq("old_sku", normalizedOldSku).select("*").single();
   if (error) throw new Error(error.message);
+  clearMapSkusCache();
   return data;
 }
 async function deleteMapSku(oldSku) {
@@ -33314,6 +33422,7 @@ async function deleteMapSku(oldSku) {
   const now2 = getNowIso();
   const { error } = await supabase.from(TABLE).update({ deleted_at: now2, updated_at: now2, updated_by: userId }).eq("user_id", userId).is("deleted_at", null).eq("old_sku", oldSku);
   if (error) throw new Error(error.message);
+  clearMapSkusCache();
   return { success: true };
 }
 async function searchMapSkus(searchTerm) {
@@ -33335,6 +33444,7 @@ async function restoreMapSku(oldSku) {
   const now2 = getNowIso();
   const { data, error } = await supabase.from(TABLE).update({ deleted_at: null, updated_at: now2, updated_by: userId }).eq("user_id", userId).not("deleted_at", "is", null).eq("old_sku", oldSku).select("*").single();
   if (error) throw new Error(error.message);
+  clearMapSkusCache();
   return data;
 }
 function isShopsyProduct(skuId) {
@@ -33373,6 +33483,13 @@ function parseCompositeSku(value) {
     };
   }
   return null;
+}
+function parseItemTokens(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return [];
+  const bracketMatch = raw.match(/^\[(.+)\]$/);
+  const tokenSource = bracketMatch ? bracketMatch[1] : raw;
+  return tokenSource.split("-").map((token) => token.trim()).filter(Boolean);
 }
 function normalizeText(value) {
   return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
@@ -33460,37 +33577,25 @@ const useOrderData = (selectedState = null) => {
     };
   }, [user == null ? void 0 : user.id]);
   reactExports.useEffect(() => {
-    if (orders.length === 0) {
+    if (!(user == null ? void 0 : user.id) || orders.length === 0) {
       setSkuMappings({});
       return;
     }
     const fetchMappings = async () => {
       try {
+        const fullMap = await getMapSkusObject();
         const allSkus = /* @__PURE__ */ new Set();
-        orders.forEach(
-          (order) => {
-            var _a;
-            return (_a = order.orderItems) == null ? void 0 : _a.forEach(
-              (item) => item.sku && allSkus.add(item.sku)
-            );
-          }
-        );
-        const results = await Promise.all(
-          Array.from(allSkus).map(async (sku) => {
-            try {
-              const normalizedSku = String(sku || "").trim();
-              if (!normalizedSku) return null;
-              const mapping = await getMapSkuByOldSku(normalizedSku);
-              return mapping ? { sku: normalizedSku, newSku: mapping.new_sku } : null;
-            } catch {
-              return null;
-            }
-          })
-        );
+        orders.forEach((order) => {
+          var _a;
+          (_a = order.orderItems) == null ? void 0 : _a.forEach((item) => {
+            const key = String((item == null ? void 0 : item.sku) || "").trim();
+            if (key) allSkus.add(key);
+          });
+        });
         const mappings = {};
-        results.forEach((r) => {
-          if (r && typeof r.sku === "string") {
-            mappings[r.sku] = String(r.newSku || "");
+        allSkus.forEach((sku) => {
+          if (Object.prototype.hasOwnProperty.call(fullMap || {}, sku)) {
+            mappings[sku] = String(fullMap[sku] || "");
           }
         });
         setSkuMappings(mappings);
@@ -33499,7 +33604,7 @@ const useOrderData = (selectedState = null) => {
       }
     };
     fetchMappings();
-  }, [orders]);
+  }, [orders, user == null ? void 0 : user.id]);
   const resolveProduct = reactExports.useCallback(
     (item) => {
       if (!products.length) {
@@ -33510,7 +33615,10 @@ const useOrderData = (selectedState = null) => {
       const sku = skuMappings[modified] || item.newSku || modified;
       const parsedSku = parseCompositeSku(sku);
       if (parsedSku) {
-        const matched = parsedSku.itemIds.map(
+        const parsedItemIds = parsedSku.itemIds.flatMap(
+          (token) => parseItemTokens(token)
+        );
+        const matched = parsedItemIds.map(
           (id) => products.find(
             (p) => normalizeText(p.sku_id) === normalizeText(id) || normalizeText(p.item_sku) === normalizeText(id)
           )
@@ -35751,6 +35859,7 @@ const SettingsPage = () => {
   } = useAuth();
   const { currentLanguage, changeLanguage, t } = useLanguage();
   const { fontSize, changeFontSize } = useFontSize();
+  const { isSimpleOrdersViewEnabled, toggleSimpleOrdersView } = useSimpleOrdersView();
   const [alert, setAlert] = reactExports.useState(null);
   const [currentView, setCurrentView] = reactExports.useState("signin");
   const [showAuthModal, setShowAuthModal] = reactExports.useState(!isAuthenticated);
@@ -35950,6 +36059,28 @@ const SettingsPage = () => {
               {
                 className: `inline-flex size-5 items-center justify-center transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${isDarkMode ? "translate-x-7" : "translate-x-0"}`,
                 children: isDarkMode ? /* @__PURE__ */ jsxRuntimeExports.jsx(Moon, { className: "w-3 h-3 text-primary-600" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Sun, { className: "w-3 h-3 text-yellow-500" })
+              }
+            )
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-lg font-semibold text-gray-900 dark:text-white mb-4", children: t("settings.simpleOrdersView") }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative place-items-center w-full grid grid-cols-[auto_60px]", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative w-full flex items-center space-x-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-gray-900 dark:text-white", children: t("settings.simpleOrdersView") }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-gray-600 dark:text-gray-400", children: t("settings.simpleOrdersViewDescription") })
+        ] }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            onClick: toggleSimpleOrdersView,
+            className: `relative inline-flex h-7 w-14 items-center rounded-full p-1 transition-all duration-300 ease-in-out focus:outline-none shadow-inner ${isSimpleOrdersViewEnabled ? "bg-gray-600 hover:bg-gray-700" : "bg-gray-200 hover:bg-gray-300"}`,
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `inline-flex size-5 items-center justify-center transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${isSimpleOrdersViewEnabled ? "translate-x-7" : "translate-x-0"}`
               }
             )
           }

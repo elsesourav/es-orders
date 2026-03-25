@@ -6,7 +6,7 @@ export function cn(...inputs) {
 }
 
 // Format a number as Indian currency/lakh-crore style
-export function formatIndianNumber(x) {
+export function formatIndianNumber(x: string | number | null | undefined): string | number {
   if (x === "" || x === undefined || x === null) return "";
   const num = Number(x);
   if (isNaN(num)) return x;

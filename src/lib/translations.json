@@ -69,7 +69,9 @@
       "sku": "SKU",
       "price": "Price",
       "total": "Total",
+      "pieces": "Pic",
       "grams": "g",
+      "kilograms": "Kilograms",
       "times": "x"
     },
     "voice": {
@@ -93,9 +95,11 @@
     "settings": {
       "appInformation": "App Information",
       "orderManagementSystem": "Order Management System",
-      "version": "Version 1.1.0",
+      "version": "Version 1.2.0",
       "authenticationRequired": "Authentication Required",
       "appearance": "Appearance",
+      "simpleOrdersView": "Simple Orders View",
+      "simpleOrdersViewDescription": "Simplify order card details in Orders page",
       "darkMode": "Dark Mode",
       "toggleTheme": "Toggle between light and dark theme",
       "language": "Language",
@@ -275,7 +279,9 @@
       "sku": "এসকিউ",
       "price": "মূল্য",
       "total": "মোট",
+      "pieces": "পিস",
       "grams": "গ্রাম",
+      "kilograms": "কিলোগ্রাম",
       "times": " টা"
     },
     "voice": {
@@ -299,9 +305,11 @@
     "settings": {
       "appInformation": "অ্যাপের তথ্য",
       "orderManagementSystem": "অর্ডার ব্যবস্থাপনা সিস্টেম",
-      "version": "সংস্করণ ১.১.০",
+      "version": "সংস্করণ ১.২.০",
       "authenticationRequired": "প্রমাণীকরণ প্রয়োজন",
       "appearance": "চেহারা",
+      "simpleOrdersView": "সিম্পল অর্ডার ভিউ",
+      "simpleOrdersViewDescription": "অর্ডার পেজে সরল কার্ড ভিউ চালু বা বন্ধ করুন",
       "darkMode": "ডার্ক মোড",
       "toggleTheme": "হালকা এবং গাঢ় থিমের মধ্যে টগল করুন",
       "language": "ভাষা",

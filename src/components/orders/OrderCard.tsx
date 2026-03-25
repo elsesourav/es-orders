@@ -3,8 +3,33 @@ import { useEffect, useState } from "react";
 import { FaShopify } from "react-icons/fa";
 import { SiFlipkart } from "react-icons/si";
 import { useLanguage } from "../../lib/useLanguage";
+import { useSimpleOrdersView } from "../../lib/useSimpleOrdersView";
 import type { OrderCardProps } from "./types";
 import { getMarketplaceInfo } from "./utils";
+import { formatIndianNumber } from "@/lib/utils";
+
+const QUANTITY_PART_REGEX = /^(\d+(?:\.\d+)?)([a-zA-Z]+)$/;
+
+const getSimpleQuantityFromSku = (
+  value: unknown,
+  getTranslatedUnitLabel: (unit: string) => string,
+) => {
+  const parts = String(value || "")
+    .split("_")
+    .map((part) => part.replace(/[\[\](){}]/g, ""))
+    .filter(Boolean);
+
+  const quantityPartCandidate =
+    parts.find((part) => QUANTITY_PART_REGEX.test(part)) || "";
+  const match = String(quantityPartCandidate).match(QUANTITY_PART_REGEX);
+  if (!match) return "N/A";
+
+  const qty = formatIndianNumber(match[1]);
+  const unit = match[2].toUpperCase();
+  const detailUnit = getTranslatedUnitLabel(unit);
+
+  return `${qty} - ${detailUnit}`;
+};
 
 /**
  * Full-page order card: product badges, image, SKU row, title and buyer details.
@@ -36,7 +61,8 @@ const OrderCard = ({
   onCopySku = undefined,
   copiedSku,
 }: OrderCardProps) => {
-  const { t } = useLanguage();
+  const { t, isBengali } = useLanguage();
+  const { isSimpleOrdersViewEnabled } = useSimpleOrdersView();
   const itemIndex = isActive ? selectedItemIndex : 0;
   const item = order?.orderItems?.[itemIndex] ?? order?.orderItems?.[0];
   const [isQuantityBlinkOn, setIsQuantityBlinkOn] = useState(false);
@@ -50,6 +76,12 @@ const OrderCard = ({
   const shouldBlinkQuantity = isActive && Number(item?.quantity || 0) > 1;
   const shouldBlinkItems = isActive && orderItemsCount > 1;
   const orderIdentity = String(order?.orderId || order?.order_id || "");
+  const simpleSkuQuantity = getSimpleQuantityFromSku(item?.newSku, (unit) => {
+    if (unit === "P") return t("orders.pieces");
+    if (unit === "G") return t("orders.grams");
+    if (unit === "KG") return t("orders.kilograms");
+    return unit;
+  });
   const sectionSurfaceClass = isEvenNumberedCard
     ? "bg-black/10 dark:bg-white/10"
     : "bg-white dark:bg-gray-800";
@@ -238,7 +270,9 @@ const OrderCard = ({
             icon={<Tag className="w-3 h-3 text-white" />}
           >
             <p className="text-lg font-bold text-info dark:text-blue-300 line-clamp-1 wrap-break-word">
-              {productDetails.name} • {productDetails.label}
+              {isBengali
+                ? productDetails.label
+                : `${productDetails.name} • ${productDetails.label}`}
             </p>
           </Badge>
         </div>
@@ -256,7 +290,7 @@ const OrderCard = ({
                 <SiFlipkart className="size-6 text-yellow-400" />
               </div>
             ) : (
-              <div className="absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-0.5 border border-gray-200 shadow-sm">
+              <div className="absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-1 border border-gray-200 shadow-sm">
                 <FaShopify className="size-6 text-[#81BF37]" />
               </div>
             ))}
@@ -309,20 +343,38 @@ const OrderCard = ({
 
         {/* Product title */}
         <div className="p-2 mb-2 bg-gray-50 dark:bg-primary-900/20 rounded-md border border-primary-200 dark:border-primary-700">
-          <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-4 leading-relaxed">
-            {item.title}
-            {". "}
-            <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
-              Price: ₹{item.price}{" "}
-              {Number(item.price || "0") / Number(item.quantity) > 300
-                ? "❤️"
-                : ""}
-            </span>
-          </p>
+          <div
+            className={`font-medium text-gray-900 dark:text-white line-clamp-6 leading-relaxed ${isSimpleOrdersViewEnabled ? "flex justify-evenly text-md" : "text-sm"}`}
+          >
+            {isSimpleOrdersViewEnabled ? (
+              <span className="font-bold">{simpleSkuQuantity}</span>
+            ) : (
+              item.title
+            )}
+
+            {isSimpleOrdersViewEnabled &&
+              Number(item.price || "0") / Number(item.quantity) > 300 && (
+                <span className="text-xl">❤️</span>
+              )}
+
+            {isSimpleOrdersViewEnabled ? (
+              <span className="font-bold">
+                ₹{formatIndianNumber(item.price)} - {t("orders.price")}
+              </span>
+            ) : (
+              <span className="font-bold ml-1 text-primary-600 dark:text-primary-400">
+                {t("orders.price")}: ₹{formatIndianNumber(item.price)}
+                {Number(item.price || "0") / Number(item.quantity) > 300
+                  ? " ❤️"
+                  : ""}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* SKU row */}
         <SkuRow
+          simpleMode={isSimpleOrdersViewEnabled}
           newSku={item.newSku}
           sku={item.sku}
           onCopy={onCopySku}
@@ -375,7 +427,7 @@ const Badge = ({
 );
 
 /** SKU display + copy buttons in two rows. */
-const SkuRow = ({ sku, newSku, onCopy, copied }) => {
+const SkuRow = ({ sku, newSku, onCopy, copied, simpleMode = false }) => {
   const oldSkuValue = String(sku || "").trim();
   const newSkuValue = String(newSku || "").trim();
   const [lastCopiedTarget, setLastCopiedTarget] = useState<
@@ -395,6 +447,50 @@ const SkuRow = ({ sku, newSku, onCopy, copied }) => {
     copied === oldSkuValue &&
     (!sameValue || lastCopiedTarget === "Old SKU"),
   );
+
+  if (simpleMode) {
+    return (
+      <div className="w-[90%] mx-auto px-1.5 py-0.5 opacity-50 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">
+        <div className="grid grid-cols-[40px_minmax(0,1fr)_25px] items-center gap-x-2 gap-y-0.5">
+          <span className="text-[11px] font-semibold text-gray-900 dark:text-gray-200">
+            SKU:
+          </span>
+          <span className="font-mono text-xs truncate text-gray-900 dark:text-gray-100">
+            {oldSkuValue || "-"}
+          </span>
+          <button
+            onClick={() => {
+              if (oldSkuValue) {
+                setLastCopiedTarget("Old SKU");
+                onCopy?.(oldSkuValue);
+              }
+            }}
+            disabled={!oldSkuValue}
+            className="shrink-0 p-1 rounded-md transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+            title="Copy SKU"
+          >
+            {isOldSkuCopied ? (
+              <svg
+                className="w-4 h-4 text-success"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            ) : (
+              <Copy className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-[90%] mx-auto px-1.5 py-0.5 opacity-50 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-200 dark:border-gray-600">

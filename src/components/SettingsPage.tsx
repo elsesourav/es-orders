@@ -16,6 +16,7 @@ import iconImage from "../assets/esIcon.png";
 import { useAuth } from "../lib/AuthContext";
 import { useFontSize } from "../lib/useFontSize";
 import { useLanguage } from "../lib/useLanguage";
+import { useSimpleOrdersView } from "../lib/useSimpleOrdersView";
 import { SignIn, SignUp } from "./login";
 import AddAccountDialog from "./settings/AddAccountDialog";
 import ManageAccountsDialog from "./settings/ManageAccountsDialog";
@@ -37,6 +38,8 @@ const SettingsPage = () => {
   } = useAuth();
   const { currentLanguage, changeLanguage, t } = useLanguage();
   const { fontSize, changeFontSize } = useFontSize();
+  const { isSimpleOrdersViewEnabled, toggleSimpleOrdersView } =
+    useSimpleOrdersView();
   const [alert, setAlert] = useState(null);
   const [currentView, setCurrentView] = useState("signin"); // "signin" or "signup"
   const [showAuthModal, setShowAuthModal] = useState(!isAuthenticated);
@@ -313,6 +316,39 @@ const SettingsPage = () => {
                 <Sun className="w-3 h-3 text-yellow-500" />
               )}
             </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Language Settings */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-5">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          {t("settings.simpleOrdersView")}
+        </h2>
+        <div className="relative place-items-center w-full grid grid-cols-[auto_60px]">
+          <div className="relative w-full flex items-center space-x-3">
+            <div>
+              <p className="font-medium text-gray-900 dark:text-white">
+                {t("settings.simpleOrdersView")}
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t("settings.simpleOrdersViewDescription")}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={toggleSimpleOrdersView}
+            className={`relative inline-flex h-7 w-14 items-center rounded-full p-1 transition-all duration-300 ease-in-out focus:outline-none shadow-inner ${
+              isSimpleOrdersViewEnabled
+                ? "bg-gray-600 hover:bg-gray-700"
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
+          >
+            <span
+              className={`inline-flex size-5 items-center justify-center transform rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${
+                isSimpleOrdersViewEnabled ? "translate-x-7" : "translate-x-0"
+              }`}
+            />
           </button>
         </div>
       </div>
