@@ -1,5 +1,9 @@
 # ES Orders
 
+<p align="left">
+  <img src="./src/assets/esIcon.png" alt="ES Orders Icon" width="72" />
+</p>
+
 ES Orders is a React + Vite order management application built for high-speed daily fulfillment operations. It helps teams review saved order states, inspect order details, resolve SKU mappings, and manage multiple accounts from a single interface.
 
 ## Download Android App
