@@ -1,7 +1,6 @@
 # ES Orders
 
-ES Orders is a React + Vite order management app focused on fast daily fulfillment workflows.
-It helps teams review saved order states, inspect order items in detail, resolve SKU mappings, and manage multiple user accounts from one interface.
+ES Orders is a React + Vite order management application built for high-speed daily fulfillment operations. It helps teams review saved order states, inspect order details, resolve SKU mappings, and manage multiple accounts from a single interface.
 
 ## Download Android App
 
@@ -11,79 +10,72 @@ It helps teams review saved order states, inspect order items in detail, resolve
   </a>
 </div>
 
-## Key Features
+## Features
 
-### 1. Authentication & Account Management
+### Authentication and Account Management
 
-- Sign up and sign in with username/password.
-- Session-based auth persistence with cookies.
-- Multi-account support:
+- Sign up and sign in with username/password credentials.
+- Keep authenticated sessions active using cookie-based persistence.
+- Manage multiple accounts in one app:
   - add account
   - switch account
   - disconnect account
-  - logout all accounts
-- Auto-redirect to settings/auth flow if a user is not authenticated.
+  - log out all accounts
+- Automatically redirect users to auth/settings flow when authentication is missing.
 
-### 2. Saved Order States Dashboard (Home)
+### Saved Order States Dashboard
 
-- Fetches user-specific saved order states.
-- Displays each state by timestamp.
-- Quick entry into:
-  - RTD (Ready To Dispatch) list
-  - Handover list
-- Empty and error states for better reliability.
+- Fetch and display user-specific saved order states.
+- Show state history by timestamp.
+- Open RTD (Ready to Dispatch) and Handover lists directly from the dashboard.
+- Provide reliable empty and error states.
 
-### 3. Orders Reader Experience
+### Order Reading Experience
 
-- Full-screen order card workflow optimized for mobile and desktop.
-- Horizontal swipe navigation with preloading and performance windows for large order lists.
-- Direct hotzone navigation (left/right touch zones) to move between orders quickly.
-- Order jump dialog to jump to a specific order number.
-- Multi-item order support with item index selector.
-- Product image preloading/cache for smoother browsing.
-- Marketplace badge rendering (Flipkart / Shopsy-like sources).
-- Copy SKU support:
-  - Web clipboard (`navigator.clipboard`)
+- Full-screen order-card workflow optimized for both desktop and mobile.
+- Horizontal swipe navigation with preloading windows for smoother large-list performance.
+- Hot-zone navigation (left/right touch areas) for rapid order traversal.
+- Jump-to-order dialog for direct navigation to a specific order number.
+- Multi-item order support with item index selection.
+- Product image preloading and caching for faster transitions.
+- Marketplace badge rendering (for Flipkart and Shopsy-like sources).
+- SKU copy support via:
+  - Web Clipboard API (`navigator.clipboard`)
   - Android bridge clipboard (`window.AndroidClipboard`) when available
 
-### 4. Product Resolution & Weight Calculation
+### Product Resolution and Weight Calculation
 
-- Resolves product details using:
-  - item SKU
-  - mapped SKU
-  - normalized SKU parsing
-- Supports composite SKU parsing formats:
-  - IDs-then-quantity
-  - quantity-then-IDs
-- Fallback matching by title if SKU-token match is missing.
-- Computes item weight in grams using quantity/unit logic.
+- Resolve products using item SKU, mapped SKU, and normalized SKU parsing.
+- Parse composite SKU formats in both IDs-then-quantity and quantity-then-IDs layouts.
+- Fall back to title-based matching when token matching is unavailable.
+- Compute item weight in grams using quantity and unit logic.
 
-### 5. SKU Mapping Management
+### SKU Mapping Management
 
-- Searchable SKU map table.
+- Searchable SKU mapping table.
 - Add, edit, soft-delete, and restore mappings.
-- Active and deleted view modes.
-- Debounced search for large mapping lists.
-- Builder-assisted new SKU generation with stepwise flow:
+- Toggle between active and deleted records.
+- Debounced search for better large-dataset performance.
+- Step-by-step SKU builder flow:
   1. Select vertical
   2. Select category
   3. Add one or more product SKUs
   4. Enter quantity
   5. Choose unit
-- Built-in validation to prevent self-mapping and chain conflicts.
+- Built-in guardrails to prevent self-mapping and chain conflicts.
 
-### 6. Personalization & UX Settings
+### Personalization and UX Settings
 
 - Dark mode toggle.
-- Language switching (English / Bengali).
-- Font size controls (small / medium / large).
-- Simple Orders View mode for compact order reading.
-- Responsive navigation for desktop and mobile.
+- Language switching (English and Bengali).
+- Font size controls (small, medium, and large).
+- Simple Orders View mode for compact reading.
+- Responsive navigation across desktop and mobile layouts.
 
-### 7. Developer Contact & App Info
+### App Information
 
-- In-app app-information card.
-- Developer contact links (email + social profiles).
+- In-app application information card.
+- Developer contact links (email and social profiles).
 
 ## Tech Stack
 
@@ -93,22 +85,23 @@ It helps teams review saved order states, inspect order items in detail, resolve
 - Tailwind CSS 4
 - Supabase JS 2
 - Swiper 12
-- Lucide React + React Icons
+- Lucide React
+- React Icons
 
-## Project Structure (Important Paths)
+## Project Structure
 
-- `src/components` - main UI pages and reusable UI blocks
-- `src/components/orders` - order viewing flow and data resolution
-- `src/components/settings` - account center and SKU mapping tools
-- `src/components/login` - sign in/sign up modals
-- `src/api` - Supabase data access layer
-- `src/lib` - auth, language, theme, font-size, utility hooks
-- `setup.sql` - baseline SQL schema/setup script
-- `ES Orders.apk` - Android app binary
+- `src/components`: Main pages and reusable UI components
+- `src/components/orders`: Order reader workflow and data resolution logic
+- `src/components/settings`: Account management and SKU mapping tools
+- `src/components/login`: Sign-in and sign-up components
+- `src/api`: Supabase data access layer
+- `src/lib`: Auth, language, theme, font size, and utility hooks
+- `setup.sql`: Base database schema/setup script
+- `ES Orders.apk`: Android app binary
 
 ## Environment Variables
 
-Create a `.env` file in project root:
+Create a `.env` file in the project root:
 
 ```env
 VITE_SUPABASE_URL=your_supabase_project_url
@@ -117,67 +110,64 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 ## Getting Started
 
-### 1. Install dependencies
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Run development server
+### 2. Start Development Server
 
 ```bash
 npm run dev
 ```
 
-### 3. Build for production
+### 3. Build for Production
 
 ```bash
 npm run build
 ```
 
-### 4. Type-check
+### 4. Run Type Check
 
 ```bash
 npm run typecheck
 ```
 
-### 5. Lint
+### 5. Run Linting
 
 ```bash
 npm run lint
 ```
 
-## Database Notes
-
-- The app relies on Supabase tables for users, orders states, items/base items, categories, verticals, and SKU mappings.
-- Use `setup.sql` as the starting point for schema setup and extend as needed for all API tables used in `src/api`.
-
 ## Scripts
 
-- `npm run dev` - Start Vite dev server
-- `npm run build` - Production build
-- `npm run typecheck` - TypeScript check without emit
-- `npm run lint` - ESLint
-- `npm run preview` - Preview production build
+- `npm run dev`: Start the Vite development server
+- `npm run build`: Create a production build
+- `npm run typecheck`: Run TypeScript checks without emitting files
+- `npm run lint`: Run ESLint
+- `npm run preview`: Preview the production build locally
 
-## APK Download (Direct File)
+## Database Notes
 
-If you are viewing this repository in a file browser that supports local links, use the button at the top.
+- The app depends on Supabase tables for users, order states, items/base items, categories, verticals, and SKU mappings.
+- Use `setup.sql` as the starting schema and extend it for all tables required by files in `src/api`.
+
+## APK Download (Direct Link)
+
+If your file browser supports local links, use the download button above.
 
 Alternative direct link:
 
-- [Download ES Orders.apk](./ES%20Orders.apk)
+- [Download ES Orders.apk](./raw/refs/heads/master/ES%20Orders.apk)
 
 ## License
 
+This repository is proprietary and not open source.
+
+Copyright (c) 2026 Sourav Barui.
 All rights reserved.
 
-Copyright (c) 2026 SouravBarui2026
+No permission is granted to use, copy, modify, merge, publish, distribute, sublicense, or sell any part of this software or its documentation without prior written permission from the copyright owner.
 
-This project is NOT open source.
-
-Use, copying, modification, distribution, or resale is not allowed without prior written permission from SouravBarui2026.
-
-## README Copyright
-
-README Copyright by SouravBarui2026
+See the `LICENSE` file for full terms.
