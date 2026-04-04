@@ -12640,7 +12640,7 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$t = [
+const __iconNode$u = [
   [
     "path",
     {
@@ -12672,7 +12672,15 @@ const __iconNode$t = [
   ["path", { d: "m12 8 4.74-2.85", key: "3rx089" }],
   ["path", { d: "M12 13.5V8", key: "1io7kd" }]
 ];
-const Boxes = createLucideIcon("boxes", __iconNode$t);
+const Boxes = createLucideIcon("boxes", __iconNode$u);
+/**
+ * @license lucide-react v0.525.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$t = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$t);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
@@ -26924,12 +26932,314 @@ const useLanguage = () => {
   }
   return context;
 };
+function CustomAlert({
+  type = "info",
+  message,
+  onClose,
+  duration = 5e3
+}) {
+  const [isVisible, setIsVisible] = reactExports.useState(false);
+  const [isExiting, setIsExiting] = reactExports.useState(false);
+  const colorMap = {
+    info: {
+      bg: "#6366f1",
+      // primary
+      bgLight: "#818cf8",
+      // primary-light
+      text: "#eef2ff",
+      textLight: "#1e1b4b",
+      icon: "ℹ️"
+    },
+    success: {
+      bg: "#10b981",
+      // success
+      bgLight: "#34d399",
+      // success-light
+      text: "#ecfdf5",
+      textLight: "#052e16",
+      icon: "✓"
+    },
+    error: {
+      bg: "#f43f5e",
+      // danger
+      bgLight: "#fb7185",
+      // danger-light
+      text: "#fff1f2",
+      textLight: "#4c0519",
+      icon: "✕"
+    },
+    warning: {
+      bg: "#f59e0b",
+      // warning
+      bgLight: "#fbbf24",
+      // warning-light
+      text: "#1f2937",
+      textLight: "#422006",
+      icon: "⚠"
+    }
+  };
+  const handleClose = reactExports.useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onClose == null ? void 0 : onClose();
+    }, 300);
+  }, [onClose]);
+  reactExports.useEffect(() => {
+    requestAnimationFrame(() => setIsVisible(true));
+    if (!onClose) return void 0;
+    const timer = setTimeout(() => {
+      handleClose();
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [onClose, duration, handleClose]);
+  const colors = colorMap[type] || colorMap.info;
+  const alertStyle = {
+    "--alert-bg": colors.bg,
+    "--alert-bg-light": colors.bgLight,
+    "--alert-text": colors.text,
+    "--alert-text-light": colors.textLight
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        className: `custom-alert custom-alert-${type} ${isVisible ? "visible" : ""} ${isExiting ? "exiting" : ""}`,
+        style: alertStyle,
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "alert-content", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "alert-icon", children: colors.icon }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "alert-message", children: message })
+          ] }),
+          onClose && /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: handleClose, className: "alert-close", children: "✕" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: "alert-progress",
+              style: { animationDuration: `${duration}ms` }
+            }
+          )
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("style", { children: `
+        .custom-alert {
+          position: fixed;
+          left: 50%;
+          bottom: -120px;
+          transform: translateX(-50%) scale(0.9);
+          z-index: 2147483648;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          min-width: 320px;
+          max-width: 480px;
+          padding: 16px 20px;
+          border-radius: 16px;
+          background: var(--alert-bg);
+          color: var(--alert-text);
+          font-weight: 500;
+          box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.3),
+            0 2px 8px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+          overflow: hidden;
+          opacity: 0;
+        }
+        
+        .custom-alert.visible {
+          bottom: 32px;
+          transform: translateX(-50%) scale(1) translateY(0);
+          opacity: 1;
+        }
+        
+        .custom-alert.exiting {
+          bottom: -120px;
+          opacity: 0;
+          transform: translateX(-50%) scale(0.85) translateY(30px);
+          transition: all 0.35s cubic-bezier(0.4, 0, 1, 1);
+        }
+        
+        .alert-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex: 1;
+          min-width: 0;
+        }
+        
+        .alert-icon {
+          font-size: 20px;
+          line-height: 1;
+          flex-shrink: 0;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+          animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes iconBounce {
+          0% { transform: scale(0) rotate(-180deg); }
+          50% { transform: scale(1.2) rotate(10deg); }
+          100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        .alert-message {
+          font-size: 14px;
+          line-height: 1.5;
+          flex: 1;
+          min-width: 0;
+          word-wrap: break-word;
+        }
+        
+        .alert-close {
+          background: rgba(255, 255, 255, 0.18);
+          border: 1px solid rgba(255, 255, 255, 0.24);
+          color: inherit;
+          width: 28px;
+          height: 28px;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          font-weight: bold;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          flex-shrink: 0;
+          backdrop-filter: blur(4px);
+        }
+        
+        .alert-close:hover {
+          background: rgba(255, 255, 255, 0.28);
+          transform: scale(1.1) rotate(90deg);
+        }
+        
+        .alert-close:active {
+          transform: scale(0.95) rotate(90deg);
+        }
+        
+        .alert-progress {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          height: 4px;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.85),
+            rgba(255, 255, 255, 0.45)
+          );
+          animation: progressShrink linear forwards;
+          border-radius: 0 0 16px 16px;
+          box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes progressShrink {
+          0% { 
+            width: 100%; 
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% { 
+            width: 0%; 
+            opacity: 0;
+          }
+        }
+        
+        /* Light theme adjustments */
+        .light-theme .custom-alert {
+          background: var(--alert-bg-light);
+          color: var(--alert-text-light);
+          box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.15),
+            0 2px 8px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+          border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .light-theme .alert-close {
+          background: rgba(0, 0, 0, 0.1);
+          border-color: rgba(0, 0, 0, 0.14);
+          color: inherit;
+        }
+        
+        .light-theme .alert-close:hover {
+          background: rgba(0, 0, 0, 0.15);
+        }
+        
+        .light-theme .alert-progress {
+          background: linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.25),
+            rgba(0, 0, 0, 0.15)
+          );
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 640px) {
+          .custom-alert {
+            min-width: 280px;
+            max-width: calc(100vw - 32px);
+            padding: 14px 16px;
+            bottom: -100px;
+          }
+          
+          .custom-alert.visible {
+            bottom: 20px;
+          }
+          
+          .alert-message {
+            font-size: 13px;
+          }
+        }
+      ` })
+  ] });
+}
 const HomePage = ({ onNavigateToOrders }) => {
-  const { user } = useAuth();
+  const { user, savedAccounts, switchAccount } = useAuth();
   const { t } = useLanguage();
   const [states, setStates] = reactExports.useState([]);
   const [loading, setLoading] = reactExports.useState(true);
   const [error, setError] = reactExports.useState(null);
+  const [showSwitchPopup, setShowSwitchPopup] = reactExports.useState(false);
+  const [switchPopupVisible, setSwitchPopupVisible] = reactExports.useState(false);
+  const [switchingUsername, setSwitchingUsername] = reactExports.useState(
+    null
+  );
+  const [alert, setAlert] = reactExports.useState(null);
+  const openSwitchPopup = () => {
+    setShowSwitchPopup(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setSwitchPopupVisible(true));
+    });
+  };
+  const closeSwitchPopup = () => {
+    setSwitchPopupVisible(false);
+    setTimeout(() => setShowSwitchPopup(false), 180);
+  };
+  const handleQuickSwitch = async (username) => {
+    if (String(username).toLowerCase() === String(user == null ? void 0 : user.username).toLowerCase()) {
+      return;
+    }
+    setSwitchingUsername(username);
+    const result = await switchAccount(username);
+    setSwitchingUsername(null);
+    if (!result.success) {
+      setAlert({
+        type: "error",
+        message: result.error || t("settings.switchFailed")
+      });
+      return;
+    }
+    setAlert({
+      type: "success",
+      message: `${t("settings.switchedTo")} @${username}`
+    });
+    closeSwitchPopup();
+  };
   reactExports.useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -26989,7 +27299,7 @@ const HomePage = ({ onNavigateToOrders }) => {
   }
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-6", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center space-y-3", children: [
-      user && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700", children: [
+      user && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-md font-semibold text-gray-900 dark:text-white", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-normal text-gray-500 dark:text-gray-400", children: [
             t("orders.name"),
@@ -27001,7 +27311,19 @@ const HomePage = ({ onNavigateToOrders }) => {
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-md text-gray-600 dark:text-gray-300", children: [
           "@",
           user.username
-        ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            onClick: openSwitchPopup,
+            className: "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+            children: [
+              t("settings.switch"),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronRight, { className: "w-3 h-3" })
+            ]
+          }
+        )
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white mb-2", children: t("home.savedStates") })
     ] }),
@@ -27059,7 +27381,70 @@ const HomePage = ({ onNavigateToOrders }) => {
         },
         state.id || index
       );
-    }) })
+    }) }),
+    showSwitchPopup && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        className: `fixed inset-0 z-2147483645 flex items-end sm:items-center justify-center p-4 transition-all duration-200 ${switchPopupVisible ? "bg-black/30 backdrop-blur-sm opacity-100" : "bg-black/0 backdrop-blur-none opacity-0"}`,
+        onClick: (event) => {
+          if (event.target === event.currentTarget) {
+            closeSwitchPopup();
+          }
+        },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: `w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 transform transition-all duration-200 ${switchPopupVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-3 scale-95"}`,
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-3", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-gray-100", children: t("settings.switchAccount") }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    className: "text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600",
+                    onClick: closeSwitchPopup,
+                    children: t("common.close")
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-2 max-h-[50svh] overflow-y-auto custom-scrollbar", children: savedAccounts.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: t("settings.noSavedAccounts") }) : savedAccounts.map((account) => {
+                const isCurrent = String(account.username || "").toLowerCase() === String((user == null ? void 0 : user.username) || "").toLowerCase();
+                const isSwitching = switchingUsername === account.username;
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    disabled: isCurrent || isSwitching,
+                    onClick: () => handleQuickSwitch(account.username),
+                    className: `w-full flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${isCurrent ? "border-primary-400 bg-primary-50 dark:bg-primary-900/30" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"} ${isSwitching ? "opacity-70" : ""}`,
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-gray-900 dark:text-white truncate", children: account.name || t("settings.unnamed") }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-300 truncate", children: [
+                          "@",
+                          account.username
+                        ] })
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-medium text-gray-500 dark:text-gray-400", children: isCurrent ? t("settings.current") : isSwitching ? t("common.loading") : t("settings.switch") })
+                    ]
+                  },
+                  account.username
+                );
+              }) })
+            ]
+          }
+        )
+      }
+    ),
+    alert && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      CustomAlert,
+      {
+        type: alert.type,
+        message: alert.message,
+        onClose: () => setAlert(null)
+      }
+    )
   ] });
 };
 function isObject$2(obj) {
@@ -34802,272 +35187,6 @@ function ConfirmDialog({
       )
     }
   );
-}
-function CustomAlert({
-  type = "info",
-  message,
-  onClose,
-  duration = 5e3
-}) {
-  const [isVisible, setIsVisible] = reactExports.useState(false);
-  const [isExiting, setIsExiting] = reactExports.useState(false);
-  const colorMap = {
-    info: {
-      bg: "#6366f1",
-      // primary
-      bgLight: "#818cf8",
-      // primary-light
-      text: "#eef2ff",
-      textLight: "#1e1b4b",
-      icon: "ℹ️"
-    },
-    success: {
-      bg: "#10b981",
-      // success
-      bgLight: "#34d399",
-      // success-light
-      text: "#ecfdf5",
-      textLight: "#052e16",
-      icon: "✓"
-    },
-    error: {
-      bg: "#f43f5e",
-      // danger
-      bgLight: "#fb7185",
-      // danger-light
-      text: "#fff1f2",
-      textLight: "#4c0519",
-      icon: "✕"
-    },
-    warning: {
-      bg: "#f59e0b",
-      // warning
-      bgLight: "#fbbf24",
-      // warning-light
-      text: "#1f2937",
-      textLight: "#422006",
-      icon: "⚠"
-    }
-  };
-  const handleClose = reactExports.useCallback(() => {
-    setIsExiting(true);
-    setTimeout(() => {
-      onClose == null ? void 0 : onClose();
-    }, 300);
-  }, [onClose]);
-  reactExports.useEffect(() => {
-    requestAnimationFrame(() => setIsVisible(true));
-    if (!onClose) return void 0;
-    const timer = setTimeout(() => {
-      handleClose();
-    }, duration);
-    return () => clearTimeout(timer);
-  }, [onClose, duration, handleClose]);
-  const colors = colorMap[type] || colorMap.info;
-  const alertStyle = {
-    "--alert-bg": colors.bg,
-    "--alert-bg-light": colors.bgLight,
-    "--alert-text": colors.text,
-    "--alert-text-light": colors.textLight
-  };
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "div",
-      {
-        className: `custom-alert custom-alert-${type} ${isVisible ? "visible" : ""} ${isExiting ? "exiting" : ""}`,
-        style: alertStyle,
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "alert-content", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "alert-icon", children: colors.icon }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "alert-message", children: message })
-          ] }),
-          onClose && /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: handleClose, className: "alert-close", children: "✕" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "div",
-            {
-              className: "alert-progress",
-              style: { animationDuration: `${duration}ms` }
-            }
-          )
-        ]
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("style", { children: `
-        .custom-alert {
-          position: fixed;
-          left: 50%;
-          bottom: -120px;
-          transform: translateX(-50%) scale(0.9);
-          z-index: 2147483648;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          min-width: 320px;
-          max-width: 480px;
-          padding: 16px 20px;
-          border-radius: 16px;
-          background: var(--alert-bg);
-          color: var(--alert-text);
-          font-weight: 500;
-          box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.3),
-            0 2px 8px rgba(0, 0, 0, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
-          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-          overflow: hidden;
-          opacity: 0;
-        }
-        
-        .custom-alert.visible {
-          bottom: 32px;
-          transform: translateX(-50%) scale(1) translateY(0);
-          opacity: 1;
-        }
-        
-        .custom-alert.exiting {
-          bottom: -120px;
-          opacity: 0;
-          transform: translateX(-50%) scale(0.85) translateY(30px);
-          transition: all 0.35s cubic-bezier(0.4, 0, 1, 1);
-        }
-        
-        .alert-content {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          flex: 1;
-          min-width: 0;
-        }
-        
-        .alert-icon {
-          font-size: 20px;
-          line-height: 1;
-          flex-shrink: 0;
-          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-          animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        @keyframes iconBounce {
-          0% { transform: scale(0) rotate(-180deg); }
-          50% { transform: scale(1.2) rotate(10deg); }
-          100% { transform: scale(1) rotate(0deg); }
-        }
-        
-        .alert-message {
-          font-size: 14px;
-          line-height: 1.5;
-          flex: 1;
-          min-width: 0;
-          word-wrap: break-word;
-        }
-        
-        .alert-close {
-          background: rgba(255, 255, 255, 0.18);
-          border: 1px solid rgba(255, 255, 255, 0.24);
-          color: inherit;
-          width: 28px;
-          height: 28px;
-          border-radius: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 14px;
-          font-weight: bold;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          flex-shrink: 0;
-          backdrop-filter: blur(4px);
-        }
-        
-        .alert-close:hover {
-          background: rgba(255, 255, 255, 0.28);
-          transform: scale(1.1) rotate(90deg);
-        }
-        
-        .alert-close:active {
-          transform: scale(0.95) rotate(90deg);
-        }
-        
-        .alert-progress {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          height: 4px;
-          background: linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.85),
-            rgba(255, 255, 255, 0.45)
-          );
-          animation: progressShrink linear forwards;
-          border-radius: 0 0 16px 16px;
-          box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        @keyframes progressShrink {
-          0% { 
-            width: 100%; 
-            opacity: 1;
-          }
-          90% {
-            opacity: 1;
-          }
-          100% { 
-            width: 0%; 
-            opacity: 0;
-          }
-        }
-        
-        /* Light theme adjustments */
-        .light-theme .custom-alert {
-          background: var(--alert-bg-light);
-          color: var(--alert-text-light);
-          box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.15),
-            0 2px 8px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.5);
-          border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        .light-theme .alert-close {
-          background: rgba(0, 0, 0, 0.1);
-          border-color: rgba(0, 0, 0, 0.14);
-          color: inherit;
-        }
-        
-        .light-theme .alert-close:hover {
-          background: rgba(0, 0, 0, 0.15);
-        }
-        
-        .light-theme .alert-progress {
-          background: linear-gradient(
-            90deg,
-            rgba(0, 0, 0, 0.25),
-            rgba(0, 0, 0, 0.15)
-          );
-        }
-        
-        /* Mobile responsive */
-        @media (max-width: 640px) {
-          .custom-alert {
-            min-width: 280px;
-            max-width: calc(100vw - 32px);
-            padding: 14px 16px;
-            bottom: -100px;
-          }
-          
-          .custom-alert.visible {
-            bottom: 20px;
-          }
-          
-          .alert-message {
-            font-size: 13px;
-          }
-        }
-      ` })
-  ] });
 }
 const MAX_SEARCH_RESULTS = 20;
 const DEBOUNCE_DELAY = 1e3;

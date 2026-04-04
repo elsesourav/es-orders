@@ -1,4 +1,4 @@
-import { getUserId } from "@/api/usersApi";
+import { getUserId } from "../../api/usersApi";
 import type { ComponentType, ReactNode } from "react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import Button from "./Button";

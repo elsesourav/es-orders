@@ -1,9 +1,10 @@
-import { Package, Truck } from "lucide-react";
+import { ChevronRight, Package, Truck } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { listOrderStates } from "../api/ordersStatesApi";
 import { useAuth } from "../lib/AuthContext";
 import { useLanguage } from "../lib/useLanguage";
+import CustomAlert from "./ui/CustomAlert";
 import type { SelectedOrdersState } from "../types/orders";
 
 interface HomePageProps {
@@ -11,11 +12,56 @@ interface HomePageProps {
 }
 
 const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
-  const { user } = useAuth();
+  const { user, savedAccounts, switchAccount } = useAuth();
   const { t } = useLanguage();
   const [states, setStates] = useState<SelectedOrdersState[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showSwitchPopup, setShowSwitchPopup] = useState(false);
+  const [switchPopupVisible, setSwitchPopupVisible] = useState(false);
+  const [switchingUsername, setSwitchingUsername] = useState<string | null>(
+    null,
+  );
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  const openSwitchPopup = () => {
+    setShowSwitchPopup(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setSwitchPopupVisible(true));
+    });
+  };
+
+  const closeSwitchPopup = () => {
+    setSwitchPopupVisible(false);
+    setTimeout(() => setShowSwitchPopup(false), 180);
+  };
+
+  const handleQuickSwitch = async (username: string) => {
+    if (String(username).toLowerCase() === String(user?.username).toLowerCase()) {
+      return;
+    }
+
+    setSwitchingUsername(username);
+    const result = await switchAccount(username);
+    setSwitchingUsername(null);
+
+    if (!result.success) {
+      setAlert({
+        type: "error",
+        message: result.error || t("settings.switchFailed"),
+      });
+      return;
+    }
+
+    setAlert({
+      type: "success",
+      message: `${t("settings.switchedTo")} @${username}`,
+    });
+    closeSwitchPopup();
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -96,7 +142,7 @@ const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
     <div className="space-y-6">
       <div className="text-center space-y-3">
         {user && (
-          <div className="mx-auto inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <div className="mx-auto inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
             <span className="text-md font-semibold text-gray-900 dark:text-white">
               <span className="font-normal text-gray-500 dark:text-gray-400">
                 {t("orders.name")}:{" "}
@@ -106,6 +152,14 @@ const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
             <span className="text-md text-gray-600 dark:text-gray-300">
               @{user.username}
             </span>
+            <button
+              type="button"
+              onClick={openSwitchPopup}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              {t("settings.switch")}
+              <ChevronRight className="w-3 h-3" />
+            </button>
           </div>
         )}
 
@@ -179,6 +233,95 @@ const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
             </div>
           ))}
         </div>
+      )}
+
+      {showSwitchPopup && (
+        <div
+          className={`fixed inset-0 z-2147483645 flex items-end sm:items-center justify-center p-4 transition-all duration-200 ${
+            switchPopupVisible
+              ? "bg-black/30 backdrop-blur-sm opacity-100"
+              : "bg-black/0 backdrop-blur-none opacity-0"
+          }`}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closeSwitchPopup();
+            }
+          }}
+        >
+          <div
+            className={`w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 transform transition-all duration-200 ${
+              switchPopupVisible
+                ? "opacity-100 translate-y-0 scale-100"
+                : "opacity-0 translate-y-3 scale-95"
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                {t("settings.switchAccount")}
+              </h3>
+              <button
+                type="button"
+                className="text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600"
+                onClick={closeSwitchPopup}
+              >
+                {t("common.close")}
+              </button>
+            </div>
+
+            <div className="space-y-2 max-h-[50svh] overflow-y-auto custom-scrollbar">
+              {savedAccounts.length === 0 ? (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {t("settings.noSavedAccounts")}
+                </p>
+              ) : (
+                savedAccounts.map((account) => {
+                  const isCurrent =
+                    String(account.username || "").toLowerCase() ===
+                    String(user?.username || "").toLowerCase();
+                  const isSwitching = switchingUsername === account.username;
+
+                  return (
+                    <button
+                      key={account.username}
+                      type="button"
+                      disabled={isCurrent || isSwitching}
+                      onClick={() => handleQuickSwitch(account.username)}
+                      className={`w-full flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${
+                        isCurrent
+                          ? "border-primary-400 bg-primary-50 dark:bg-primary-900/30"
+                          : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      } ${isSwitching ? "opacity-70" : ""}`}
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {account.name || t("settings.unnamed")}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 truncate">
+                          @{account.username}
+                        </p>
+                      </div>
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                        {isCurrent
+                          ? t("settings.current")
+                          : isSwitching
+                            ? t("common.loading")
+                            : t("settings.switch")}
+                      </span>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {alert && (
+        <CustomAlert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
       )}
     </div>
   );
