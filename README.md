@@ -159,7 +159,7 @@ If your file browser supports local links, use the download button above.
 
 Alternative direct link:
 
-- [Download ES Orders.apk](./raw/refs/heads/master/ES%20Orders.apk)
+- [Download ES Orders.apk](./ES%20Orders.apk)
 
 ## License
 
