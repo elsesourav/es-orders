@@ -151,9 +151,6 @@ const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
               </span>
               {user.name || "User"}
             </span>
-            <span className="text-md text-gray-600 dark:text-gray-300">
-              @{user.username}
-            </span>
             <button
               type="button"
               onClick={openSwitchPopup}

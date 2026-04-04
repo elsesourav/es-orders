@@ -27308,10 +27308,6 @@ const HomePage = ({ onNavigateToOrders }) => {
           ] }),
           user.name || "User"
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-md text-gray-600 dark:text-gray-300", children: [
-          "@",
-          user.username
-        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "button",
           {
