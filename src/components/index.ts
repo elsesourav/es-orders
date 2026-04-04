@@ -1,6 +1,6 @@
 // Export all reusable components from this file
-export { default as HomePage } from "./HomePage";
-export { default as OrdersPage } from "./OrdersPage";
+export { default as HomePage } from "../features/home/HomePage";
+export { default as OrdersPage } from "../features/orders/OrdersPage";
 export { default as ResponsiveNav } from "./ResponsiveNav";
 export { default as SettingsPage } from "./SettingsPage";
 export { default as ThemeToggle } from "./ThemeToggle";

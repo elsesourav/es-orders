@@ -94,6 +94,7 @@ export {
   listDeletedOrderStates,
   listOrderStates,
   listOrderStatesByDateRange,
+  listOwnOrderStatesPaged,
   listRecentOrderStates,
   restoreOrderState,
   searchOrderStates,

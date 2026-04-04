@@ -36,6 +36,16 @@ export interface ProductDetails {
   unite: string;
 }
 
+export interface OrderProductDetailRow {
+  imageUrl: string;
+  name: string;
+  sku: string;
+  quantity: number;
+  price: number;
+  unitWeight: number;
+  totalWeight: number;
+}
+
 export interface StateData {
   selectedType?: string;
   timestamp?: string;
@@ -48,4 +58,38 @@ export interface SelectedOrdersState extends StateData {
   id?: string | number;
   userId: string;
   selectedType?: "rtd" | "handover";
+}
+
+export interface OrdersStateListQuery {
+  page?: number;
+  limit?: number;
+  startDate?: string | null;
+  endDate?: string | null;
+}
+
+export interface SavedOrderStateRow {
+  id?: string | number;
+  user_id?: string;
+  created_by?: string;
+  created_at?: string;
+  updated_at?: string;
+  state_data?: {
+    timestamp?: string;
+    states?: StateData;
+    [key: string]: unknown;
+  };
+  order_data?: {
+    timestamp?: string;
+    states?: StateData;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+export interface SavedOrderStatesPage {
+  rows: SavedOrderStateRow[];
+  page: number;
+  limit: number;
+  total: number;
+  hasMore: boolean;
 }

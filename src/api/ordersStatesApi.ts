@@ -1,6 +1,12 @@
 import { supabase } from "../lib/supabaseClient";
+import type {
+  OrdersStateListQuery,
+  SavedOrderStatesPage,
+} from "../types/orders";
 import { getVisibleRows, mapLegacyVisibilityRows } from "./_visibility";
 import { getUserId } from "./usersApi";
+
+export const ORDERS_STATES_PAGE_SIZE = 4;
 
 function requireUserId() {
   const userId = getUserId();
@@ -48,6 +54,64 @@ export async function listOrderStates() {
   });
 
   return mapLegacyVisibilityRows(rows, "user_id").map(mapOrderState);
+}
+
+function normalizePositiveInt(value, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return fallback;
+  }
+
+  return Math.floor(parsed);
+}
+
+function toOptionalDate(value) {
+  const normalized = String(value || "").trim();
+  return normalized || null;
+}
+
+export async function listOwnOrderStatesPaged(
+  options: OrdersStateListQuery = {},
+): Promise<SavedOrderStatesPage> {
+  const userId = requireUserId();
+  const page = normalizePositiveInt(options.page, 1);
+  const limit = normalizePositiveInt(options.limit, ORDERS_STATES_PAGE_SIZE);
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  const startDate = toOptionalDate(options.startDate);
+  const endDate = toOptionalDate(options.endDate);
+
+  let query = supabase
+    .from("orders_states")
+    .select("*", { count: "exact" })
+    .eq("user_id", userId)
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
+
+  if (startDate) {
+    query = query.gte("created_at", startDate);
+  }
+
+  if (endDate) {
+    query = query.lte("created_at", endDate);
+  }
+
+  const { data, error, count } = await query.range(from, to);
+
+  if (error) throw new Error(error.message);
+
+  const rows = mapLegacyVisibilityRows(data || [], "user_id").map(
+    mapOrderState,
+  );
+  const total = Number(count || 0);
+
+  return {
+    rows,
+    page,
+    limit,
+    total,
+    hasMore: page * limit < total,
+  };
 }
 
 export async function getOrderStateById(id) {

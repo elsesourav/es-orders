@@ -5,6 +5,7 @@ import {
   ResponsiveNav,
   SettingsPage,
 } from "./components";
+import LoadingWindow from "./components/ui/feedback/LoadingWindow";
 import { useAuth } from "./lib/AuthContext";
 import type { SelectedOrdersState } from "./types/orders";
 
@@ -62,10 +63,11 @@ function IndexPage() {
   if (loading) {
     return (
       <div className="min-h-svh bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
-        </div>
+        <LoadingWindow
+          open
+          title="Loading App"
+          message="Checking authentication and preparing your workspace"
+        />
       </div>
     );
   }
