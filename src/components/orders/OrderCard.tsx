@@ -4,9 +4,9 @@ import { FaShopify } from "react-icons/fa";
 import { SiFlipkart } from "react-icons/si";
 import { useLanguage } from "../../lib/useLanguage";
 import { useSimpleOrdersView } from "../../lib/useSimpleOrdersView";
+import { formatIndianNumber } from "../../lib/utils";
 import type { OrderCardProps } from "./types";
 import { getMarketplaceInfo } from "./utils";
-import { formatIndianNumber } from "../../lib/utils";
 
 const QUANTITY_PART_REGEX = /^(\d+(?:\.\d+)?)([a-zA-Z]+)$/;
 

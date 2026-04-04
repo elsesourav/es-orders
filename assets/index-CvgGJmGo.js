@@ -32854,6 +32854,14 @@ const useSimpleOrdersView = () => {
     toggleSimpleOrdersView
   };
 };
+function formatIndianNumber(x) {
+  if (x === "" || x === void 0 || x === null) return "";
+  const num = Number(x);
+  if (isNaN(num)) return x;
+  const [intPart, decPart] = x.toString().split(".");
+  const formattedInt = new Intl.NumberFormat("en-IN").format(Number(intPart));
+  return decPart !== void 0 ? `${formattedInt}.${decPart}` : formattedInt;
+}
 const calculateWeightInGrams = (allQuantityPerKg, unit, unitType) => {
   const type = unitType.toLowerCase();
   let weight = 0;
@@ -32898,14 +32906,6 @@ const LOADING_PRODUCT = {
   weight: "Loading...",
   unite: "Loading..."
 };
-function formatIndianNumber(x) {
-  if (x === "" || x === void 0 || x === null) return "";
-  const num = Number(x);
-  if (isNaN(num)) return x;
-  const [intPart, decPart] = x.toString().split(".");
-  const formattedInt = new Intl.NumberFormat("en-IN").format(Number(intPart));
-  return decPart !== void 0 ? `${formattedInt}.${decPart}` : formattedInt;
-}
 const QUANTITY_PART_REGEX$1 = /^(\d+(?:\.\d+)?)([a-zA-Z]+)$/;
 const getSimpleQuantityFromSku = (value, getTranslatedUnitLabel) => {
   const parts = String(value || "").split("_").map((part) => part.replace(/[\[\](){}]/g, "")).filter(Boolean);

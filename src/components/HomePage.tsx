@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { listOrderStates } from "../api/ordersStatesApi";
 import { useAuth } from "../lib/AuthContext";
 import { useLanguage } from "../lib/useLanguage";
-import CustomAlert from "./ui/CustomAlert";
 import type { SelectedOrdersState } from "../types/orders";
+import CustomAlert from "./ui/CustomAlert";
 
 interface HomePageProps {
   onNavigateToOrders?: (state: SelectedOrdersState) => void;
@@ -40,7 +40,9 @@ const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
   };
 
   const handleQuickSwitch = async (username: string) => {
-    if (String(username).toLowerCase() === String(user?.username).toLowerCase()) {
+    if (
+      String(username).toLowerCase() === String(user?.username).toLowerCase()
+    ) {
       return;
     }
 
