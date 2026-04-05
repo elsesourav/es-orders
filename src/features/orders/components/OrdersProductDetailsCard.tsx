@@ -20,6 +20,7 @@ type ProductTotalsSummary = {
   productCount: number;
   shipmentCount: number;
   itemQuantity: number;
+  totalWeight: number;
   productCost: number;
   packageCost: number;
   totalCost: number;
@@ -35,6 +36,14 @@ const PACKAGE_COST_PER_SHIPMENT = 3;
 function toSafeNumber(value: unknown) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function toCeilDisplayValue(value: unknown) {
+  return Math.ceil(Math.max(0, toSafeNumber(value)));
+}
+
+function toRoundedDisplayValue(value: unknown) {
+  return Math.round(Math.max(0, toSafeNumber(value)));
 }
 
 function getSku(item: OrderItem, details: ProductDetails) {
@@ -79,109 +88,115 @@ export default function OrdersProductDetailsCard({
   orders,
   resolveProduct,
 }: OrdersProductDetailsCardProps) {
-  const { rows, summary } = useMemo(() => {
-    const productMap = new Map<string, ProductTotalsRow>();
+  const { rows, summary, displayProductCost, displayTotalCost } =
+    useMemo(() => {
+      const productMap = new Map<string, ProductTotalsRow>();
 
-    for (const order of orders) {
-      const items = Array.isArray(order?.orderItems) ? order.orderItems : [];
-      const shipmentSeenKeys = new Set<string>();
+      for (const order of orders) {
+        const items = Array.isArray(order?.orderItems) ? order.orderItems : [];
+        const shipmentSeenKeys = new Set<string>();
 
-      for (const item of items) {
-        const details = resolveProduct(item);
-        const sku = getSku(item, details);
-        const displayName = getProductName(item, details);
-        const displayLabel = getProductLabel(item, details);
-        const groupKey =
-          normalizeGroupKey(displayLabel || displayName || sku) || sku;
-        const quantity = Math.max(1, toSafeNumber(item?.quantity));
-        const productCost = getItemProductCost(item, details);
-        const unitWeight = getUnitWeight(details);
-        const totalWeight = unitWeight * quantity;
+        for (const item of items) {
+          const details = resolveProduct(item);
+          const sku = getSku(item, details);
+          const displayName = getProductName(item, details);
+          const displayLabel = getProductLabel(item, details);
+          const groupKey =
+            normalizeGroupKey(displayLabel || displayName || sku) || sku;
+          const quantity = Math.max(1, toSafeNumber(item?.quantity));
+          const productCost = getItemProductCost(item, details);
+          const unitWeight = getUnitWeight(details);
+          const totalWeight = unitWeight * quantity;
 
-        const current = productMap.get(groupKey) || {
-          key: groupKey,
-          sku,
-          name: displayName,
-          label: displayLabel,
-          imageUrl: getImageUrl(item),
-          shipmentCount: 0,
+          const current = productMap.get(groupKey) || {
+            key: groupKey,
+            sku,
+            name: displayName,
+            label: displayLabel,
+            imageUrl: getImageUrl(item),
+            shipmentCount: 0,
+            itemQuantity: 0,
+            totalWeight: 0,
+            productCost: 0,
+            packageCost: 0,
+            totalCost: 0,
+          };
+
+          current.itemQuantity += quantity;
+          current.totalWeight += totalWeight;
+          current.productCost += productCost;
+
+          if (!shipmentSeenKeys.has(groupKey)) {
+            current.shipmentCount += 1;
+            shipmentSeenKeys.add(groupKey);
+          }
+
+          if (!current.imageUrl) {
+            current.imageUrl = getImageUrl(item);
+          }
+
+          if (!current.label) {
+            current.label = displayLabel;
+          }
+
+          productMap.set(groupKey, current);
+        }
+      }
+
+      for (const row of productMap.values()) {
+        row.packageCost = row.shipmentCount * PACKAGE_COST_PER_SHIPMENT;
+        row.totalCost = row.productCost + row.packageCost;
+      }
+
+      const nextRows = Array.from(productMap.values()).sort(
+        (a, b) => b.totalCost - a.totalCost,
+      );
+
+      const nextSummary = nextRows.reduce<ProductTotalsSummary>(
+        (acc, row) => {
+          acc.itemQuantity += row.itemQuantity;
+          acc.totalWeight += row.totalWeight;
+          acc.productCost += row.productCost;
+          acc.packageCost += row.packageCost;
+          acc.totalCost += row.totalCost;
+          return acc;
+        },
+        {
+          productCount: nextRows.length,
+          shipmentCount: orders.length,
           itemQuantity: 0,
           totalWeight: 0,
           productCost: 0,
           packageCost: 0,
           totalCost: 0,
-        };
+        },
+      );
 
-        current.itemQuantity += quantity;
-        current.totalWeight += totalWeight;
-        current.productCost += productCost;
+      const nextDisplayProductCost = nextRows.reduce(
+        (acc, row) => acc + toCeilDisplayValue(row.productCost),
+        0,
+      );
 
-        if (!shipmentSeenKeys.has(groupKey)) {
-          current.shipmentCount += 1;
-          shipmentSeenKeys.add(groupKey);
-        }
+      const nextDisplayTotalCost = nextRows.reduce(
+        (acc, row) => acc + toCeilDisplayValue(row.totalCost),
+        0,
+      );
 
-        if (!current.imageUrl) {
-          current.imageUrl = getImageUrl(item);
-        }
-
-        if (!current.label) {
-          current.label = displayLabel;
-        }
-
-        productMap.set(groupKey, current);
-      }
-    }
-
-    for (const row of productMap.values()) {
-      row.packageCost = row.shipmentCount * PACKAGE_COST_PER_SHIPMENT;
-      row.totalCost = row.productCost + row.packageCost;
-    }
-
-    const nextRows = Array.from(productMap.values()).sort(
-      (a, b) => b.totalCost - a.totalCost,
-    );
-
-    const nextSummary = nextRows.reduce<ProductTotalsSummary>(
-      (acc, row) => {
-        acc.itemQuantity += row.itemQuantity;
-        acc.productCost += row.productCost;
-        acc.packageCost += row.packageCost;
-        acc.totalCost += row.totalCost;
-        return acc;
-      },
-      {
-        productCount: nextRows.length,
-        shipmentCount: orders.length,
-        itemQuantity: 0,
-        productCost: 0,
-        packageCost: 0,
-        totalCost: 0,
-      },
-    );
-
-    return {
-      rows: nextRows,
-      summary: nextSummary,
-    };
-  }, [orders, resolveProduct]);
+      return {
+        rows: nextRows,
+        summary: nextSummary,
+        displayProductCost: nextDisplayProductCost,
+        displayTotalCost: nextDisplayTotalCost,
+      };
+    }, [orders, resolveProduct]);
 
   if (!rows.length) {
     return null;
   }
 
   return (
-    <section className="h-full rounded-xl  bg-linear-to-b from-white to-gray-50/80 dark:from-gray-900 dark:to-gray-900/80 space-y-2 overflow-hidden flex flex-col">
-      <div className="flex items-center justify-between gap-2 px-0.5">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-          Product Details Totals
-        </h3>
-        <p className="text-xs text-gray-600 dark:text-gray-400">
-          {summary.productCount} products • {summary.shipmentCount} shipments
-        </p>
-      </div>
-
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5">
+    <section className="h-full rounded-sm bg-linear-to-b from-white to-gray-50/80 dark:from-gray-900 dark:to-gray-900/80 space-y-2 overflow-hidden flex flex-col">
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 p-1 rounded-sm bg-green-500/10">
         <InfoTile
           label="Products"
           value={String(formatIndianNumber(summary.productCount))}
@@ -196,15 +211,15 @@ export default function OrdersProductDetailsCard({
         />
         <InfoTile
           label="Product Cost"
-          value={`₹${formatIndianNumber(summary.productCost.toFixed(2))}`}
+          value={`₹${formatIndianNumber(displayProductCost)}`}
         />
         <InfoTile
           label="PKG Cost"
-          value={`₹${formatIndianNumber(summary.packageCost.toFixed(2))}`}
+          value={`₹${formatIndianNumber(toRoundedDisplayValue(summary.packageCost))}`}
         />
         <InfoTile
           label="Total Cost"
-          value={`₹${formatIndianNumber(summary.totalCost.toFixed(2))}`}
+          value={`₹${formatIndianNumber(displayTotalCost)}`}
         />
       </div>
 
@@ -251,13 +266,13 @@ export default function OrdersProductDetailsCard({
                 <p className="text-[11px] text-gray-500 dark:text-gray-400">
                   Qty:{" "}
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    {formatIndianNumber(row.itemQuantity)}
+                    {formatIndianNumber(toCeilDisplayValue(row.itemQuantity))}
                   </span>
                 </p>
                 <p className="text-[11px] text-gray-500 dark:text-gray-400">
                   Shipments:{" "}
                   <span className="font-semibold text-gray-900 dark:text-white">
-                    {formatIndianNumber(row.shipmentCount)}
+                    {formatIndianNumber(toCeilDisplayValue(row.shipmentCount))}
                   </span>
                 </p>
               </div>
@@ -278,7 +293,7 @@ export default function OrdersProductDetailsCard({
               />
               <MetricInline
                 label="Total"
-                value={`₹${formatIndianNumber(row.totalCost.toFixed(2))}`}
+                value={`₹${formatIndianNumber(toCeilDisplayValue(row.totalCost))}`}
                 emphasized
               />
             </div>

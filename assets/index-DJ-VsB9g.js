@@ -27423,6 +27423,12 @@ function toSafeNumber(value) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 }
+function toCeilDisplayValue(value) {
+  return Math.ceil(Math.max(0, toSafeNumber(value)));
+}
+function toRoundedDisplayValue(value) {
+  return Math.round(Math.max(0, toSafeNumber(value)));
+}
 function getSku(item, details) {
   return String((details == null ? void 0 : details.itemSku) || (item == null ? void 0 : item.newSku) || (item == null ? void 0 : item.sku) || "-").trim() || "-";
 }
@@ -27452,7 +27458,7 @@ function OrdersProductDetailsCard({
   orders,
   resolveProduct
 }) {
-  const { rows, summary } = reactExports.useMemo(() => {
+  const { rows, summary, displayProductCost, displayTotalCost } = reactExports.useMemo(() => {
     const productMap = /* @__PURE__ */ new Map();
     for (const order of orders) {
       const items = Array.isArray(order == null ? void 0 : order.orderItems) ? order.orderItems : [];
@@ -27506,6 +27512,7 @@ function OrdersProductDetailsCard({
     const nextSummary = nextRows.reduce(
       (acc, row) => {
         acc.itemQuantity += row.itemQuantity;
+        acc.totalWeight += row.totalWeight;
         acc.productCost += row.productCost;
         acc.packageCost += row.packageCost;
         acc.totalCost += row.totalCost;
@@ -27515,30 +27522,32 @@ function OrdersProductDetailsCard({
         productCount: nextRows.length,
         shipmentCount: orders.length,
         itemQuantity: 0,
+        totalWeight: 0,
         productCost: 0,
         packageCost: 0,
         totalCost: 0
       }
     );
+    const nextDisplayProductCost = nextRows.reduce(
+      (acc, row) => acc + toCeilDisplayValue(row.productCost),
+      0
+    );
+    const nextDisplayTotalCost = nextRows.reduce(
+      (acc, row) => acc + toCeilDisplayValue(row.totalCost),
+      0
+    );
     return {
       rows: nextRows,
-      summary: nextSummary
+      summary: nextSummary,
+      displayProductCost: nextDisplayProductCost,
+      displayTotalCost: nextDisplayTotalCost
     };
   }, [orders, resolveProduct]);
   if (!rows.length) {
     return null;
   }
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "h-full rounded-xl  bg-linear-to-b from-white to-gray-50/80 dark:from-gray-900 dark:to-gray-900/80 space-y-2 overflow-hidden flex flex-col", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2 px-0.5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: "Product Details Totals" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-400", children: [
-        summary.productCount,
-        " products • ",
-        summary.shipmentCount,
-        " shipments"
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-3 md:grid-cols-6 gap-1.5", children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "h-full rounded-sm bg-linear-to-b from-white to-gray-50/80 dark:from-gray-900 dark:to-gray-900/80 space-y-2 overflow-hidden flex flex-col", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-3 md:grid-cols-6 gap-1.5 p-1 rounded-sm bg-green-500/10", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         InfoTile,
         {
@@ -27564,21 +27573,21 @@ function OrdersProductDetailsCard({
         InfoTile,
         {
           label: "Product Cost",
-          value: `₹${formatIndianNumber(summary.productCost.toFixed(2))}`
+          value: `₹${formatIndianNumber(displayProductCost)}`
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         InfoTile,
         {
           label: "PKG Cost",
-          value: `₹${formatIndianNumber(summary.packageCost.toFixed(2))}`
+          value: `₹${formatIndianNumber(toRoundedDisplayValue(summary.packageCost))}`
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         InfoTile,
         {
           label: "Total Cost",
-          value: `₹${formatIndianNumber(summary.totalCost.toFixed(2))}`
+          value: `₹${formatIndianNumber(displayTotalCost)}`
         }
       )
     ] }),
@@ -27608,12 +27617,12 @@ function OrdersProductDetailsCard({
               /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[11px] text-gray-500 dark:text-gray-400", children: [
                 "Qty:",
                 " ",
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-gray-900 dark:text-white", children: formatIndianNumber(row.itemQuantity) })
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-gray-900 dark:text-white", children: formatIndianNumber(toCeilDisplayValue(row.itemQuantity)) })
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[11px] text-gray-500 dark:text-gray-400", children: [
                 "Shipments:",
                 " ",
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-gray-900 dark:text-white", children: formatIndianNumber(row.shipmentCount) })
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-gray-900 dark:text-white", children: formatIndianNumber(toCeilDisplayValue(row.shipmentCount)) })
               ] })
             ] })
           ] }),
@@ -27643,7 +27652,7 @@ function OrdersProductDetailsCard({
               MetricInline,
               {
                 label: "Total",
-                value: `₹${formatIndianNumber(row.totalCost.toFixed(2))}`,
+                value: `₹${formatIndianNumber(toCeilDisplayValue(row.totalCost))}`,
                 emphasized: true
               }
             )
