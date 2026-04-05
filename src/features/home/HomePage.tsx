@@ -1,4 +1,5 @@
 import { Package } from "lucide-react";
+import { useState } from "react";
 import CustomAlert from "../../components/ui/CustomAlert";
 import LoadingWindow from "../../components/ui/feedback/LoadingWindow";
 import { useAuth } from "../../lib/AuthContext";
@@ -7,6 +8,7 @@ import type { SelectedOrdersState } from "../../types/orders";
 import HomeFiltersFooter from "./components/HomeFiltersFooter";
 import HomeHeader from "./components/HomeHeader";
 import SavedStateCard from "./components/SavedStateCard";
+import SavedStateProductDetailsModal from "./components/SavedStateProductDetailsModal";
 import SwitchAccountPopup from "./components/SwitchAccountPopup";
 import useAccountSwitch from "./hooks/useAccountSwitch";
 import useHomeOrderStates from "./hooks/useHomeOrderStates";
@@ -45,6 +47,9 @@ const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
     closeSwitchPopup,
     handleQuickSwitch,
   } = useAccountSwitch({ user, switchAccount, t });
+
+  const [selectedStateForDetails, setSelectedStateForDetails] =
+    useState<SelectedOrdersState | null>(null);
 
   const openState = (
     state: SelectedOrdersState,
@@ -96,6 +101,9 @@ const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
               key={String(state.id || index)}
               state={state}
               index={index}
+              onOpenDetails={(nextState) =>
+                setSelectedStateForDetails(nextState)
+              }
               onOpenRtd={(nextState) => openState(nextState, "rtd")}
               onOpenHandover={(nextState) => openState(nextState, "handover")}
               t={t}
@@ -133,6 +141,12 @@ const HomePage = ({ onNavigateToOrders }: HomePageProps) => {
         t={t}
         onClose={closeSwitchPopup}
         onSwitch={handleQuickSwitch}
+      />
+
+      <SavedStateProductDetailsModal
+        open={!!selectedStateForDetails}
+        state={selectedStateForDetails}
+        onClose={() => setSelectedStateForDetails(null)}
       />
 
       {alert && (

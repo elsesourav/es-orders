@@ -5,7 +5,6 @@ import { A11y } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { OrderPagesListProps } from "../types/types";
 import OrderCard from "./OrderCard";
-import OrdersProductDetailsCard from "./OrdersProductDetailsCard";
 
 const HOTZONE_DEBUG_MODE = false;
 const SWIPE_TRANSITION_MS = 220;
@@ -39,7 +38,7 @@ const OrderPagesList = ({
   const [orderJumpValue, setOrderJumpValue] = useState("");
   const [scrollDirection, setScrollDirection] = useState<-1 | 0 | 1>(0);
 
-  const totalSlides = orders.length + 1;
+  const totalSlides = orders.length;
 
   useEffect(() => {
     if (selectedOrderIndex === null) return;
@@ -228,15 +227,6 @@ const OrderPagesList = ({
             </SwiperSlide>
           );
         })}
-
-        <SwiperSlide key="orders-totals-card" className="h-full!">
-          <div className="relative w-full h-full p-1 rounded-xl bg-primary-50/60 dark:bg-primary-950/20">
-            <OrdersProductDetailsCard
-              orders={orders}
-              resolveProduct={resolveProduct}
-            />
-          </div>
-        </SwiperSlide>
       </Swiper>
 
       <div className="absolute inset-y-0 left-0 right-0 z-40 pointer-events-none">
@@ -309,17 +299,10 @@ const OrderPagesList = ({
                 : "opacity-0 translate-y-3 scale-95"
             }`}
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center mb-3">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                 Select Order
               </h3>
-              <button
-                type="button"
-                className="text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600"
-                onClick={closeOrderPicker}
-              >
-                Close
-              </button>
             </div>
             <div className="flex gap-2 mb-3">
               <input
@@ -361,7 +344,7 @@ const OrderPagesList = ({
                         : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600"
                     }`}
                   >
-                    {index === orders.length ? "Total" : index + 1}
+                    {index + 1}
                   </button>
                 );
               })}

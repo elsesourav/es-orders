@@ -4,6 +4,7 @@ import type { SelectedOrdersState } from "../../../types/orders";
 type SavedStateCardProps = {
   state: SelectedOrdersState;
   index: number;
+  onOpenDetails: (state: SelectedOrdersState) => void;
   onOpenRtd: (state: SelectedOrdersState) => void;
   onOpenHandover: (state: SelectedOrdersState) => void;
   t: (key: string) => string;
@@ -12,6 +13,7 @@ type SavedStateCardProps = {
 export default function SavedStateCard({
   state,
   index,
+  onOpenDetails,
   onOpenRtd,
   onOpenHandover,
   t,
@@ -19,10 +21,20 @@ export default function SavedStateCard({
   return (
     <div
       key={state.id || index}
-      className="relative w-full grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-2 bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1"
+      className="relative w-full space-y-2 bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1"
     >
-      <div className="relative w-full h-full flex items-center text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-200">
-        {state.timestamp || "No timestamp"}
+      <div className="relative w-full flex items-center justify-between gap-2">
+        <div className="text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-200">
+          {state.timestamp || "No timestamp"}
+        </div>
+
+        <button
+          type="button"
+          className="shrink-0 text-xs px-2 py-1 rounded-md border border-primary-300 dark:border-primary-700 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 active:bg-primary-100 dark:active:bg-primary-900/50 transition-colors duration-200 cursor-pointer"
+          onClick={() => onOpenDetails(state)}
+        >
+          Product Details
+        </button>
       </div>
 
       <div className="relative w-full grid grid-cols-2 gap-2">

@@ -314,7 +314,7 @@ const OrderCard = ({
             ))}
 
           <div className="my-1 flex justify-center">
-            <div className="relative w-full max-w-[min(70vw,70vh)] min-h-[min(30vw,30vh)] max-h-[min(75vw,75vh)]">
+            <div className="relative w-full max-w-[min(70vw,70vh,300px)] min-h-[min(30vw,30vh,150px)] max-h-[min(70vw,70vh,300px)]">
               {isActive && isImageLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 z-10">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />

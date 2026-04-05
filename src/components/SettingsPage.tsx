@@ -217,7 +217,7 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className="space-y-4 md:space-y-5 max-w-2xl mx-auto pb-4">
+    <div className="space-y-4 md:space-y-5 max-w-xl mx-auto pb-4">
       {/* Account Switch Section */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-5 mt-2 md:mt-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">

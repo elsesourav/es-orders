@@ -34,6 +34,8 @@ export interface ProductDetails {
   label: string;
   weight: string;
   unite: string;
+  computedCost?: number;
+  itemSku?: string;
 }
 
 export interface OrderProductDetailRow {

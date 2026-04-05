@@ -77,6 +77,18 @@ function normalizeText(value: unknown) {
     .replace(/\s+/g, " ");
 }
 
+function toNonNegativeNumber(value: unknown) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+}
+
+function calculateWeightBasedCost(pricePerKg: unknown, weightInGrams: number) {
+  const safePricePerKg = toNonNegativeNumber(pricePerKg);
+  if (safePricePerKg === null) return null;
+  if (!Number.isFinite(weightInGrams) || weightInGrams <= 0) return null;
+  return (safePricePerKg * weightInGrams) / 1000;
+}
+
 /**
  * Hook that owns all data-fetching and product-resolution logic for orders.
  */
@@ -211,7 +223,18 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
 
   // ── Fetch SKU mappings for all orders ───────────────────────────────
   useEffect(() => {
-    if (!user?.id || orders.length === 0) {
+    if (!user?.id) {
+      setSkuMappings({});
+      return;
+    }
+
+    const sourceOrders = [
+      ...(Array.isArray(stateData?.rtd) ? stateData.rtd : []),
+      ...(Array.isArray(stateData?.handover) ? stateData.handover : []),
+    ];
+    const mappingOrders = sourceOrders.length ? sourceOrders : orders;
+
+    if (mappingOrders.length === 0) {
       setSkuMappings({});
       return;
     }
@@ -221,7 +244,7 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
         const fullMap = await getMapSkusObject();
         const allSkus = new Set<string>();
 
-        orders.forEach((order) => {
+        mappingOrders.forEach((order) => {
           order.orderItems?.forEach((item) => {
             const key = String(item?.sku || "").trim();
             if (key) allSkus.add(key);
@@ -242,7 +265,7 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
     };
 
     fetchMappings();
-  }, [orders, user?.id]);
+  }, [orders, stateData, user?.id]);
 
   // ── Resolve product details from an order item ──────────────────────
   const resolveProduct = useCallback(
@@ -271,16 +294,44 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
         );
 
         if (matched.every(Boolean)) {
+          const matchedProducts = matched as Array<Record<string, unknown>>;
           const weight = calculateWeightInGrams(
-            matched.map((p) => p.quantity_per_kg),
+            matchedProducts.map((p) => p.quantity_per_kg),
             parsedSku.unit,
             parsedSku.unitType,
           );
+
+          const computedCost = matchedProducts.reduce<number | null>(
+            (acc, product) => {
+              if (acc === null) return null;
+
+              const componentWeight = calculateWeightInGrams(
+                [product.quantity_per_kg],
+                parsedSku.unit,
+                parsedSku.unitType,
+              );
+              const componentCost = calculateWeightBasedCost(
+                product.price,
+                componentWeight,
+              );
+
+              return componentCost === null ? null : acc + componentCost;
+            },
+            0,
+          );
+
+          const itemSku = matchedProducts
+            .map((p) => String(p.item_sku || p.sku_id || "").trim())
+            .filter(Boolean)
+            .join(", ");
+
           return {
-            name: matched.map((p) => p.name).join(", "),
-            label: matched.map((p) => p.label || p.name).join(", "),
+            name: matchedProducts.map((p) => p.name).join(", "),
+            label: matchedProducts.map((p) => p.label || p.name).join(", "),
             weight: weight.toFixed(2),
             unite: parsedSku.unitType,
+            ...(itemSku ? { itemSku } : {}),
+            ...(computedCost === null ? {} : { computedCost }),
           };
         }
 
@@ -312,6 +363,10 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
                 parsedSku.unit,
                 parsedSku.unitType,
               );
+              const computedCost = calculateWeightBasedCost(
+                titleMatch.price,
+                weight,
+              );
 
               return {
                 name: titleMatch.name || item?.title || DEFAULT_PRODUCT.name,
@@ -319,6 +374,10 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
                   titleMatch.label || titleMatch.name || DEFAULT_PRODUCT.label,
                 weight: weight.toFixed(2),
                 unite: parsedSku.unitType,
+                ...(titleMatch.item_sku
+                  ? { itemSku: String(titleMatch.item_sku).trim() }
+                  : {}),
+                ...(computedCost === null ? {} : { computedCost }),
               };
             }
           }

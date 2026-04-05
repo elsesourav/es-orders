@@ -202,7 +202,7 @@ const OrdersPageView = ({ selectedOrdersState = null }: OrdersPageProps) => {
   }, [checkAndLoadImage, orders, selectedItemIndex, selectedOrderIndex]);
 
   return (
-    <div className="relative flex flex-col h-[calc(100svh-4.5rem)] overflow-hidden">
+    <div className="relative flex flex-col h-[calc(100svh-4.5rem)] max-w-xl mx-auto overflow-hidden">
       <LoadingWindow
         open={isOrdersLoading}
         title="Loading Orders"

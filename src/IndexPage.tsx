@@ -81,7 +81,7 @@ function IndexPage() {
             {renderContent()}
           </div>
         ) : (
-          <div className="max-w-7xl pt-16 md:pt-18 pb-6 px-2 md:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto overscroll-y-contain">
+          <div className="max-w-xl pt-16 md:pt-18 pb-6 px-2 md:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto overscroll-y-contain">
             {renderContent()}
           </div>
         )}

@@ -5,6 +5,8 @@ import {
 } from "../../../api/ordersStatesApi";
 import type { SelectedOrdersState } from "../../../types/orders";
 
+const FILTERED_ORDERS_STATES_PAGE_SIZE = 12;
+
 function buildDateRangeIso(fromDate: string, toDate: string) {
   return {
     startDate: fromDate ? `${fromDate}T00:00:00.000Z` : null,
@@ -17,8 +19,33 @@ function mapStateRows(rows = []): SelectedOrdersState[] {
     ...item?.order_data?.states,
     id: item?.id,
     timestamp: item?.order_data?.timestamp,
+    createdAt: item?.created_at,
     userId: String(item?.user_id ?? item?.created_by ?? ""),
   }));
+}
+
+function toDateOnly(value: unknown) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().slice(0, 10);
+}
+
+function getPageDateBounds(rows: SelectedOrdersState[]) {
+  const dates = rows
+    .map((row) => toDateOnly(row?.createdAt || row?.timestamp))
+    .filter(Boolean)
+    .sort();
+
+  if (!dates.length) {
+    return { from: "", to: "" };
+  }
+
+  return {
+    from: dates[0],
+    to: dates[dates.length - 1],
+  };
 }
 
 export default function useHomeOrderStates(userId?: string) {
@@ -51,17 +78,26 @@ export default function useHomeOrderStates(userId?: string) {
         setLoading(true);
         setError(null);
 
+        const isCustomDateApplied = !!(appliedFromDate || appliedToDate);
+        const pageLimit = isCustomDateApplied
+          ? FILTERED_ORDERS_STATES_PAGE_SIZE
+          : ORDERS_STATES_PAGE_SIZE;
         const dateRange = buildDateRangeIso(appliedFromDate, appliedToDate);
         const response = await listOwnOrderStatesPaged({
           page,
-          limit: ORDERS_STATES_PAGE_SIZE,
+          limit: pageLimit,
           startDate: dateRange.startDate,
           endDate: dateRange.endDate,
         });
 
-        setStates(mapStateRows(response?.rows || []));
+        const mappedRows = mapStateRows(response?.rows || []);
+        setStates(mappedRows);
         setTotalStates(Number(response?.total || 0));
         setHasMore(Boolean(response?.hasMore));
+
+        const { from, to } = getPageDateBounds(mappedRows);
+        setFromDate(from);
+        setToDate(to);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load states");
       } finally {

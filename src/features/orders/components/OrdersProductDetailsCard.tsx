@@ -6,21 +6,23 @@ type ProductTotalsRow = {
   key: string;
   sku: string;
   name: string;
+  label: string;
   imageUrl: string;
   shipmentCount: number;
   itemQuantity: number;
   totalWeight: number;
-  totalPrice: number;
-  avgUnitWeight: number;
-  avgUnitPrice: number;
+  productCost: number;
+  packageCost: number;
+  totalCost: number;
 };
 
 type ProductTotalsSummary = {
   productCount: number;
   shipmentCount: number;
   itemQuantity: number;
-  totalWeight: number;
-  totalPrice: number;
+  productCost: number;
+  packageCost: number;
+  totalCost: number;
 };
 
 type OrdersProductDetailsCardProps = {
@@ -28,13 +30,17 @@ type OrdersProductDetailsCardProps = {
   resolveProduct: (item: OrderItem) => ProductDetails;
 };
 
+const PACKAGE_COST_PER_SHIPMENT = 3;
+
 function toSafeNumber(value: unknown) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function getSku(item: OrderItem) {
-  return String(item?.newSku || item?.sku || "-").trim() || "-";
+function getSku(item: OrderItem, details: ProductDetails) {
+  return (
+    String(details?.itemSku || item?.newSku || item?.sku || "-").trim() || "-"
+  );
 }
 
 function normalizeGroupKey(value: unknown) {
@@ -49,11 +55,24 @@ function getImageUrl(item: OrderItem) {
 }
 
 function getProductName(item: OrderItem, details: ProductDetails) {
+  return String(details?.name || item?.title || details?.label || "NA").trim();
+}
+
+function getProductLabel(item: OrderItem, details: ProductDetails) {
   return String(details?.label || details?.name || item?.title || "NA").trim();
 }
 
 function getUnitWeight(details: ProductDetails) {
   return toSafeNumber(Number.parseFloat(String(details?.weight || 0)));
+}
+
+function getItemProductCost(item: OrderItem, details: ProductDetails) {
+  const computedCost = details?.computedCost;
+  if (typeof computedCost === "number" && Number.isFinite(computedCost)) {
+    return computedCost;
+  }
+
+  return toSafeNumber(item?.price);
 }
 
 export default function OrdersProductDetailsCard({
@@ -69,11 +88,13 @@ export default function OrdersProductDetailsCard({
 
       for (const item of items) {
         const details = resolveProduct(item);
-        const sku = getSku(item);
+        const sku = getSku(item, details);
         const displayName = getProductName(item, details);
-        const groupKey = normalizeGroupKey(displayName || sku) || sku;
+        const displayLabel = getProductLabel(item, details);
+        const groupKey =
+          normalizeGroupKey(displayLabel || displayName || sku) || sku;
         const quantity = Math.max(1, toSafeNumber(item?.quantity));
-        const totalPrice = toSafeNumber(item?.price);
+        const productCost = getItemProductCost(item, details);
         const unitWeight = getUnitWeight(details);
         const totalWeight = unitWeight * quantity;
 
@@ -81,18 +102,19 @@ export default function OrdersProductDetailsCard({
           key: groupKey,
           sku,
           name: displayName,
+          label: displayLabel,
           imageUrl: getImageUrl(item),
           shipmentCount: 0,
           itemQuantity: 0,
           totalWeight: 0,
-          totalPrice: 0,
-          avgUnitWeight: 0,
-          avgUnitPrice: 0,
+          productCost: 0,
+          packageCost: 0,
+          totalCost: 0,
         };
 
         current.itemQuantity += quantity;
         current.totalWeight += totalWeight;
-        current.totalPrice += totalPrice;
+        current.productCost += productCost;
 
         if (!shipmentSeenKeys.has(groupKey)) {
           current.shipmentCount += 1;
@@ -103,33 +125,38 @@ export default function OrdersProductDetailsCard({
           current.imageUrl = getImageUrl(item);
         }
 
+        if (!current.label) {
+          current.label = displayLabel;
+        }
+
         productMap.set(groupKey, current);
       }
     }
 
-    const nextRows = Array.from(productMap.values()).sort(
-      (a, b) => b.totalPrice - a.totalPrice,
-    );
-
-    for (const row of nextRows) {
-      const qty = Math.max(1, row.itemQuantity);
-      row.avgUnitWeight = row.totalWeight / qty;
-      row.avgUnitPrice = row.totalPrice / qty;
+    for (const row of productMap.values()) {
+      row.packageCost = row.shipmentCount * PACKAGE_COST_PER_SHIPMENT;
+      row.totalCost = row.productCost + row.packageCost;
     }
+
+    const nextRows = Array.from(productMap.values()).sort(
+      (a, b) => b.totalCost - a.totalCost,
+    );
 
     const nextSummary = nextRows.reduce<ProductTotalsSummary>(
       (acc, row) => {
         acc.itemQuantity += row.itemQuantity;
-        acc.totalWeight += row.totalWeight;
-        acc.totalPrice += row.totalPrice;
+        acc.productCost += row.productCost;
+        acc.packageCost += row.packageCost;
+        acc.totalCost += row.totalCost;
         return acc;
       },
       {
         productCount: nextRows.length,
         shipmentCount: orders.length,
         itemQuantity: 0,
-        totalWeight: 0,
-        totalPrice: 0,
+        productCost: 0,
+        packageCost: 0,
+        totalCost: 0,
       },
     );
 
@@ -144,8 +171,8 @@ export default function OrdersProductDetailsCard({
   }
 
   return (
-    <section className="h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/70 p-2 space-y-2 overflow-hidden flex flex-col">
-      <div className="flex items-center justify-between gap-2">
+    <section className="h-full rounded-xl  bg-linear-to-b from-white to-gray-50/80 dark:from-gray-900 dark:to-gray-900/80 space-y-2 overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between gap-2 px-0.5">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
           Product Details Totals
         </h3>
@@ -154,37 +181,45 @@ export default function OrdersProductDetailsCard({
         </p>
       </div>
 
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-        <InfoTile
-          label="Quantity"
-          value={String(formatIndianNumber(summary.itemQuantity))}
-        />
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5">
         <InfoTile
           label="Products"
           value={String(formatIndianNumber(summary.productCount))}
         />
         <InfoTile
-          label="Weight"
-          value={`${formatIndianNumber(summary.totalWeight.toFixed(2))} g`}
+          label="Shipments"
+          value={String(formatIndianNumber(summary.shipmentCount))}
+        />
+        <InfoTile
+          label="Quantity"
+          value={String(formatIndianNumber(summary.itemQuantity))}
+        />
+        <InfoTile
+          label="Product Cost"
+          value={`₹${formatIndianNumber(summary.productCost.toFixed(2))}`}
+        />
+        <InfoTile
+          label="PKG Cost"
+          value={`₹${formatIndianNumber(summary.packageCost.toFixed(2))}`}
         />
         <InfoTile
           label="Total Cost"
-          value={`₹${formatIndianNumber(summary.totalPrice.toFixed(2))}`}
+          value={`₹${formatIndianNumber(summary.totalCost.toFixed(2))}`}
         />
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 p-2 space-y-2">
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 pr-0.5">
         {rows.map((row, index) => (
           <article
             key={`${row.key}-${index}`}
-            className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/70 p-2"
+            className="rounded-lg border border-gray-200/80 dark:border-gray-700/80 bg-white/80 dark:bg-gray-900/70 px-2 py-1.5 space-y-1.5"
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
                 <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 w-5 shrink-0">
                   {index + 1}
                 </div>
-                <div className="size-10 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-hidden shrink-0">
+                <div className="size-10 rounded-md bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 ring-1 ring-gray-200 dark:ring-gray-700">
                   {row.imageUrl ? (
                     <img
                       src={row.imageUrl}
@@ -198,48 +233,54 @@ export default function OrdersProductDetailsCard({
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold text-gray-900 dark:text-white wrap-break-word">
+                  <p className="text-xs font-semibold text-gray-900 dark:text-white wrap-break-word leading-[1.3]">
                     {row.name}
                   </p>
+                  {row.label && row.label !== row.name && (
+                    <p className="text-[11px] text-gray-600 dark:text-gray-300 wrap-break-word leading-[1.3]">
+                      {row.label}
+                    </p>
+                  )}
                   <p className="text-[10px] text-gray-500 dark:text-gray-400 wrap-break-word">
                     {row.sku}
                   </p>
                 </div>
               </div>
 
-              <div className="text-right shrink-0">
-                <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                  Qty
+              <div className="text-right shrink-0 space-y-0.5">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  Qty:{" "}
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {formatIndianNumber(row.itemQuantity)}
+                  </span>
                 </p>
-                <p className="text-sm font-bold text-gray-900 dark:text-white">
-                  {formatIndianNumber(row.itemQuantity)}
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  Shipments:{" "}
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {formatIndianNumber(row.shipmentCount)}
+                  </span>
                 </p>
               </div>
             </div>
 
-            <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-1.5">
-              <MetricCell
-                label="Shipments"
-                value={String(formatIndianNumber(row.shipmentCount))}
-              />
-              <MetricCell
-                label="Total Weight"
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-2 gap-y-1 text-xs">
+              <MetricInline
+                label="Total Grams"
                 value={`${formatIndianNumber(row.totalWeight.toFixed(2))} g`}
               />
-              <MetricCell
-                label="Unit Weight"
-                value={`${formatIndianNumber(row.avgUnitWeight.toFixed(2))} g`}
+              <MetricInline
+                label="Product"
+                value={`₹${formatIndianNumber(row.productCost.toFixed(2))}`}
               />
-              <MetricCell
-                label="Unit Price"
-                value={`₹${formatIndianNumber(row.avgUnitPrice.toFixed(2))}`}
+              <MetricInline
+                label="Package"
+                value={`₹${formatIndianNumber(row.packageCost.toFixed(2))}`}
               />
-            </div>
-
-            <div className="mt-1.5 flex items-center justify-end">
-              <p className="text-xs font-semibold text-gray-900 dark:text-white">
-                Total: ₹{formatIndianNumber(row.totalPrice.toFixed(2))}
-              </p>
+              <MetricInline
+                label="Total"
+                value={`₹${formatIndianNumber(row.totalCost.toFixed(2))}`}
+                emphasized
+              />
             </div>
           </article>
         ))}
@@ -250,7 +291,7 @@ export default function OrdersProductDetailsCard({
 
 function InfoTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 px-2 py-1">
+    <div className="rounded-md border border-gray-200/70 dark:border-gray-700/70 bg-white/70 dark:bg-gray-800/40 px-2 py-1">
       <p className="text-[10px] text-gray-500 dark:text-gray-400">{label}</p>
       <p className="text-xs font-semibold text-gray-900 dark:text-white">
         {value}
@@ -259,11 +300,21 @@ function InfoTile({ label, value }: { label: string; value: string }) {
   );
 }
 
-function MetricCell({ label, value }: { label: string; value: string }) {
+function MetricInline({
+  label,
+  value,
+  emphasized = false,
+}: {
+  label: string;
+  value: string;
+  emphasized?: boolean;
+}) {
   return (
     <div className="rounded border border-gray-200 dark:border-gray-700 bg-gray-50/70 dark:bg-gray-800/60 px-1.5 py-1">
       <p className="text-[10px] text-gray-500 dark:text-gray-400">{label}</p>
-      <p className="text-xs font-semibold text-gray-900 dark:text-white">
+      <p
+        className={`text-xs ${emphasized ? "font-bold text-gray-900 dark:text-white" : "font-semibold text-gray-800 dark:text-gray-200"}`}
+      >
         {value}
       </p>
     </div>

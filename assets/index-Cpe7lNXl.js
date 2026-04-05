@@ -27342,6 +27342,7 @@ function HomeHeader({
 function SavedStateCard({
   state,
   index,
+  onOpenDetails,
   onOpenRtd,
   onOpenHandover,
   t
@@ -27350,9 +27351,20 @@ function SavedStateCard({
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
-      className: "relative w-full grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-2 bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1",
+      className: "relative w-full space-y-2 bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1",
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative w-full h-full flex items-center text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-200", children: state.timestamp || "No timestamp" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full flex items-center justify-between gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-200", children: state.timestamp || "No timestamp" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              className: "shrink-0 text-xs px-2 py-1 rounded-md border border-primary-300 dark:border-primary-700 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 active:bg-primary-100 dark:active:bg-primary-900/50 transition-colors duration-200 cursor-pointer",
+              onClick: () => onOpenDetails(state),
+              children: "Product Details"
+            }
+          )
+        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full grid grid-cols-2 gap-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "button",
@@ -27396,6 +27408,1050 @@ function SavedStateCard({
       ]
     },
     state.id || index
+  );
+}
+function formatIndianNumber(x) {
+  if (x === "" || x === void 0 || x === null) return "";
+  const num = Number(x);
+  if (isNaN(num)) return x;
+  const [intPart, decPart] = x.toString().split(".");
+  const formattedInt = new Intl.NumberFormat("en-IN").format(Number(intPart));
+  return decPart !== void 0 ? `${formattedInt}.${decPart}` : formattedInt;
+}
+const PACKAGE_COST_PER_SHIPMENT = 3;
+function toSafeNumber(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+function getSku(item, details) {
+  return String((details == null ? void 0 : details.itemSku) || (item == null ? void 0 : item.newSku) || (item == null ? void 0 : item.sku) || "-").trim() || "-";
+}
+function normalizeGroupKey(value) {
+  return String(value).trim().toLowerCase().replace(/\s+/g, " ");
+}
+function getImageUrl(item) {
+  return String((item == null ? void 0 : item.primaryImageUrl) || "").trim();
+}
+function getProductName(item, details) {
+  return String((details == null ? void 0 : details.name) || (item == null ? void 0 : item.title) || (details == null ? void 0 : details.label) || "NA").trim();
+}
+function getProductLabel(item, details) {
+  return String((details == null ? void 0 : details.label) || (details == null ? void 0 : details.name) || (item == null ? void 0 : item.title) || "NA").trim();
+}
+function getUnitWeight(details) {
+  return toSafeNumber(Number.parseFloat(String((details == null ? void 0 : details.weight) || 0)));
+}
+function getItemProductCost(item, details) {
+  const computedCost = details == null ? void 0 : details.computedCost;
+  if (typeof computedCost === "number" && Number.isFinite(computedCost)) {
+    return computedCost;
+  }
+  return toSafeNumber(item == null ? void 0 : item.price);
+}
+function OrdersProductDetailsCard({
+  orders,
+  resolveProduct
+}) {
+  const { rows, summary } = reactExports.useMemo(() => {
+    const productMap = /* @__PURE__ */ new Map();
+    for (const order of orders) {
+      const items = Array.isArray(order == null ? void 0 : order.orderItems) ? order.orderItems : [];
+      const shipmentSeenKeys = /* @__PURE__ */ new Set();
+      for (const item of items) {
+        const details = resolveProduct(item);
+        const sku = getSku(item, details);
+        const displayName = getProductName(item, details);
+        const displayLabel = getProductLabel(item, details);
+        const groupKey = normalizeGroupKey(displayLabel || displayName || sku) || sku;
+        const quantity = Math.max(1, toSafeNumber(item == null ? void 0 : item.quantity));
+        const productCost = getItemProductCost(item, details);
+        const unitWeight = getUnitWeight(details);
+        const totalWeight = unitWeight * quantity;
+        const current = productMap.get(groupKey) || {
+          key: groupKey,
+          sku,
+          name: displayName,
+          label: displayLabel,
+          imageUrl: getImageUrl(item),
+          shipmentCount: 0,
+          itemQuantity: 0,
+          totalWeight: 0,
+          productCost: 0,
+          packageCost: 0,
+          totalCost: 0
+        };
+        current.itemQuantity += quantity;
+        current.totalWeight += totalWeight;
+        current.productCost += productCost;
+        if (!shipmentSeenKeys.has(groupKey)) {
+          current.shipmentCount += 1;
+          shipmentSeenKeys.add(groupKey);
+        }
+        if (!current.imageUrl) {
+          current.imageUrl = getImageUrl(item);
+        }
+        if (!current.label) {
+          current.label = displayLabel;
+        }
+        productMap.set(groupKey, current);
+      }
+    }
+    for (const row of productMap.values()) {
+      row.packageCost = row.shipmentCount * PACKAGE_COST_PER_SHIPMENT;
+      row.totalCost = row.productCost + row.packageCost;
+    }
+    const nextRows = Array.from(productMap.values()).sort(
+      (a, b) => b.totalCost - a.totalCost
+    );
+    const nextSummary = nextRows.reduce(
+      (acc, row) => {
+        acc.itemQuantity += row.itemQuantity;
+        acc.productCost += row.productCost;
+        acc.packageCost += row.packageCost;
+        acc.totalCost += row.totalCost;
+        return acc;
+      },
+      {
+        productCount: nextRows.length,
+        shipmentCount: orders.length,
+        itemQuantity: 0,
+        productCost: 0,
+        packageCost: 0,
+        totalCost: 0
+      }
+    );
+    return {
+      rows: nextRows,
+      summary: nextSummary
+    };
+  }, [orders, resolveProduct]);
+  if (!rows.length) {
+    return null;
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "h-full rounded-xl  bg-linear-to-b from-white to-gray-50/80 dark:from-gray-900 dark:to-gray-900/80 space-y-2 overflow-hidden flex flex-col", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2 px-0.5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: "Product Details Totals" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-400", children: [
+        summary.productCount,
+        " products • ",
+        summary.shipmentCount,
+        " shipments"
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-3 md:grid-cols-6 gap-1.5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Products",
+          value: String(formatIndianNumber(summary.productCount))
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Shipments",
+          value: String(formatIndianNumber(summary.shipmentCount))
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Quantity",
+          value: String(formatIndianNumber(summary.itemQuantity))
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Product Cost",
+          value: `₹${formatIndianNumber(summary.productCost.toFixed(2))}`
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "PKG Cost",
+          value: `₹${formatIndianNumber(summary.packageCost.toFixed(2))}`
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Total Cost",
+          value: `₹${formatIndianNumber(summary.totalCost.toFixed(2))}`
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 min-h-0 overflow-y-auto space-y-1.5 pr-0.5", children: rows.map((row, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "article",
+      {
+        className: "rounded-lg border border-gray-200/80 dark:border-gray-700/80 bg-white/80 dark:bg-gray-900/70 px-2 py-1.5 space-y-1.5",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 min-w-0", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs font-semibold text-gray-500 dark:text-gray-400 w-5 shrink-0", children: index + 1 }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "size-10 rounded-md bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 ring-1 ring-gray-200 dark:ring-gray-700", children: row.imageUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "img",
+                {
+                  src: row.imageUrl,
+                  alt: row.name,
+                  className: "w-full h-full object-cover"
+                }
+              ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full h-full flex items-center justify-center text-[10px] text-gray-400", children: "IMG" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white wrap-break-word leading-[1.3]", children: row.name }),
+                row.label && row.label !== row.name && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[11px] text-gray-600 dark:text-gray-300 wrap-break-word leading-[1.3]", children: row.label }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400 wrap-break-word", children: row.sku })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-right shrink-0 space-y-0.5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[11px] text-gray-500 dark:text-gray-400", children: [
+                "Qty:",
+                " ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-gray-900 dark:text-white", children: formatIndianNumber(row.itemQuantity) })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[11px] text-gray-500 dark:text-gray-400", children: [
+                "Shipments:",
+                " ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-gray-900 dark:text-white", children: formatIndianNumber(row.shipmentCount) })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 md:grid-cols-4 gap-x-2 gap-y-1 text-xs", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MetricInline,
+              {
+                label: "Total Grams",
+                value: `${formatIndianNumber(row.totalWeight.toFixed(2))} g`
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MetricInline,
+              {
+                label: "Product",
+                value: `₹${formatIndianNumber(row.productCost.toFixed(2))}`
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MetricInline,
+              {
+                label: "Package",
+                value: `₹${formatIndianNumber(row.packageCost.toFixed(2))}`
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MetricInline,
+              {
+                label: "Total",
+                value: `₹${formatIndianNumber(row.totalCost.toFixed(2))}`,
+                emphasized: true
+              }
+            )
+          ] })
+        ]
+      },
+      `${row.key}-${index}`
+    )) })
+  ] });
+}
+function InfoTile({ label, value }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-md border border-gray-200/70 dark:border-gray-700/70 bg-white/70 dark:bg-gray-800/40 px-2 py-1", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400", children: label }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: value })
+  ] });
+}
+function MetricInline({
+  label,
+  value,
+  emphasized = false
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded border border-gray-200 dark:border-gray-700 bg-gray-50/70 dark:bg-gray-800/60 px-1.5 py-1", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400", children: label }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "p",
+      {
+        className: `text-xs ${emphasized ? "font-bold text-gray-900 dark:text-white" : "font-semibold text-gray-800 dark:text-gray-200"}`,
+        children: value
+      }
+    )
+  ] });
+}
+async function getSharedOwnerIds(userId) {
+  if (!userId) return [];
+  const { data, error } = await supabase.from("shared_access_users").select("owner_user_id").eq("shared_with_user_id", userId).eq("is_active", true).eq("member_access_enabled", true);
+  if (error) throw new Error(error.message);
+  return Array.from(
+    new Set(
+      (data || []).map((row) => row.owner_user_id).filter((value) => Boolean(value))
+    )
+  );
+}
+function mapLegacyVisibilityRows(rows, ownerColumn) {
+  return (rows || []).map((row) => {
+    const ownerId = (row == null ? void 0 : row[ownerColumn]) || null;
+    return {
+      ...row,
+      created_by: (row == null ? void 0 : row.created_by) ?? ownerId,
+      user_id: (row == null ? void 0 : row.user_id) ?? ownerId
+    };
+  });
+}
+async function getVisibleRows({
+  table,
+  ownerColumn,
+  currentUserId,
+  select = "*",
+  orderBy,
+  ascending = false,
+  extraEq = {}
+}) {
+  const queries = [];
+  let publicQuery = supabase.from(table).select(select).eq("status", "public");
+  publicQuery = publicQuery.is("deleted_at", null);
+  Object.entries(extraEq).forEach(([key, value]) => {
+    if (typeof value === "undefined") return;
+    if (value === null) {
+      publicQuery = publicQuery.is(key, null);
+      return;
+    }
+    publicQuery = publicQuery.eq(key, value);
+  });
+  publicQuery = publicQuery.order(orderBy, { ascending });
+  queries.push(publicQuery);
+  if (currentUserId) {
+    let ownQuery = supabase.from(table).select(select).eq(ownerColumn, currentUserId);
+    ownQuery = ownQuery.is("deleted_at", null);
+    Object.entries(extraEq).forEach(([key, value]) => {
+      if (typeof value === "undefined") return;
+      if (value === null) {
+        ownQuery = ownQuery.is(key, null);
+        return;
+      }
+      ownQuery = ownQuery.eq(key, value);
+    });
+    ownQuery = ownQuery.order(orderBy, { ascending });
+    queries.push(ownQuery);
+    const sharedOwnerIds = await getSharedOwnerIds(currentUserId);
+    if (sharedOwnerIds.length > 0) {
+      let sharedQuery = supabase.from(table).select(select).eq("status", "shared").in(ownerColumn, sharedOwnerIds).is("deleted_at", null);
+      Object.entries(extraEq).forEach(([key, value]) => {
+        if (typeof value === "undefined") return;
+        if (value === null) {
+          sharedQuery = sharedQuery.is(key, null);
+          return;
+        }
+        sharedQuery = sharedQuery.eq(key, value);
+      });
+      sharedQuery = sharedQuery.order(orderBy, { ascending });
+      queries.push(sharedQuery);
+    }
+  }
+  const results = await Promise.all(queries);
+  results.forEach(({ error }) => {
+    if (error) throw new Error(error.message);
+  });
+  const merged = results.flatMap(({ data }) => data || []);
+  const dedup = /* @__PURE__ */ new Map();
+  merged.forEach((row) => {
+    if (row == null ? void 0 : row.id) dedup.set(row.id, row);
+  });
+  return Array.from(dedup.values());
+}
+async function listItems() {
+  const rows = await getVisibleRows({
+    table: "items",
+    ownerColumn: "created_by",
+    currentUserId: getUserId(),
+    orderBy: "created_at",
+    ascending: false
+  });
+  return mapLegacyVisibilityRows(rows, "created_by");
+}
+const TABLE = "map_skus";
+let mapSkusCache = null;
+const SHOPSY_PREFIX_REGEX = /^(SPY_|SHY_|SH_)/i;
+const CHAIN_CONFLICT_ERROR_PREFIX = "[chain_conflict]";
+const SELF_MAP_ERROR_PREFIX = "[self_map]";
+function requireUserId$1() {
+  const userId = getUserId();
+  if (!userId) throw new Error("Not authenticated");
+  return userId;
+}
+function getNowIso() {
+  return (/* @__PURE__ */ new Date()).toISOString();
+}
+function clearMapSkusCache() {
+  mapSkusCache = null;
+}
+const normalizeSkuValue = (value) => String(value || "").trim();
+const normalizeSkuForComparison = (value) => normalizeSkuValue(value).replace(SHOPSY_PREFIX_REGEX, "").toUpperCase();
+const createChainConflictMessage = (oldSku, newSku) => `${CHAIN_CONFLICT_ERROR_PREFIX} Chain mapping is not allowed: "${newSku}" is already used as an old SKU, so "${oldSku}" -> "${newSku}" was blocked.`;
+const createSelfMapMessage = (sku) => `${SELF_MAP_ERROR_PREFIX} Self mapping is not allowed for SKU "${sku}".`;
+async function fetchAllMapSkusForUser(userId, options = {}) {
+  const { includeDeleted = false } = options;
+  let from = 0;
+  const pageSize = 1e3;
+  let hasMore = true;
+  let rows = [];
+  while (hasMore) {
+    let query = supabase.from(TABLE).select("*").eq("user_id", userId).order("old_sku", { ascending: true });
+    if (!includeDeleted) {
+      query = query.is("deleted_at", null);
+    }
+    const { data, error } = await query.range(from, from + pageSize - 1);
+    if (error) throw new Error(error.message);
+    const batch = data || [];
+    rows = rows.concat(batch);
+    hasMore = batch.length === pageSize;
+    from += pageSize;
+  }
+  return rows;
+}
+async function getActiveMapSkuRowByOldSku(userId, oldSku) {
+  const normalizedOldSku = normalizeSkuValue(oldSku);
+  if (!normalizedOldSku) return null;
+  const { data, error } = await supabase.from(TABLE).select("*").eq("user_id", userId).is("deleted_at", null).eq("old_sku", normalizedOldSku).maybeSingle();
+  if (error) throw new Error(error.message);
+  return data || null;
+}
+async function listMapSkus() {
+  const userId = requireUserId$1();
+  return fetchAllMapSkusForUser(userId);
+}
+async function getMapSkusObject() {
+  if (mapSkusCache) return mapSkusCache;
+  const rows = await listMapSkus();
+  mapSkusCache = rows.reduce((acc, row) => {
+    acc[row.old_sku] = row.new_sku;
+    return acc;
+  }, {});
+  return mapSkusCache;
+}
+async function upsertMapSku({
+  oldSku,
+  newSku
+}) {
+  const userId = requireUserId$1();
+  const normalizedOldSku = normalizeSkuValue(oldSku);
+  const normalizedNewSku = normalizeSkuValue(newSku);
+  if (!normalizedOldSku || !normalizedNewSku) {
+    throw new Error("old_sku and new_sku are required");
+  }
+  const oldSkuKey = normalizeSkuForComparison(normalizedOldSku);
+  const newSkuKey = normalizeSkuForComparison(normalizedNewSku);
+  if (!oldSkuKey || !newSkuKey) {
+    throw new Error("old_sku and new_sku are required");
+  }
+  if (oldSkuKey === newSkuKey) {
+    throw new Error(createSelfMapMessage(normalizedOldSku));
+  }
+  const allRows = await fetchAllMapSkusForUser(userId, {
+    includeDeleted: true
+  });
+  const existingRow = allRows.find(
+    (row) => normalizeSkuForComparison(row.old_sku) === oldSkuKey
+  );
+  if (existingRow && !existingRow.deleted_at) {
+    const existingNewSkuKey = normalizeSkuForComparison(existingRow.new_sku);
+    if (existingNewSkuKey === newSkuKey) {
+      return existingRow;
+    }
+  }
+  const chainRow = allRows.find((row) => {
+    if (row.deleted_at) return false;
+    const existingOldKey = normalizeSkuForComparison(row.old_sku);
+    return existingOldKey === newSkuKey && existingOldKey !== oldSkuKey;
+  });
+  if (chainRow) {
+    throw new Error(
+      createChainConflictMessage(normalizedOldSku, normalizedNewSku)
+    );
+  }
+  const now2 = getNowIso();
+  const { data, error } = await supabase.from(TABLE).upsert(
+    {
+      user_id: userId,
+      old_sku: normalizedOldSku,
+      new_sku: normalizedNewSku,
+      created_at: (existingRow == null ? void 0 : existingRow.created_at) || now2,
+      updated_at: now2,
+      updated_by: userId,
+      deleted_at: null
+    },
+    { onConflict: "user_id,old_sku" }
+  ).select("*").single();
+  if (error) throw new Error(error.message);
+  clearMapSkusCache();
+  return data;
+}
+async function updateMapSku(oldSku, updates) {
+  const userId = requireUserId$1();
+  const normalizedOldSku = normalizeSkuValue(oldSku);
+  if (!normalizedOldSku) throw new Error("oldSku is required");
+  const existingRow = await getActiveMapSkuRowByOldSku(
+    userId,
+    normalizedOldSku
+  );
+  if (!existingRow) {
+    throw new Error(`Mapping for "${normalizedOldSku}" not found`);
+  }
+  if (typeof (updates == null ? void 0 : updates.newSku) === "undefined") {
+    return existingRow;
+  }
+  const normalizedNewSku = normalizeSkuValue(updates.newSku);
+  if (!normalizedNewSku) {
+    throw new Error("newSku is required");
+  }
+  const oldSkuKey = normalizeSkuForComparison(existingRow.old_sku);
+  const newSkuKey = normalizeSkuForComparison(normalizedNewSku);
+  if (oldSkuKey === newSkuKey) {
+    throw new Error(createSelfMapMessage(existingRow.old_sku));
+  }
+  const currentNewSkuKey = normalizeSkuForComparison(existingRow.new_sku);
+  if (currentNewSkuKey === newSkuKey) {
+    return existingRow;
+  }
+  const activeRows = await fetchAllMapSkusForUser(userId, {
+    includeDeleted: false
+  });
+  const chainRow = activeRows.find((row) => {
+    const existingOldKey = normalizeSkuForComparison(row.old_sku);
+    return existingOldKey === newSkuKey && existingOldKey !== oldSkuKey;
+  });
+  if (chainRow) {
+    throw new Error(
+      createChainConflictMessage(existingRow.old_sku, normalizedNewSku)
+    );
+  }
+  const now2 = getNowIso();
+  const { data, error } = await supabase.from(TABLE).update({
+    new_sku: normalizedNewSku,
+    updated_at: now2,
+    updated_by: userId
+  }).eq("user_id", userId).is("deleted_at", null).eq("old_sku", normalizedOldSku).select("*").single();
+  if (error) throw new Error(error.message);
+  clearMapSkusCache();
+  return data;
+}
+async function deleteMapSku(oldSku) {
+  const userId = requireUserId$1();
+  if (!oldSku) throw new Error("oldSku is required");
+  const now2 = getNowIso();
+  const { error } = await supabase.from(TABLE).update({ deleted_at: now2, updated_at: now2, updated_by: userId }).eq("user_id", userId).is("deleted_at", null).eq("old_sku", oldSku);
+  if (error) throw new Error(error.message);
+  clearMapSkusCache();
+  return { success: true };
+}
+async function searchMapSkus(searchTerm) {
+  const userId = requireUserId$1();
+  if (!(searchTerm == null ? void 0 : searchTerm.trim())) return listMapSkus();
+  const { data, error } = await supabase.from(TABLE).select("*").eq("user_id", userId).is("deleted_at", null).or(`old_sku.ilike.%${searchTerm}%,new_sku.ilike.%${searchTerm}%`).order("old_sku", { ascending: true });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+async function listDeletedMapSkus() {
+  const userId = requireUserId$1();
+  const { data, error } = await supabase.from(TABLE).select("*").eq("user_id", userId).not("deleted_at", "is", null).order("updated_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+async function restoreMapSku(oldSku) {
+  const userId = requireUserId$1();
+  if (!oldSku) throw new Error("oldSku is required");
+  const now2 = getNowIso();
+  const { data, error } = await supabase.from(TABLE).update({ deleted_at: null, updated_at: now2, updated_by: userId }).eq("user_id", userId).not("deleted_at", "is", null).eq("old_sku", oldSku).select("*").single();
+  if (error) throw new Error(error.message);
+  clearMapSkusCache();
+  return data;
+}
+const ORDERS_STATES_PAGE_SIZE = 4;
+function requireUserId() {
+  const userId = getUserId();
+  if (!userId) throw new Error("Not authenticated");
+  return userId;
+}
+function mapOrderState(row) {
+  return {
+    ...row,
+    order_data: row.state_data
+  };
+}
+async function listOrderStates() {
+  const rows = await getVisibleRows({
+    table: "orders_states",
+    ownerColumn: "user_id",
+    currentUserId: getUserId(),
+    orderBy: "created_at",
+    ascending: false,
+    extraEq: { deleted_at: null }
+  });
+  return mapLegacyVisibilityRows(rows, "user_id").map(mapOrderState);
+}
+function normalizePositiveInt(value, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return fallback;
+  }
+  return Math.floor(parsed);
+}
+function toOptionalDate(value) {
+  const normalized = String(value || "").trim();
+  return normalized || null;
+}
+async function listOwnOrderStatesPaged(options = {}) {
+  const userId = requireUserId();
+  const page = normalizePositiveInt(options.page, 1);
+  const limit = normalizePositiveInt(options.limit, ORDERS_STATES_PAGE_SIZE);
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  const startDate = toOptionalDate(options.startDate);
+  const endDate = toOptionalDate(options.endDate);
+  let query = supabase.from("orders_states").select("*", { count: "exact" }).eq("user_id", userId).is("deleted_at", null).order("created_at", { ascending: false });
+  if (startDate) {
+    query = query.gte("created_at", startDate);
+  }
+  if (endDate) {
+    query = query.lte("created_at", endDate);
+  }
+  const { data, error, count } = await query.range(from, to);
+  if (error) throw new Error(error.message);
+  const rows = mapLegacyVisibilityRows(data || [], "user_id").map(
+    mapOrderState
+  );
+  const total = Number(count || 0);
+  return {
+    rows,
+    page,
+    limit,
+    total,
+    hasMore: page * limit < total
+  };
+}
+function isShopsyProduct(skuId) {
+  return !!skuId && /^(SPY_|SHY_|SH_)/.test(skuId.toUpperCase());
+}
+function shopsyModifySkuId(skuId) {
+  if (isShopsyProduct(skuId)) {
+    return skuId.toUpperCase().replace(/^(SPY_|SHY_|SH_)/, "");
+  }
+  return skuId;
+}
+const calculateWeightInGrams = (allQuantityPerKg, unit, unitType) => {
+  const type = unitType.toLowerCase();
+  let weight = 0;
+  allQuantityPerKg.forEach((qtyPerKg) => {
+    if (type === "p") {
+      weight += parseInt(unit) * (1 / qtyPerKg) * 1e3;
+    } else if (type === "g") {
+      weight += parseInt(unit);
+    } else if (type === "kg") {
+      weight += parseInt(unit) * 1e3;
+    }
+  });
+  return weight;
+};
+const getMarketplaceInfo = (item) => {
+  const productId = String(
+    (item == null ? void 0 : item.productId) ?? (item == null ? void 0 : item.product_id) ?? (item == null ? void 0 : item.productID) ?? ""
+  ).toUpperCase();
+  if (productId.startsWith("VPS")) {
+    return {
+      label: "Shopsy",
+      className: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300"
+    };
+  }
+  if (productId.startsWith("PAE")) {
+    return {
+      label: "Flipkart",
+      className: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+    };
+  }
+  return null;
+};
+const DEFAULT_PRODUCT = {
+  name: "NA",
+  label: "NA",
+  weight: "NA",
+  unite: "NA"
+};
+const LOADING_PRODUCT = {
+  name: "Loading...",
+  label: "Loading...",
+  weight: "Loading...",
+  unite: "Loading..."
+};
+const QUANTITY_PART_REGEX$1 = /^(\d+)([a-zA-Z]+)$/;
+function parseCompositeSku(value) {
+  const parts = String(value || "").split("_").filter(Boolean);
+  if (parts.length < 4) return null;
+  const directMatch = parts[3].match(QUANTITY_PART_REGEX$1);
+  if (directMatch) {
+    return {
+      itemIds: parts[2].split("-").filter(Boolean),
+      unit: parseInt(directMatch[1], 10),
+      unitType: directMatch[2],
+      quantityPart: parts[3],
+      itemIdsPart: parts[2],
+      format: "ids-then-qty"
+    };
+  }
+  const swappedMatch = parts[2].match(QUANTITY_PART_REGEX$1);
+  if (swappedMatch) {
+    return {
+      itemIds: parts[3].split("-").filter(Boolean),
+      unit: parseInt(swappedMatch[1], 10),
+      unitType: swappedMatch[2],
+      quantityPart: parts[2],
+      itemIdsPart: parts[3],
+      format: "qty-then-ids"
+    };
+  }
+  return null;
+}
+function parseItemTokens(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return [];
+  const bracketMatch = raw.match(/^\[(.+)\]$/);
+  const tokenSource = bracketMatch ? bracketMatch[1] : raw;
+  return tokenSource.split("-").map((token) => token.trim()).filter(Boolean);
+}
+function normalizeText(value) {
+  return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+function toNonNegativeNumber(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+}
+function calculateWeightBasedCost(pricePerKg, weightInGrams) {
+  const safePricePerKg = toNonNegativeNumber(pricePerKg);
+  if (safePricePerKg === null) return null;
+  if (!Number.isFinite(weightInGrams) || weightInGrams <= 0) return null;
+  return safePricePerKg * weightInGrams / 1e3;
+}
+const useOrderData = (selectedState = null) => {
+  const { user } = useAuth();
+  const [stateData, setStateData] = reactExports.useState(null);
+  const [orders, setOrders] = reactExports.useState([]);
+  const [products, setProducts] = reactExports.useState([]);
+  const [skuMappings, setSkuMappings] = reactExports.useState({});
+  const [isStateLoading, setIsStateLoading] = reactExports.useState(false);
+  const [isProductsLoading, setIsProductsLoading] = reactExports.useState(false);
+  reactExports.useEffect(() => {
+    let isCancelled = false;
+    const currentUserId = String((user == null ? void 0 : user.id) || "");
+    const applySelectedState = (nextState) => {
+      if (isCancelled) return;
+      setStateData(nextState);
+      const ordersArray = (nextState == null ? void 0 : nextState.selectedType) === "handover" ? nextState.handover : nextState == null ? void 0 : nextState.rtd;
+      setOrders(Array.isArray(ordersArray) ? ordersArray : []);
+    };
+    const fetchLatestState = async () => {
+      var _a, _b, _c, _d;
+      try {
+        setIsStateLoading(true);
+        const savedStates = await listOrderStates();
+        const ownStates = (savedStates || []).filter(
+          (item) => String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "") === currentUserId
+        );
+        const latestState = ownStates == null ? void 0 : ownStates[0];
+        if (!latestState) {
+          applySelectedState(null);
+          return;
+        }
+        const rawSelectedType = (_b = (_a = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _a.states) == null ? void 0 : _b.selectedType;
+        const selectedType = rawSelectedType === "handover" || rawSelectedType === "rtd" ? rawSelectedType : "rtd";
+        applySelectedState({
+          ...(_c = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _c.states,
+          id: latestState == null ? void 0 : latestState.id,
+          timestamp: (_d = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _d.timestamp,
+          userId: String((latestState == null ? void 0 : latestState.user_id) ?? (latestState == null ? void 0 : latestState.created_by) ?? ""),
+          selectedType
+        });
+      } catch (error) {
+        console.error("Error fetching latest order state:", error);
+        applySelectedState(null);
+      } finally {
+        if (!isCancelled) {
+          setIsStateLoading(false);
+        }
+      }
+    };
+    if (!(user == null ? void 0 : user.id)) {
+      setIsStateLoading(false);
+      applySelectedState(null);
+    } else {
+      const selectedStateMatchesUser = !!selectedState && selectedState.userId === user.id;
+      if (selectedStateMatchesUser && selectedState) {
+        setIsStateLoading(false);
+        applySelectedState(selectedState);
+      } else {
+        applySelectedState(null);
+        fetchLatestState();
+      }
+    }
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedState, user == null ? void 0 : user.id]);
+  reactExports.useEffect(() => {
+    let isCancelled = false;
+    const fetchProducts = async () => {
+      if (!(user == null ? void 0 : user.id)) {
+        setProducts([]);
+        setIsProductsLoading(false);
+        return;
+      }
+      setProducts([]);
+      setIsProductsLoading(true);
+      try {
+        const data = await listItems();
+        if (isCancelled) return;
+        const normalizedProducts = (data || []).map((item) => ({
+          ...item,
+          sku_id: item.sku_id || item.item_sku
+        }));
+        setProducts(normalizedProducts);
+      } catch (error) {
+        if (isCancelled) return;
+        console.error("Error fetching products:", error);
+      } finally {
+        if (!isCancelled) {
+          setIsProductsLoading(false);
+        }
+      }
+    };
+    fetchProducts();
+    return () => {
+      isCancelled = true;
+    };
+  }, [user == null ? void 0 : user.id]);
+  reactExports.useEffect(() => {
+    if (!(user == null ? void 0 : user.id)) {
+      setSkuMappings({});
+      return;
+    }
+    const sourceOrders = [
+      ...Array.isArray(stateData == null ? void 0 : stateData.rtd) ? stateData.rtd : [],
+      ...Array.isArray(stateData == null ? void 0 : stateData.handover) ? stateData.handover : []
+    ];
+    const mappingOrders = sourceOrders.length ? sourceOrders : orders;
+    if (mappingOrders.length === 0) {
+      setSkuMappings({});
+      return;
+    }
+    const fetchMappings = async () => {
+      try {
+        const fullMap = await getMapSkusObject();
+        const allSkus = /* @__PURE__ */ new Set();
+        mappingOrders.forEach((order) => {
+          var _a;
+          (_a = order.orderItems) == null ? void 0 : _a.forEach((item) => {
+            const key = String((item == null ? void 0 : item.sku) || "").trim();
+            if (key) allSkus.add(key);
+          });
+        });
+        const mappings = {};
+        allSkus.forEach((sku) => {
+          if (Object.prototype.hasOwnProperty.call(fullMap || {}, sku)) {
+            mappings[sku] = String(fullMap[sku] || "");
+          }
+        });
+        setSkuMappings(mappings);
+      } catch (error) {
+        console.error("Error fetching SKU mappings:", error);
+      }
+    };
+    fetchMappings();
+  }, [orders, stateData, user == null ? void 0 : user.id]);
+  const resolveProduct = reactExports.useCallback(
+    (item) => {
+      if (!products.length) {
+        return LOADING_PRODUCT;
+      }
+      const originalSku = item.sku;
+      const modified = shopsyModifySkuId(originalSku);
+      const sku = skuMappings[modified] || item.newSku || modified;
+      const parsedSku = parseCompositeSku(sku);
+      if (parsedSku) {
+        const parsedItemIds = parsedSku.itemIds.flatMap(
+          (token) => parseItemTokens(token)
+        );
+        const matched = parsedItemIds.map(
+          (id) => products.find(
+            (p) => normalizeText(p.sku_id) === normalizeText(id) || normalizeText(p.item_sku) === normalizeText(id)
+          )
+        );
+        if (matched.every(Boolean)) {
+          const matchedProducts = matched;
+          const weight = calculateWeightInGrams(
+            matchedProducts.map((p) => p.quantity_per_kg),
+            parsedSku.unit,
+            parsedSku.unitType
+          );
+          const computedCost = matchedProducts.reduce(
+            (acc, product) => {
+              if (acc === null) return null;
+              const componentWeight = calculateWeightInGrams(
+                [product.quantity_per_kg],
+                parsedSku.unit,
+                parsedSku.unitType
+              );
+              const componentCost = calculateWeightBasedCost(
+                product.price,
+                componentWeight
+              );
+              return componentCost === null ? null : acc + componentCost;
+            },
+            0
+          );
+          const itemSku = matchedProducts.map((p) => String(p.item_sku || p.sku_id || "").trim()).filter(Boolean).join(", ");
+          return {
+            name: matchedProducts.map((p) => p.name).join(", "),
+            label: matchedProducts.map((p) => p.label || p.name).join(", "),
+            weight: weight.toFixed(2),
+            unite: parsedSku.unitType,
+            ...itemSku ? { itemSku } : {},
+            ...computedCost === null ? {} : { computedCost }
+          };
+        }
+        const normalizedTitle = normalizeText(item == null ? void 0 : item.title);
+        if (normalizedTitle) {
+          const titleMatch = products.find((p) => {
+            const productName = normalizeText(p == null ? void 0 : p.name);
+            const productLabel = normalizeText(p == null ? void 0 : p.label);
+            return productName === normalizedTitle || productLabel === normalizedTitle || normalizedTitle.includes(productName) || productName.includes(normalizedTitle) || productLabel && normalizedTitle.includes(productLabel) || productLabel && productLabel.includes(normalizedTitle);
+          });
+          if (titleMatch) {
+            const qtyPerKgValue = Number(titleMatch.quantity_per_kg);
+            const isPieceMode = parsedSku.unitType.toLowerCase() === "p";
+            const canComputePieceWeight = !isPieceMode || qtyPerKgValue > 0;
+            if (canComputePieceWeight) {
+              const weight = calculateWeightInGrams(
+                [titleMatch.quantity_per_kg],
+                parsedSku.unit,
+                parsedSku.unitType
+              );
+              const computedCost = calculateWeightBasedCost(
+                titleMatch.price,
+                weight
+              );
+              return {
+                name: titleMatch.name || (item == null ? void 0 : item.title) || DEFAULT_PRODUCT.name,
+                label: titleMatch.label || titleMatch.name || DEFAULT_PRODUCT.label,
+                weight: weight.toFixed(2),
+                unite: parsedSku.unitType,
+                ...titleMatch.item_sku ? { itemSku: String(titleMatch.item_sku).trim() } : {},
+                ...computedCost === null ? {} : { computedCost }
+              };
+            }
+          }
+        }
+      }
+      return DEFAULT_PRODUCT;
+    },
+    [products, skuMappings]
+  );
+  return {
+    stateData,
+    orders,
+    products,
+    resolveProduct,
+    isOrdersLoading: isStateLoading || isProductsLoading
+  };
+};
+function getAllOrders(state) {
+  if (!state) return [];
+  const rtd = Array.isArray(state.rtd) ? state.rtd : [];
+  const handover = Array.isArray(state.handover) ? state.handover : [];
+  return [...rtd, ...handover];
+}
+function SavedStateProductDetailsModal({
+  open,
+  state,
+  onClose
+}) {
+  const [isMounted, setIsMounted] = reactExports.useState(open);
+  const [isVisible, setIsVisible] = reactExports.useState(false);
+  reactExports.useEffect(() => {
+    if (open) {
+      setIsMounted(true);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setIsVisible(true));
+      });
+      return void 0;
+    }
+    setIsVisible(false);
+    const timer = window.setTimeout(() => {
+      setIsMounted(false);
+    }, 220);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [open]);
+  reactExports.useEffect(() => {
+    if (!isMounted) return void 0;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isMounted, onClose]);
+  const resolverState = reactExports.useMemo(() => {
+    if (!state) return null;
+    return {
+      ...state,
+      selectedType: "rtd"
+    };
+  }, [state]);
+  const allOrders = reactExports.useMemo(() => getAllOrders(state), [state]);
+  const { resolveProduct, isOrdersLoading } = useOrderData(resolverState);
+  if (!isMounted || !state) {
+    return null;
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: `fixed inset-0 z-60 flex items-center justify-center p-2 md:p-3 transition-all duration-200 ${isVisible ? "bg-black/40 dark:bg-black/60 opacity-100" : "bg-black/0 opacity-0"}`,
+      onClick: (event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      },
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: `w-full max-w-3xl h-[min(90svh,760px)] rounded-xl border border-gray-200/80 dark:border-gray-700/80 bg-white dark:bg-gray-900 shadow-xl p-2 transition-all duration-200 ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"}`,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full flex flex-col gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex items-start justify-between gap-2 px-1 py-0.5 border-b border-gray-200/70 dark:border-gray-700/70", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: "Product Details" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[11px] text-gray-600 dark:text-gray-400 wrap-break-word", children: state.timestamp || "No timestamp" })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  onClick: onClose,
+                  className: "shrink-0 text-xs px-2.5 py-1 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 transition-colors duration-200",
+                  children: "Close"
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className: "flex-1 min-h-0 px-0.5 pb-0.5", children: isOrdersLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "h-full flex items-center justify-center text-sm text-gray-600 dark:text-gray-400", children: "Loading product details..." }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+              OrdersProductDetailsCard,
+              {
+                orders: allOrders,
+                resolveProduct
+              }
+            ) })
+          ] })
+        }
+      )
+    }
   );
 }
 function SwitchAccountPopup({
@@ -27517,150 +28573,7 @@ function useAccountSwitch({
     handleQuickSwitch
   };
 }
-async function getSharedOwnerIds(userId) {
-  if (!userId) return [];
-  const { data, error } = await supabase.from("shared_access_users").select("owner_user_id").eq("shared_with_user_id", userId).eq("is_active", true).eq("member_access_enabled", true);
-  if (error) throw new Error(error.message);
-  return Array.from(
-    new Set(
-      (data || []).map((row) => row.owner_user_id).filter((value) => Boolean(value))
-    )
-  );
-}
-function mapLegacyVisibilityRows(rows, ownerColumn) {
-  return (rows || []).map((row) => {
-    const ownerId = (row == null ? void 0 : row[ownerColumn]) || null;
-    return {
-      ...row,
-      created_by: (row == null ? void 0 : row.created_by) ?? ownerId,
-      user_id: (row == null ? void 0 : row.user_id) ?? ownerId
-    };
-  });
-}
-async function getVisibleRows({
-  table,
-  ownerColumn,
-  currentUserId,
-  select = "*",
-  orderBy,
-  ascending = false,
-  extraEq = {}
-}) {
-  const queries = [];
-  let publicQuery = supabase.from(table).select(select).eq("status", "public");
-  publicQuery = publicQuery.is("deleted_at", null);
-  Object.entries(extraEq).forEach(([key, value]) => {
-    if (typeof value === "undefined") return;
-    if (value === null) {
-      publicQuery = publicQuery.is(key, null);
-      return;
-    }
-    publicQuery = publicQuery.eq(key, value);
-  });
-  publicQuery = publicQuery.order(orderBy, { ascending });
-  queries.push(publicQuery);
-  if (currentUserId) {
-    let ownQuery = supabase.from(table).select(select).eq(ownerColumn, currentUserId);
-    ownQuery = ownQuery.is("deleted_at", null);
-    Object.entries(extraEq).forEach(([key, value]) => {
-      if (typeof value === "undefined") return;
-      if (value === null) {
-        ownQuery = ownQuery.is(key, null);
-        return;
-      }
-      ownQuery = ownQuery.eq(key, value);
-    });
-    ownQuery = ownQuery.order(orderBy, { ascending });
-    queries.push(ownQuery);
-    const sharedOwnerIds = await getSharedOwnerIds(currentUserId);
-    if (sharedOwnerIds.length > 0) {
-      let sharedQuery = supabase.from(table).select(select).eq("status", "shared").in(ownerColumn, sharedOwnerIds).is("deleted_at", null);
-      Object.entries(extraEq).forEach(([key, value]) => {
-        if (typeof value === "undefined") return;
-        if (value === null) {
-          sharedQuery = sharedQuery.is(key, null);
-          return;
-        }
-        sharedQuery = sharedQuery.eq(key, value);
-      });
-      sharedQuery = sharedQuery.order(orderBy, { ascending });
-      queries.push(sharedQuery);
-    }
-  }
-  const results = await Promise.all(queries);
-  results.forEach(({ error }) => {
-    if (error) throw new Error(error.message);
-  });
-  const merged = results.flatMap(({ data }) => data || []);
-  const dedup = /* @__PURE__ */ new Map();
-  merged.forEach((row) => {
-    if (row == null ? void 0 : row.id) dedup.set(row.id, row);
-  });
-  return Array.from(dedup.values());
-}
-const ORDERS_STATES_PAGE_SIZE = 4;
-function requireUserId$1() {
-  const userId = getUserId();
-  if (!userId) throw new Error("Not authenticated");
-  return userId;
-}
-function mapOrderState(row) {
-  return {
-    ...row,
-    order_data: row.state_data
-  };
-}
-async function listOrderStates() {
-  const rows = await getVisibleRows({
-    table: "orders_states",
-    ownerColumn: "user_id",
-    currentUserId: getUserId(),
-    orderBy: "created_at",
-    ascending: false,
-    extraEq: { deleted_at: null }
-  });
-  return mapLegacyVisibilityRows(rows, "user_id").map(mapOrderState);
-}
-function normalizePositiveInt(value, fallback) {
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed) || parsed < 1) {
-    return fallback;
-  }
-  return Math.floor(parsed);
-}
-function toOptionalDate(value) {
-  const normalized = String(value || "").trim();
-  return normalized || null;
-}
-async function listOwnOrderStatesPaged(options = {}) {
-  const userId = requireUserId$1();
-  const page = normalizePositiveInt(options.page, 1);
-  const limit = normalizePositiveInt(options.limit, ORDERS_STATES_PAGE_SIZE);
-  const from = (page - 1) * limit;
-  const to = from + limit - 1;
-  const startDate = toOptionalDate(options.startDate);
-  const endDate = toOptionalDate(options.endDate);
-  let query = supabase.from("orders_states").select("*", { count: "exact" }).eq("user_id", userId).is("deleted_at", null).order("created_at", { ascending: false });
-  if (startDate) {
-    query = query.gte("created_at", startDate);
-  }
-  if (endDate) {
-    query = query.lte("created_at", endDate);
-  }
-  const { data, error, count } = await query.range(from, to);
-  if (error) throw new Error(error.message);
-  const rows = mapLegacyVisibilityRows(data || [], "user_id").map(
-    mapOrderState
-  );
-  const total = Number(count || 0);
-  return {
-    rows,
-    page,
-    limit,
-    total,
-    hasMore: page * limit < total
-  };
-}
+const FILTERED_ORDERS_STATES_PAGE_SIZE = 12;
 function buildDateRangeIso(fromDate, toDate) {
   return {
     startDate: fromDate ? `${fromDate}T00:00:00.000Z` : null,
@@ -27674,9 +28587,27 @@ function mapStateRows(rows = []) {
       ...(_a = item == null ? void 0 : item.order_data) == null ? void 0 : _a.states,
       id: item == null ? void 0 : item.id,
       timestamp: (_b = item == null ? void 0 : item.order_data) == null ? void 0 : _b.timestamp,
+      createdAt: item == null ? void 0 : item.created_at,
       userId: String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "")
     };
   });
+}
+function toDateOnly(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().slice(0, 10);
+}
+function getPageDateBounds(rows) {
+  const dates = rows.map((row) => toDateOnly((row == null ? void 0 : row.createdAt) || (row == null ? void 0 : row.timestamp))).filter(Boolean).sort();
+  if (!dates.length) {
+    return { from: "", to: "" };
+  }
+  return {
+    from: dates[0],
+    to: dates[dates.length - 1]
+  };
 }
 function useHomeOrderStates(userId) {
   const [states, setStates] = reactExports.useState([]);
@@ -27702,16 +28633,22 @@ function useHomeOrderStates(userId) {
       try {
         setLoading(true);
         setError(null);
+        const isCustomDateApplied = !!(appliedFromDate || appliedToDate);
+        const pageLimit = isCustomDateApplied ? FILTERED_ORDERS_STATES_PAGE_SIZE : ORDERS_STATES_PAGE_SIZE;
         const dateRange = buildDateRangeIso(appliedFromDate, appliedToDate);
         const response = await listOwnOrderStatesPaged({
           page,
-          limit: ORDERS_STATES_PAGE_SIZE,
+          limit: pageLimit,
           startDate: dateRange.startDate,
           endDate: dateRange.endDate
         });
-        setStates(mapStateRows((response == null ? void 0 : response.rows) || []));
+        const mappedRows = mapStateRows((response == null ? void 0 : response.rows) || []);
+        setStates(mappedRows);
         setTotalStates(Number((response == null ? void 0 : response.total) || 0));
         setHasMore(Boolean(response == null ? void 0 : response.hasMore));
+        const { from, to } = getPageDateBounds(mappedRows);
+        setFromDate(from);
+        setToDate(to);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load states");
       } finally {
@@ -27792,6 +28729,7 @@ const HomePage = ({ onNavigateToOrders }) => {
     closeSwitchPopup,
     handleQuickSwitch
   } = useAccountSwitch({ user, switchAccount, t });
+  const [selectedStateForDetails, setSelectedStateForDetails] = reactExports.useState(null);
   const openState = (state, selectedType) => {
     onNavigateToOrders == null ? void 0 : onNavigateToOrders({
       ...state,
@@ -27824,6 +28762,7 @@ const HomePage = ({ onNavigateToOrders }) => {
       {
         state,
         index,
+        onOpenDetails: (nextState) => setSelectedStateForDetails(nextState),
         onOpenRtd: (nextState) => openState(nextState, "rtd"),
         onOpenHandover: (nextState) => openState(nextState, "handover"),
         t
@@ -27861,6 +28800,14 @@ const HomePage = ({ onNavigateToOrders }) => {
         t,
         onClose: closeSwitchPopup,
         onSwitch: handleQuickSwitch
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      SavedStateProductDetailsModal,
+      {
+        open: !!selectedStateForDetails,
+        state: selectedStateForDetails,
+        onClose: () => setSelectedStateForDetails(null)
       }
     ),
     alert && /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -33144,14 +34091,6 @@ const useSimpleOrdersView = () => {
     toggleSimpleOrdersView
   };
 };
-function formatIndianNumber(x) {
-  if (x === "" || x === void 0 || x === null) return "";
-  const num = Number(x);
-  if (isNaN(num)) return x;
-  const [intPart, decPart] = x.toString().split(".");
-  const formattedInt = new Intl.NumberFormat("en-IN").format(Number(intPart));
-  return decPart !== void 0 ? `${formattedInt}.${decPart}` : formattedInt;
-}
 var DefaultContext = {
   color: void 0,
   size: void 0,
@@ -33288,55 +34227,11 @@ function FaShopify(props) {
 function SiFlipkart(props) {
   return GenIcon({ "attr": { "role": "img", "viewBox": "0 0 24 24" }, "child": [{ "tag": "path", "attr": { "d": "M3.833 1.333a.993.993 0 0 0-.333.061V1c0-.551.449-1 1-1h14.667c.551 0 1 .449 1 1v.333H3.833zm17.334 2.334H2.833c-.551 0-1 .449-1 1V23c0 .551.449 1 1 1h7.3l1.098-5.645h-2.24c-.051 0-5.158-.241-5.158-.241l4.639-.327-.078-.366-1.978-.285 1.882-.158-.124-.449-3.075-.467s3.341-.373 3.392-.373h3.232l.247-1.331c.289-1.616.945-2.807 1.973-3.693 1.033-.892 2.344-1.332 3.937-1.332.643 0 1.053.151 1.231.463.118.186.201.516.279.859.074.352.14.671.095.903-.057.345-.461.465-1.197.465h-.253c-1.327 0-2.134.763-2.405 2.31l-.243 1.355h1.54c.574 0 .781.402.622 1.306-.17.941-.539 1.36-1.111 1.36H14.9L13.804 24h7.362c.551 0 1-.449 1-1V4.667a1 1 0 0 0-.999-1zM20.5 2.333A.334.334 0 0 0 20.167 2H3.833a.334.334 0 0 0-.333.333V3h17v-.667z" }, "child": [] }] })(props);
 }
-const calculateWeightInGrams = (allQuantityPerKg, unit, unitType) => {
-  const type = unitType.toLowerCase();
-  let weight = 0;
-  allQuantityPerKg.forEach((qtyPerKg) => {
-    if (type === "p") {
-      weight += parseInt(unit) * (1 / qtyPerKg) * 1e3;
-    } else if (type === "g") {
-      weight += parseInt(unit);
-    } else if (type === "kg") {
-      weight += parseInt(unit) * 1e3;
-    }
-  });
-  return weight;
-};
-const getMarketplaceInfo = (item) => {
-  const productId = String(
-    (item == null ? void 0 : item.productId) ?? (item == null ? void 0 : item.product_id) ?? (item == null ? void 0 : item.productID) ?? ""
-  ).toUpperCase();
-  if (productId.startsWith("VPS")) {
-    return {
-      label: "Shopsy",
-      className: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300"
-    };
-  }
-  if (productId.startsWith("PAE")) {
-    return {
-      label: "Flipkart",
-      className: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
-    };
-  }
-  return null;
-};
-const DEFAULT_PRODUCT = {
-  name: "NA",
-  label: "NA",
-  weight: "NA",
-  unite: "NA"
-};
-const LOADING_PRODUCT = {
-  name: "Loading...",
-  label: "Loading...",
-  weight: "Loading...",
-  unite: "Loading..."
-};
-const QUANTITY_PART_REGEX$1 = /^(\d+(?:\.\d+)?)([a-zA-Z]+)$/;
+const QUANTITY_PART_REGEX = /^(\d+(?:\.\d+)?)([a-zA-Z]+)$/;
 const getSimpleQuantityFromSku = (value, getTranslatedUnitLabel) => {
   const parts = String(value || "").split("_").map((part) => part.replace(/[\[\](){}]/g, "")).filter(Boolean);
-  const quantityPartCandidate = parts.find((part) => QUANTITY_PART_REGEX$1.test(part)) || "";
-  const match = String(quantityPartCandidate).match(QUANTITY_PART_REGEX$1);
+  const quantityPartCandidate = parts.find((part) => QUANTITY_PART_REGEX.test(part)) || "";
+  const match = String(quantityPartCandidate).match(QUANTITY_PART_REGEX);
   if (!match) return "N/A";
   const qty = formatIndianNumber(match[1]);
   const unit = match[2].toUpperCase();
@@ -33546,7 +34441,7 @@ const OrderCard = ({
                   className: `relative w-full my-2 gap-1 grid grid-cols-1 ${hasMultipleItems ? "grid-cols-[1fr_50px] px-10" : ""}`,
                   children: [
                     marketplaceInfo && (marketplaceInfo.label === "Flipkart" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-gray-900/80 p-0.5 border border-gray-700 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SiFlipkart, { className: "size-6 text-yellow-400" }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-1 border border-gray-200 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaShopify, { className: "size-6 text-[#81BF37]" }) })),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full max-w-[min(70vw,70vh)] min-h-[min(30vw,30vh)] max-h-[min(75vw,75vh)]", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full max-w-[min(70vw,70vh,300px)] min-h-[min(30vw,30vh,150px)] max-h-[min(70vw,70vh,300px)]", children: [
                       isActive && isImageLoading && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 z-10", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" }) }),
                       /* @__PURE__ */ jsxRuntimeExports.jsx(
                         "img",
@@ -33812,217 +34707,6 @@ const InfoCell = ({ label, value }) => /* @__PURE__ */ jsxRuntimeExports.jsxs("d
   /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-medium text-gray-500 dark:text-gray-400 mb-0.5", children: label }),
   /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: value || "N/A" })
 ] });
-function toSafeNumber(value) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-function getSku(item) {
-  return String((item == null ? void 0 : item.newSku) || (item == null ? void 0 : item.sku) || "-").trim() || "-";
-}
-function normalizeGroupKey(value) {
-  return String(value).trim().toLowerCase().replace(/\s+/g, " ");
-}
-function getImageUrl(item) {
-  return String((item == null ? void 0 : item.primaryImageUrl) || "").trim();
-}
-function getProductName(item, details) {
-  return String((details == null ? void 0 : details.label) || (details == null ? void 0 : details.name) || (item == null ? void 0 : item.title) || "NA").trim();
-}
-function getUnitWeight(details) {
-  return toSafeNumber(Number.parseFloat(String((details == null ? void 0 : details.weight) || 0)));
-}
-function OrdersProductDetailsCard({
-  orders,
-  resolveProduct
-}) {
-  const { rows, summary } = reactExports.useMemo(() => {
-    const productMap = /* @__PURE__ */ new Map();
-    for (const order of orders) {
-      const items = Array.isArray(order == null ? void 0 : order.orderItems) ? order.orderItems : [];
-      const shipmentSeenKeys = /* @__PURE__ */ new Set();
-      for (const item of items) {
-        const details = resolveProduct(item);
-        const sku = getSku(item);
-        const displayName = getProductName(item, details);
-        const groupKey = normalizeGroupKey(displayName || sku) || sku;
-        const quantity = Math.max(1, toSafeNumber(item == null ? void 0 : item.quantity));
-        const totalPrice = toSafeNumber(item == null ? void 0 : item.price);
-        const unitWeight = getUnitWeight(details);
-        const totalWeight = unitWeight * quantity;
-        const current = productMap.get(groupKey) || {
-          key: groupKey,
-          sku,
-          name: displayName,
-          imageUrl: getImageUrl(item),
-          shipmentCount: 0,
-          itemQuantity: 0,
-          totalWeight: 0,
-          totalPrice: 0,
-          avgUnitWeight: 0,
-          avgUnitPrice: 0
-        };
-        current.itemQuantity += quantity;
-        current.totalWeight += totalWeight;
-        current.totalPrice += totalPrice;
-        if (!shipmentSeenKeys.has(groupKey)) {
-          current.shipmentCount += 1;
-          shipmentSeenKeys.add(groupKey);
-        }
-        if (!current.imageUrl) {
-          current.imageUrl = getImageUrl(item);
-        }
-        productMap.set(groupKey, current);
-      }
-    }
-    const nextRows = Array.from(productMap.values()).sort(
-      (a, b) => b.totalPrice - a.totalPrice
-    );
-    for (const row of nextRows) {
-      const qty = Math.max(1, row.itemQuantity);
-      row.avgUnitWeight = row.totalWeight / qty;
-      row.avgUnitPrice = row.totalPrice / qty;
-    }
-    const nextSummary = nextRows.reduce(
-      (acc, row) => {
-        acc.itemQuantity += row.itemQuantity;
-        acc.totalWeight += row.totalWeight;
-        acc.totalPrice += row.totalPrice;
-        return acc;
-      },
-      {
-        productCount: nextRows.length,
-        shipmentCount: orders.length,
-        itemQuantity: 0,
-        totalWeight: 0,
-        totalPrice: 0
-      }
-    );
-    return {
-      rows: nextRows,
-      summary: nextSummary
-    };
-  }, [orders, resolveProduct]);
-  if (!rows.length) {
-    return null;
-  }
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/70 p-2 space-y-2 overflow-hidden flex flex-col", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: "Product Details Totals" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-400", children: [
-        summary.productCount,
-        " products • ",
-        summary.shipmentCount,
-        " shipments"
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-3 md:grid-cols-4 gap-2", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        InfoTile,
-        {
-          label: "Quantity",
-          value: String(formatIndianNumber(summary.itemQuantity))
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        InfoTile,
-        {
-          label: "Products",
-          value: String(formatIndianNumber(summary.productCount))
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        InfoTile,
-        {
-          label: "Weight",
-          value: `${formatIndianNumber(summary.totalWeight.toFixed(2))} g`
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        InfoTile,
-        {
-          label: "Total Cost",
-          value: `₹${formatIndianNumber(summary.totalPrice.toFixed(2))}`
-        }
-      )
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 min-h-0 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 p-2 space-y-2", children: rows.map((row, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "article",
-      {
-        className: "rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/70 p-2",
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 min-w-0", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs font-semibold text-gray-500 dark:text-gray-400 w-5 shrink-0", children: index + 1 }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "size-10 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-hidden shrink-0", children: row.imageUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "img",
-                {
-                  src: row.imageUrl,
-                  alt: row.name,
-                  className: "w-full h-full object-cover"
-                }
-              ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full h-full flex items-center justify-center text-[10px] text-gray-400", children: "IMG" }) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white wrap-break-word", children: row.name }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400 wrap-break-word", children: row.sku })
-              ] })
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-right shrink-0", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400", children: "Qty" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-bold text-gray-900 dark:text-white", children: formatIndianNumber(row.itemQuantity) })
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 grid grid-cols-2 md:grid-cols-4 gap-1.5", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              MetricCell,
-              {
-                label: "Shipments",
-                value: String(formatIndianNumber(row.shipmentCount))
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              MetricCell,
-              {
-                label: "Total Weight",
-                value: `${formatIndianNumber(row.totalWeight.toFixed(2))} g`
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              MetricCell,
-              {
-                label: "Unit Weight",
-                value: `${formatIndianNumber(row.avgUnitWeight.toFixed(2))} g`
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              MetricCell,
-              {
-                label: "Unit Price",
-                value: `₹${formatIndianNumber(row.avgUnitPrice.toFixed(2))}`
-              }
-            )
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-1.5 flex items-center justify-end", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: [
-            "Total: ₹",
-            formatIndianNumber(row.totalPrice.toFixed(2))
-          ] }) })
-        ]
-      },
-      `${row.key}-${index}`
-    )) })
-  ] });
-}
-function InfoTile({ label, value }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 px-2 py-1", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400", children: label }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: value })
-  ] });
-}
-function MetricCell({ label, value }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded border border-gray-200 dark:border-gray-700 bg-gray-50/70 dark:bg-gray-800/60 px-1.5 py-1", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400", children: label }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: value })
-  ] });
-}
 const HOTZONE_DEBUG_MODE = false;
 const SWIPE_TRANSITION_MS = 220;
 const EDGE_RESISTANCE_RATIO = 0.28;
@@ -34051,7 +34735,7 @@ const OrderPagesList = ({
   const [isOrderPickerVisible, setIsOrderPickerVisible] = reactExports.useState(false);
   const [orderJumpValue, setOrderJumpValue] = reactExports.useState("");
   const [scrollDirection, setScrollDirection] = reactExports.useState(0);
-  const totalSlides = orders.length + 1;
+  const totalSlides = orders.length;
   reactExports.useEffect(() => {
     if (selectedOrderIndex === null) return;
     const previous = previousSelectedIndexRef.current;
@@ -34114,7 +34798,7 @@ const OrderPagesList = ({
   };
   if (!orders.length || selectedOrderIndex === null) return null;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full py-1 md:py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20 relative overflow-hidden", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
       Swiper2,
       {
         modules: [A11y],
@@ -34140,76 +34824,67 @@ const OrderPagesList = ({
           }
         },
         onSlideChange: handleSlideChange,
-        children: [
-          orders.map((order, index) => {
-            var _a;
-            const isActive = index === selectedOrderIndex;
-            const isOddPage = index % 2 === 1;
-            const isEvenNumberedCard = (index + 1) % 2 === 0;
-            const distance = Math.abs(selectedOrderIndex - index);
-            const scale = Math.max(0.92, 1 - distance * 0.08);
-            const opacity = Math.max(0.72, 1 - distance * 0.2);
-            const referenceIndex = selectedOrderIndex;
-            const remainingRight = orders.length - 1 - referenceIndex;
-            const remainingLeft = referenceIndex;
-            const renderBehind = scrollDirection > 0 ? BACKWARD_RENDER_WINDOW : FORWARD_RENDER_WINDOW;
-            const renderAhead = scrollDirection < 0 ? BACKWARD_RENDER_WINDOW : FORWARD_RENDER_WINDOW;
-            const edgeLeftBoost = scrollDirection < 0 && remainingLeft <= 2 ? EDGE_PRELOAD_EXTRA : 0;
-            const edgeRightBoost = scrollDirection > 0 && remainingRight <= 2 ? EDGE_PRELOAD_EXTRA : 0;
-            const renderStart = Math.max(
-              0,
-              referenceIndex - renderBehind - edgeLeftBoost
-            );
-            const renderEnd = Math.min(
-              orders.length - 1,
-              referenceIndex + renderAhead + edgeRightBoost
-            );
-            const shouldRenderCard = index >= renderStart && index <= renderEnd || isActive;
-            return /* @__PURE__ */ jsxRuntimeExports.jsx(
-              SwiperSlide,
-              {
-                className: "h-full!",
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "div",
-                  {
-                    className: `relative w-full h-full p-1 rounded-xl ${isOddPage ? "bg-indigo-50/70 dark:bg-indigo-950/30" : "bg-transparent"}`,
-                    style: {
-                      transform: `scale(${scale})`,
-                      opacity,
-                      transition: "transform 220ms ease, opacity 220ms ease"
-                    },
-                    children: shouldRenderCard ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-                      OrderCard,
-                      {
-                        order,
-                        productDetails: isActive ? product : resolveProduct((_a = order.orderItems) == null ? void 0 : _a[0]),
-                        selectedItemIndex: isActive ? selectedItemIndex : 0,
-                        isActive,
-                        isEvenNumberedCard,
-                        orderNumber: index + 1,
-                        onOrderBadgeClick: isActive ? openOrderPicker : void 0,
-                        isImageLoading: isActive ? isImageLoading : false,
-                        onImageLoad,
-                        onImageError,
-                        onSelectItem: isActive ? onSelectItem : void 0,
-                        onCopySku,
-                        copiedSku
-                      }
-                    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/50" })
-                  }
-                )
-              },
-              `${order.orderId || order.order_id || index}-${index}`
-            );
-          }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(SwiperSlide, { className: "h-full!", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative w-full h-full p-1 rounded-xl bg-primary-50/60 dark:bg-primary-950/20", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-            OrdersProductDetailsCard,
+        children: orders.map((order, index) => {
+          var _a;
+          const isActive = index === selectedOrderIndex;
+          const isOddPage = index % 2 === 1;
+          const isEvenNumberedCard = (index + 1) % 2 === 0;
+          const distance = Math.abs(selectedOrderIndex - index);
+          const scale = Math.max(0.92, 1 - distance * 0.08);
+          const opacity = Math.max(0.72, 1 - distance * 0.2);
+          const referenceIndex = selectedOrderIndex;
+          const remainingRight = orders.length - 1 - referenceIndex;
+          const remainingLeft = referenceIndex;
+          const renderBehind = scrollDirection > 0 ? BACKWARD_RENDER_WINDOW : FORWARD_RENDER_WINDOW;
+          const renderAhead = scrollDirection < 0 ? BACKWARD_RENDER_WINDOW : FORWARD_RENDER_WINDOW;
+          const edgeLeftBoost = scrollDirection < 0 && remainingLeft <= 2 ? EDGE_PRELOAD_EXTRA : 0;
+          const edgeRightBoost = scrollDirection > 0 && remainingRight <= 2 ? EDGE_PRELOAD_EXTRA : 0;
+          const renderStart = Math.max(
+            0,
+            referenceIndex - renderBehind - edgeLeftBoost
+          );
+          const renderEnd = Math.min(
+            orders.length - 1,
+            referenceIndex + renderAhead + edgeRightBoost
+          );
+          const shouldRenderCard = index >= renderStart && index <= renderEnd || isActive;
+          return /* @__PURE__ */ jsxRuntimeExports.jsx(
+            SwiperSlide,
             {
-              orders,
-              resolveProduct
-            }
-          ) }) }, "orders-totals-card")
-        ]
+              className: "h-full!",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "div",
+                {
+                  className: `relative w-full h-full p-1 rounded-xl ${isOddPage ? "bg-indigo-50/70 dark:bg-indigo-950/30" : "bg-transparent"}`,
+                  style: {
+                    transform: `scale(${scale})`,
+                    opacity,
+                    transition: "transform 220ms ease, opacity 220ms ease"
+                  },
+                  children: shouldRenderCard ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    OrderCard,
+                    {
+                      order,
+                      productDetails: isActive ? product : resolveProduct((_a = order.orderItems) == null ? void 0 : _a[0]),
+                      selectedItemIndex: isActive ? selectedItemIndex : 0,
+                      isActive,
+                      isEvenNumberedCard,
+                      orderNumber: index + 1,
+                      onOrderBadgeClick: isActive ? openOrderPicker : void 0,
+                      isImageLoading: isActive ? isImageLoading : false,
+                      onImageLoad,
+                      onImageError,
+                      onSelectItem: isActive ? onSelectItem : void 0,
+                      onCopySku,
+                      copiedSku
+                    }
+                  ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/50" })
+                }
+              )
+            },
+            `${order.orderId || order.order_id || index}-${index}`
+          );
+        })
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "absolute inset-y-0 left-0 right-0 z-40 pointer-events-none", children: [
@@ -34262,18 +34937,7 @@ const OrderPagesList = ({
           {
             className: `w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 transition-all duration-200 ${isOrderPickerVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-3 scale-95"}`,
             children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-3", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-gray-100", children: "Select Order" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "button",
-                  {
-                    type: "button",
-                    className: "text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600",
-                    onClick: closeOrderPicker,
-                    children: "Close"
-                  }
-                )
-              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center mb-3", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-gray-100", children: "Select Order" }) }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 mb-3", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   "input",
@@ -34313,7 +34977,7 @@ const OrderPagesList = ({
                       closeOrderPicker();
                     },
                     className: `h-9 rounded-md border text-xs font-semibold ${isCurrent ? "bg-primary text-white border-primary-600" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600"}`,
-                    children: index === orders.length ? "Total" : index + 1
+                    children: index + 1
                   },
                   `picker-${index}`
                 );
@@ -34324,456 +34988,6 @@ const OrderPagesList = ({
       }
     )
   ] });
-};
-async function listItems() {
-  const rows = await getVisibleRows({
-    table: "items",
-    ownerColumn: "created_by",
-    currentUserId: getUserId(),
-    orderBy: "created_at",
-    ascending: false
-  });
-  return mapLegacyVisibilityRows(rows, "created_by");
-}
-const TABLE = "map_skus";
-let mapSkusCache = null;
-const SHOPSY_PREFIX_REGEX = /^(SPY_|SHY_|SH_)/i;
-const CHAIN_CONFLICT_ERROR_PREFIX = "[chain_conflict]";
-const SELF_MAP_ERROR_PREFIX = "[self_map]";
-function requireUserId() {
-  const userId = getUserId();
-  if (!userId) throw new Error("Not authenticated");
-  return userId;
-}
-function getNowIso() {
-  return (/* @__PURE__ */ new Date()).toISOString();
-}
-function clearMapSkusCache() {
-  mapSkusCache = null;
-}
-const normalizeSkuValue = (value) => String(value || "").trim();
-const normalizeSkuForComparison = (value) => normalizeSkuValue(value).replace(SHOPSY_PREFIX_REGEX, "").toUpperCase();
-const createChainConflictMessage = (oldSku, newSku) => `${CHAIN_CONFLICT_ERROR_PREFIX} Chain mapping is not allowed: "${newSku}" is already used as an old SKU, so "${oldSku}" -> "${newSku}" was blocked.`;
-const createSelfMapMessage = (sku) => `${SELF_MAP_ERROR_PREFIX} Self mapping is not allowed for SKU "${sku}".`;
-async function fetchAllMapSkusForUser(userId, options = {}) {
-  const { includeDeleted = false } = options;
-  let from = 0;
-  const pageSize = 1e3;
-  let hasMore = true;
-  let rows = [];
-  while (hasMore) {
-    let query = supabase.from(TABLE).select("*").eq("user_id", userId).order("old_sku", { ascending: true });
-    if (!includeDeleted) {
-      query = query.is("deleted_at", null);
-    }
-    const { data, error } = await query.range(from, from + pageSize - 1);
-    if (error) throw new Error(error.message);
-    const batch = data || [];
-    rows = rows.concat(batch);
-    hasMore = batch.length === pageSize;
-    from += pageSize;
-  }
-  return rows;
-}
-async function getActiveMapSkuRowByOldSku(userId, oldSku) {
-  const normalizedOldSku = normalizeSkuValue(oldSku);
-  if (!normalizedOldSku) return null;
-  const { data, error } = await supabase.from(TABLE).select("*").eq("user_id", userId).is("deleted_at", null).eq("old_sku", normalizedOldSku).maybeSingle();
-  if (error) throw new Error(error.message);
-  return data || null;
-}
-async function listMapSkus() {
-  const userId = requireUserId();
-  return fetchAllMapSkusForUser(userId);
-}
-async function getMapSkusObject() {
-  if (mapSkusCache) return mapSkusCache;
-  const rows = await listMapSkus();
-  mapSkusCache = rows.reduce((acc, row) => {
-    acc[row.old_sku] = row.new_sku;
-    return acc;
-  }, {});
-  return mapSkusCache;
-}
-async function upsertMapSku({
-  oldSku,
-  newSku
-}) {
-  const userId = requireUserId();
-  const normalizedOldSku = normalizeSkuValue(oldSku);
-  const normalizedNewSku = normalizeSkuValue(newSku);
-  if (!normalizedOldSku || !normalizedNewSku) {
-    throw new Error("old_sku and new_sku are required");
-  }
-  const oldSkuKey = normalizeSkuForComparison(normalizedOldSku);
-  const newSkuKey = normalizeSkuForComparison(normalizedNewSku);
-  if (!oldSkuKey || !newSkuKey) {
-    throw new Error("old_sku and new_sku are required");
-  }
-  if (oldSkuKey === newSkuKey) {
-    throw new Error(createSelfMapMessage(normalizedOldSku));
-  }
-  const allRows = await fetchAllMapSkusForUser(userId, {
-    includeDeleted: true
-  });
-  const existingRow = allRows.find(
-    (row) => normalizeSkuForComparison(row.old_sku) === oldSkuKey
-  );
-  if (existingRow && !existingRow.deleted_at) {
-    const existingNewSkuKey = normalizeSkuForComparison(existingRow.new_sku);
-    if (existingNewSkuKey === newSkuKey) {
-      return existingRow;
-    }
-  }
-  const chainRow = allRows.find((row) => {
-    if (row.deleted_at) return false;
-    const existingOldKey = normalizeSkuForComparison(row.old_sku);
-    return existingOldKey === newSkuKey && existingOldKey !== oldSkuKey;
-  });
-  if (chainRow) {
-    throw new Error(
-      createChainConflictMessage(normalizedOldSku, normalizedNewSku)
-    );
-  }
-  const now2 = getNowIso();
-  const { data, error } = await supabase.from(TABLE).upsert(
-    {
-      user_id: userId,
-      old_sku: normalizedOldSku,
-      new_sku: normalizedNewSku,
-      created_at: (existingRow == null ? void 0 : existingRow.created_at) || now2,
-      updated_at: now2,
-      updated_by: userId,
-      deleted_at: null
-    },
-    { onConflict: "user_id,old_sku" }
-  ).select("*").single();
-  if (error) throw new Error(error.message);
-  clearMapSkusCache();
-  return data;
-}
-async function updateMapSku(oldSku, updates) {
-  const userId = requireUserId();
-  const normalizedOldSku = normalizeSkuValue(oldSku);
-  if (!normalizedOldSku) throw new Error("oldSku is required");
-  const existingRow = await getActiveMapSkuRowByOldSku(
-    userId,
-    normalizedOldSku
-  );
-  if (!existingRow) {
-    throw new Error(`Mapping for "${normalizedOldSku}" not found`);
-  }
-  if (typeof (updates == null ? void 0 : updates.newSku) === "undefined") {
-    return existingRow;
-  }
-  const normalizedNewSku = normalizeSkuValue(updates.newSku);
-  if (!normalizedNewSku) {
-    throw new Error("newSku is required");
-  }
-  const oldSkuKey = normalizeSkuForComparison(existingRow.old_sku);
-  const newSkuKey = normalizeSkuForComparison(normalizedNewSku);
-  if (oldSkuKey === newSkuKey) {
-    throw new Error(createSelfMapMessage(existingRow.old_sku));
-  }
-  const currentNewSkuKey = normalizeSkuForComparison(existingRow.new_sku);
-  if (currentNewSkuKey === newSkuKey) {
-    return existingRow;
-  }
-  const activeRows = await fetchAllMapSkusForUser(userId, {
-    includeDeleted: false
-  });
-  const chainRow = activeRows.find((row) => {
-    const existingOldKey = normalizeSkuForComparison(row.old_sku);
-    return existingOldKey === newSkuKey && existingOldKey !== oldSkuKey;
-  });
-  if (chainRow) {
-    throw new Error(
-      createChainConflictMessage(existingRow.old_sku, normalizedNewSku)
-    );
-  }
-  const now2 = getNowIso();
-  const { data, error } = await supabase.from(TABLE).update({
-    new_sku: normalizedNewSku,
-    updated_at: now2,
-    updated_by: userId
-  }).eq("user_id", userId).is("deleted_at", null).eq("old_sku", normalizedOldSku).select("*").single();
-  if (error) throw new Error(error.message);
-  clearMapSkusCache();
-  return data;
-}
-async function deleteMapSku(oldSku) {
-  const userId = requireUserId();
-  if (!oldSku) throw new Error("oldSku is required");
-  const now2 = getNowIso();
-  const { error } = await supabase.from(TABLE).update({ deleted_at: now2, updated_at: now2, updated_by: userId }).eq("user_id", userId).is("deleted_at", null).eq("old_sku", oldSku);
-  if (error) throw new Error(error.message);
-  clearMapSkusCache();
-  return { success: true };
-}
-async function searchMapSkus(searchTerm) {
-  const userId = requireUserId();
-  if (!(searchTerm == null ? void 0 : searchTerm.trim())) return listMapSkus();
-  const { data, error } = await supabase.from(TABLE).select("*").eq("user_id", userId).is("deleted_at", null).or(`old_sku.ilike.%${searchTerm}%,new_sku.ilike.%${searchTerm}%`).order("old_sku", { ascending: true });
-  if (error) throw new Error(error.message);
-  return data || [];
-}
-async function listDeletedMapSkus() {
-  const userId = requireUserId();
-  const { data, error } = await supabase.from(TABLE).select("*").eq("user_id", userId).not("deleted_at", "is", null).order("updated_at", { ascending: false });
-  if (error) throw new Error(error.message);
-  return data || [];
-}
-async function restoreMapSku(oldSku) {
-  const userId = requireUserId();
-  if (!oldSku) throw new Error("oldSku is required");
-  const now2 = getNowIso();
-  const { data, error } = await supabase.from(TABLE).update({ deleted_at: null, updated_at: now2, updated_by: userId }).eq("user_id", userId).not("deleted_at", "is", null).eq("old_sku", oldSku).select("*").single();
-  if (error) throw new Error(error.message);
-  clearMapSkusCache();
-  return data;
-}
-function isShopsyProduct(skuId) {
-  return !!skuId && /^(SPY_|SHY_|SH_)/.test(skuId.toUpperCase());
-}
-function shopsyModifySkuId(skuId) {
-  if (isShopsyProduct(skuId)) {
-    return skuId.toUpperCase().replace(/^(SPY_|SHY_|SH_)/, "");
-  }
-  return skuId;
-}
-const QUANTITY_PART_REGEX = /^(\d+)([a-zA-Z]+)$/;
-function parseCompositeSku(value) {
-  const parts = String(value || "").split("_").filter(Boolean);
-  if (parts.length < 4) return null;
-  const directMatch = parts[3].match(QUANTITY_PART_REGEX);
-  if (directMatch) {
-    return {
-      itemIds: parts[2].split("-").filter(Boolean),
-      unit: parseInt(directMatch[1], 10),
-      unitType: directMatch[2],
-      quantityPart: parts[3],
-      itemIdsPart: parts[2],
-      format: "ids-then-qty"
-    };
-  }
-  const swappedMatch = parts[2].match(QUANTITY_PART_REGEX);
-  if (swappedMatch) {
-    return {
-      itemIds: parts[3].split("-").filter(Boolean),
-      unit: parseInt(swappedMatch[1], 10),
-      unitType: swappedMatch[2],
-      quantityPart: parts[2],
-      itemIdsPart: parts[3],
-      format: "qty-then-ids"
-    };
-  }
-  return null;
-}
-function parseItemTokens(value) {
-  const raw = String(value || "").trim();
-  if (!raw) return [];
-  const bracketMatch = raw.match(/^\[(.+)\]$/);
-  const tokenSource = bracketMatch ? bracketMatch[1] : raw;
-  return tokenSource.split("-").map((token) => token.trim()).filter(Boolean);
-}
-function normalizeText(value) {
-  return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
-}
-const useOrderData = (selectedState = null) => {
-  const { user } = useAuth();
-  const [stateData, setStateData] = reactExports.useState(null);
-  const [orders, setOrders] = reactExports.useState([]);
-  const [products, setProducts] = reactExports.useState([]);
-  const [skuMappings, setSkuMappings] = reactExports.useState({});
-  const [isStateLoading, setIsStateLoading] = reactExports.useState(false);
-  const [isProductsLoading, setIsProductsLoading] = reactExports.useState(false);
-  reactExports.useEffect(() => {
-    let isCancelled = false;
-    const currentUserId = String((user == null ? void 0 : user.id) || "");
-    const applySelectedState = (nextState) => {
-      if (isCancelled) return;
-      setStateData(nextState);
-      const ordersArray = (nextState == null ? void 0 : nextState.selectedType) === "handover" ? nextState.handover : nextState == null ? void 0 : nextState.rtd;
-      setOrders(Array.isArray(ordersArray) ? ordersArray : []);
-    };
-    const fetchLatestState = async () => {
-      var _a, _b, _c, _d;
-      try {
-        setIsStateLoading(true);
-        const savedStates = await listOrderStates();
-        const ownStates = (savedStates || []).filter(
-          (item) => String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "") === currentUserId
-        );
-        const latestState = ownStates == null ? void 0 : ownStates[0];
-        if (!latestState) {
-          applySelectedState(null);
-          return;
-        }
-        const rawSelectedType = (_b = (_a = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _a.states) == null ? void 0 : _b.selectedType;
-        const selectedType = rawSelectedType === "handover" || rawSelectedType === "rtd" ? rawSelectedType : "rtd";
-        applySelectedState({
-          ...(_c = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _c.states,
-          id: latestState == null ? void 0 : latestState.id,
-          timestamp: (_d = latestState == null ? void 0 : latestState.order_data) == null ? void 0 : _d.timestamp,
-          userId: String((latestState == null ? void 0 : latestState.user_id) ?? (latestState == null ? void 0 : latestState.created_by) ?? ""),
-          selectedType
-        });
-      } catch (error) {
-        console.error("Error fetching latest order state:", error);
-        applySelectedState(null);
-      } finally {
-        if (!isCancelled) {
-          setIsStateLoading(false);
-        }
-      }
-    };
-    if (!(user == null ? void 0 : user.id)) {
-      setIsStateLoading(false);
-      applySelectedState(null);
-    } else {
-      const selectedStateMatchesUser = !!selectedState && selectedState.userId === user.id;
-      if (selectedStateMatchesUser && selectedState) {
-        setIsStateLoading(false);
-        applySelectedState(selectedState);
-      } else {
-        applySelectedState(null);
-        fetchLatestState();
-      }
-    }
-    return () => {
-      isCancelled = true;
-    };
-  }, [selectedState, user == null ? void 0 : user.id]);
-  reactExports.useEffect(() => {
-    let isCancelled = false;
-    const fetchProducts = async () => {
-      if (!(user == null ? void 0 : user.id)) {
-        setProducts([]);
-        setIsProductsLoading(false);
-        return;
-      }
-      setProducts([]);
-      setIsProductsLoading(true);
-      try {
-        const data = await listItems();
-        if (isCancelled) return;
-        const normalizedProducts = (data || []).map((item) => ({
-          ...item,
-          sku_id: item.sku_id || item.item_sku
-        }));
-        setProducts(normalizedProducts);
-      } catch (error) {
-        if (isCancelled) return;
-        console.error("Error fetching products:", error);
-      } finally {
-        if (!isCancelled) {
-          setIsProductsLoading(false);
-        }
-      }
-    };
-    fetchProducts();
-    return () => {
-      isCancelled = true;
-    };
-  }, [user == null ? void 0 : user.id]);
-  reactExports.useEffect(() => {
-    if (!(user == null ? void 0 : user.id) || orders.length === 0) {
-      setSkuMappings({});
-      return;
-    }
-    const fetchMappings = async () => {
-      try {
-        const fullMap = await getMapSkusObject();
-        const allSkus = /* @__PURE__ */ new Set();
-        orders.forEach((order) => {
-          var _a;
-          (_a = order.orderItems) == null ? void 0 : _a.forEach((item) => {
-            const key = String((item == null ? void 0 : item.sku) || "").trim();
-            if (key) allSkus.add(key);
-          });
-        });
-        const mappings = {};
-        allSkus.forEach((sku) => {
-          if (Object.prototype.hasOwnProperty.call(fullMap || {}, sku)) {
-            mappings[sku] = String(fullMap[sku] || "");
-          }
-        });
-        setSkuMappings(mappings);
-      } catch (error) {
-        console.error("Error fetching SKU mappings:", error);
-      }
-    };
-    fetchMappings();
-  }, [orders, user == null ? void 0 : user.id]);
-  const resolveProduct = reactExports.useCallback(
-    (item) => {
-      if (!products.length) {
-        return LOADING_PRODUCT;
-      }
-      const originalSku = item.sku;
-      const modified = shopsyModifySkuId(originalSku);
-      const sku = skuMappings[modified] || item.newSku || modified;
-      const parsedSku = parseCompositeSku(sku);
-      if (parsedSku) {
-        const parsedItemIds = parsedSku.itemIds.flatMap(
-          (token) => parseItemTokens(token)
-        );
-        const matched = parsedItemIds.map(
-          (id) => products.find(
-            (p) => normalizeText(p.sku_id) === normalizeText(id) || normalizeText(p.item_sku) === normalizeText(id)
-          )
-        );
-        if (matched.every(Boolean)) {
-          const weight = calculateWeightInGrams(
-            matched.map((p) => p.quantity_per_kg),
-            parsedSku.unit,
-            parsedSku.unitType
-          );
-          return {
-            name: matched.map((p) => p.name).join(", "),
-            label: matched.map((p) => p.label || p.name).join(", "),
-            weight: weight.toFixed(2),
-            unite: parsedSku.unitType
-          };
-        }
-        const normalizedTitle = normalizeText(item == null ? void 0 : item.title);
-        if (normalizedTitle) {
-          const titleMatch = products.find((p) => {
-            const productName = normalizeText(p == null ? void 0 : p.name);
-            const productLabel = normalizeText(p == null ? void 0 : p.label);
-            return productName === normalizedTitle || productLabel === normalizedTitle || normalizedTitle.includes(productName) || productName.includes(normalizedTitle) || productLabel && normalizedTitle.includes(productLabel) || productLabel && productLabel.includes(normalizedTitle);
-          });
-          if (titleMatch) {
-            const qtyPerKgValue = Number(titleMatch.quantity_per_kg);
-            const isPieceMode = parsedSku.unitType.toLowerCase() === "p";
-            const canComputePieceWeight = !isPieceMode || qtyPerKgValue > 0;
-            if (canComputePieceWeight) {
-              const weight = calculateWeightInGrams(
-                [titleMatch.quantity_per_kg],
-                parsedSku.unit,
-                parsedSku.unitType
-              );
-              return {
-                name: titleMatch.name || (item == null ? void 0 : item.title) || DEFAULT_PRODUCT.name,
-                label: titleMatch.label || titleMatch.name || DEFAULT_PRODUCT.label,
-                weight: weight.toFixed(2),
-                unite: parsedSku.unitType
-              };
-            }
-          }
-        }
-      }
-      return DEFAULT_PRODUCT;
-    },
-    [products, skuMappings]
-  );
-  return {
-    stateData,
-    orders,
-    products,
-    resolveProduct,
-    isOrdersLoading: isStateLoading || isProductsLoading
-  };
 };
 const sessionImageCache = /* @__PURE__ */ new Set();
 const inFlightImageLoads = /* @__PURE__ */ new Map();
@@ -34929,7 +35143,7 @@ const OrdersPageView = ({ selectedOrdersState = null }) => {
     }
     checkAndLoadImage(String(currentItem.primaryImageUrl || ""));
   }, [checkAndLoadImage, orders, selectedItemIndex, selectedOrderIndex]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col h-[calc(100svh-4.5rem)] overflow-hidden", children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col h-[calc(100svh-4.5rem)] max-w-xl mx-auto overflow-hidden", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       LoadingWindow,
       {
@@ -34992,7 +35206,7 @@ const ResponsiveNav = ({ activeTab, onTabChange }) => {
     onTabChange(tabId);
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("nav", { className: "hidden md:flex bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-50", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-between items-center h-16", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center space-x-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("nav", { className: "hidden md:flex bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-50", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "max-w-xl mx-auto px-4 sm:px-6 lg:px-8 w-full", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-between items-center h-16", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center space-x-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center space-x-3 text-xl font-bold text-gray-900 dark:text-white", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: iconImage, alt: "ES Orders", className: "w-8 h-8" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "ES Orders" })
@@ -36437,7 +36651,7 @@ function SkuMappingSection() {
         mapping.old_sku
       )) })
     ] }),
-    showModal && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 md:p-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-white dark:bg-gray-900 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700 w-full max-w-3xl shadow-2xl max-h-[90svh] overflow-y-auto", children: [
+    showModal && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 md:p-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-white dark:bg-gray-900 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700 w-full max-w-xl shadow-2xl max-h-[90svh] overflow-y-auto", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-lg font-bold mb-4 md:mb-6 text-gray-900 dark:text-white", children: editMapping ? t("skuMapping.editTitle") : t("skuMapping.addTitle") }),
       editMapping ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-5", children: [
@@ -36851,7 +37065,7 @@ const SettingsPage = () => {
       )
     ] }) });
   }
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4 md:space-y-5 max-w-2xl mx-auto pb-4", children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4 md:space-y-5 max-w-xl mx-auto pb-4", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-5 mt-2 md:mt-4", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-lg font-semibold text-gray-900 dark:text-white mb-3", children: t("settings.switchAccount") }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-2", children: savedAccounts.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: t("settings.noSavedAccounts") }) : savedAccounts.map((account) => {
@@ -37238,7 +37452,7 @@ function IndexPage() {
   }
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-svh bg-gray-50 dark:bg-gray-900 overflow-hidden", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(ResponsiveNav, { activeTab, onTabChange: handleTabChange }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className: "relative h-full overflow-hidden", children: activeTab === "orders" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pt-16 md:pt-18 h-full overflow-hidden", children: renderContent() }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "max-w-7xl pt-16 md:pt-18 pb-6 px-2 md:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto overscroll-y-contain", children: renderContent() }) })
+    /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className: "relative h-full overflow-hidden", children: activeTab === "orders" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pt-16 md:pt-18 h-full overflow-hidden", children: renderContent() }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "max-w-xl pt-16 md:pt-18 pb-6 px-2 md:px-6 lg:px-8 mx-auto h-full custom-scrollbar overflow-y-auto overscroll-y-contain", children: renderContent() }) })
   ] });
 }
 const container = document.getElementById("index-root");
