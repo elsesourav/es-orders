@@ -1,8 +1,8 @@
 import { useLanguage } from "@/lib/useLanguage";
 import { useSimpleOrdersView } from "@/lib/useSimpleOrdersView";
 import { formatIndianNumber } from "@/lib/utils";
-import { Boxes, Copy, Tag, Weight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Boxes, Copy, Heart, Tag, Weight } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
 import { FaShopify } from "react-icons/fa";
 import { SiFlipkart } from "react-icons/si";
 import type { OrderCardProps } from "../types/types";
@@ -181,6 +181,24 @@ const OrderCard = ({
     };
   }, [shouldBlinkItems, orderIdentity, isActive]);
 
+  const profitIcon = (
+    price: string | number,
+    quantity: string | number,
+  ): ReactNode => {
+    const p = Number(price);
+    const q = Number(quantity);
+
+    if (isNaN(p) || isNaN(q)) return <></>;
+    const actualPrice = p / q;
+
+    if (actualPrice > 300) {
+      return <Heart fill="#ff0000" className="w-5 h-5 text-red-700" />;
+    } else if (actualPrice > 200) {
+      return <Heart fill="#ffff00" className="w-5 h-5 text-yellow-500" />;
+    }
+    return <></>;
+  };
+
   return (
     <div
       className="relative h-full flex flex-col gap-3 overflow-y-auto pr-0.5 no-scrollbar"
@@ -296,7 +314,7 @@ const OrderCard = ({
             ))}
 
           <div className="my-1 flex justify-center">
-            <div className="relative w-full max-w-[min(45vw,45vh)] min-h-[min(30vw,30vh)] max-h-[min(45vw,45vh)]">
+            <div className="relative w-full max-w-[min(70vw,70vh)] min-h-[min(30vw,30vh)] max-h-[min(75vw,75vh)]">
               {isActive && isImageLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 z-10">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
@@ -352,10 +370,7 @@ const OrderCard = ({
               item.title
             )}
 
-            {isSimpleOrdersViewEnabled &&
-              Number(item.price || "0") / Number(item.quantity) > 300 && (
-                <span className="text-xl">❤️</span>
-              )}
+            {isSimpleOrdersViewEnabled && profitIcon(item.price, item.quantity)}
 
             {isSimpleOrdersViewEnabled ? (
               <span className="font-bold">
@@ -364,9 +379,7 @@ const OrderCard = ({
             ) : (
               <span className="font-bold ml-1 text-primary-600 dark:text-primary-400">
                 {t("orders.price")}: ₹{formatIndianNumber(item.price)}
-                {Number(item.price || "0") / Number(item.quantity) > 300
-                  ? " ❤️"
-                  : ""}
+                {profitIcon(item.price, item.quantity)}
               </span>
             )}
           </div>
