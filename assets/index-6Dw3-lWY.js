@@ -12640,7 +12640,7 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$u = [
+const __iconNode$v = [
   [
     "path",
     {
@@ -12672,22 +12672,22 @@ const __iconNode$u = [
   ["path", { d: "m12 8 4.74-2.85", key: "3rx089" }],
   ["path", { d: "M12 13.5V8", key: "1io7kd" }]
 ];
-const Boxes = createLucideIcon("boxes", __iconNode$u);
+const Boxes = createLucideIcon("boxes", __iconNode$v);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$t = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$t);
+const __iconNode$u = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$u);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$s = [
+const __iconNode$t = [
   ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
   [
     "path",
@@ -12697,7 +12697,18 @@ const __iconNode$s = [
     }
   ]
 ];
-const Clipboard = createLucideIcon("clipboard", __iconNode$s);
+const Clipboard = createLucideIcon("clipboard", __iconNode$t);
+/**
+ * @license lucide-react v0.525.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$s = [
+  ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
+  ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
+];
+const Copy = createLucideIcon("copy", __iconNode$s);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
@@ -12705,10 +12716,11 @@ const Clipboard = createLucideIcon("clipboard", __iconNode$s);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$r = [
-  ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
-  ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
+  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
 ];
-const Copy = createLucideIcon("copy", __iconNode$r);
+const ExternalLink = createLucideIcon("external-link", __iconNode$r);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
@@ -12716,18 +12728,6 @@ const Copy = createLucideIcon("copy", __iconNode$r);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$q = [
-  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
-  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
-  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
-];
-const ExternalLink = createLucideIcon("external-link", __iconNode$q);
-/**
- * @license lucide-react v0.525.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$p = [
   [
     "path",
     {
@@ -12745,14 +12745,14 @@ const __iconNode$p = [
   ],
   ["path", { d: "m2 2 20 20", key: "1ooewy" }]
 ];
-const EyeOff = createLucideIcon("eye-off", __iconNode$p);
+const EyeOff = createLucideIcon("eye-off", __iconNode$q);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$o = [
+const __iconNode$p = [
   [
     "path",
     {
@@ -12762,7 +12762,20 @@ const __iconNode$o = [
   ],
   ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
 ];
-const Eye = createLucideIcon("eye", __iconNode$o);
+const Eye = createLucideIcon("eye", __iconNode$p);
+/**
+ * @license lucide-react v0.525.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$o = [
+  [
+    "path",
+    { d: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z", key: "1jg4f8" }
+  ]
+];
+const Facebook = createLucideIcon("facebook", __iconNode$o);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
@@ -12772,10 +12785,14 @@ const Eye = createLucideIcon("eye", __iconNode$o);
 const __iconNode$n = [
   [
     "path",
-    { d: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z", key: "1jg4f8" }
-  ]
+    {
+      d: "M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4",
+      key: "tonef"
+    }
+  ],
+  ["path", { d: "M9 18c-4.51 2-5-2-7-2", key: "9comsn" }]
 ];
-const Facebook = createLucideIcon("facebook", __iconNode$n);
+const Github = createLucideIcon("github", __iconNode$n);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
@@ -12786,13 +12803,12 @@ const __iconNode$m = [
   [
     "path",
     {
-      d: "M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4",
-      key: "tonef"
+      d: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
+      key: "c3ymky"
     }
-  ],
-  ["path", { d: "M9 18c-4.51 2-5-2-7-2", key: "9comsn" }]
+  ]
 ];
-const Github = createLucideIcon("github", __iconNode$m);
+const Heart = createLucideIcon("heart", __iconNode$m);
 /**
  * @license lucide-react v0.525.0 - ISC
  *
@@ -13107,6 +13123,2180 @@ const __iconNode = [
   ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
 ];
 const X = createLucideIcon("x", __iconNode);
+function CustomAlert({
+  type = "info",
+  message,
+  onClose,
+  duration = 5e3
+}) {
+  const [isVisible, setIsVisible] = reactExports.useState(false);
+  const [isExiting, setIsExiting] = reactExports.useState(false);
+  const colorMap = {
+    info: {
+      bg: "#6366f1",
+      // primary
+      bgLight: "#818cf8",
+      // primary-light
+      text: "#eef2ff",
+      textLight: "#1e1b4b",
+      icon: "ℹ️"
+    },
+    success: {
+      bg: "#10b981",
+      // success
+      bgLight: "#34d399",
+      // success-light
+      text: "#ecfdf5",
+      textLight: "#052e16",
+      icon: "✓"
+    },
+    error: {
+      bg: "#f43f5e",
+      // danger
+      bgLight: "#fb7185",
+      // danger-light
+      text: "#fff1f2",
+      textLight: "#4c0519",
+      icon: "✕"
+    },
+    warning: {
+      bg: "#f59e0b",
+      // warning
+      bgLight: "#fbbf24",
+      // warning-light
+      text: "#1f2937",
+      textLight: "#422006",
+      icon: "⚠"
+    }
+  };
+  const handleClose = reactExports.useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onClose == null ? void 0 : onClose();
+    }, 300);
+  }, [onClose]);
+  reactExports.useEffect(() => {
+    requestAnimationFrame(() => setIsVisible(true));
+    if (!onClose) return void 0;
+    const timer = setTimeout(() => {
+      handleClose();
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [onClose, duration, handleClose]);
+  const colors = colorMap[type] || colorMap.info;
+  const alertStyle = {
+    "--alert-bg": colors.bg,
+    "--alert-bg-light": colors.bgLight,
+    "--alert-text": colors.text,
+    "--alert-text-light": colors.textLight
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        className: `custom-alert custom-alert-${type} ${isVisible ? "visible" : ""} ${isExiting ? "exiting" : ""}`,
+        style: alertStyle,
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "alert-content", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "alert-icon", children: colors.icon }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "alert-message", children: message })
+          ] }),
+          onClose && /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: handleClose, className: "alert-close", children: "✕" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: "alert-progress",
+              style: { animationDuration: `${duration}ms` }
+            }
+          )
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("style", { children: `
+        .custom-alert {
+          position: fixed;
+          left: 50%;
+          bottom: -120px;
+          transform: translateX(-50%) scale(0.9);
+          z-index: 2147483648;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          min-width: 320px;
+          max-width: 480px;
+          padding: 16px 20px;
+          border-radius: 16px;
+          background: var(--alert-bg);
+          color: var(--alert-text);
+          font-weight: 500;
+          box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.3),
+            0 2px 8px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+          overflow: hidden;
+          opacity: 0;
+        }
+        
+        .custom-alert.visible {
+          bottom: 32px;
+          transform: translateX(-50%) scale(1) translateY(0);
+          opacity: 1;
+        }
+        
+        .custom-alert.exiting {
+          bottom: -120px;
+          opacity: 0;
+          transform: translateX(-50%) scale(0.85) translateY(30px);
+          transition: all 0.35s cubic-bezier(0.4, 0, 1, 1);
+        }
+        
+        .alert-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex: 1;
+          min-width: 0;
+        }
+        
+        .alert-icon {
+          font-size: 20px;
+          line-height: 1;
+          flex-shrink: 0;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+          animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes iconBounce {
+          0% { transform: scale(0) rotate(-180deg); }
+          50% { transform: scale(1.2) rotate(10deg); }
+          100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        .alert-message {
+          font-size: 14px;
+          line-height: 1.5;
+          flex: 1;
+          min-width: 0;
+          word-wrap: break-word;
+        }
+        
+        .alert-close {
+          background: rgba(255, 255, 255, 0.18);
+          border: 1px solid rgba(255, 255, 255, 0.24);
+          color: inherit;
+          width: 28px;
+          height: 28px;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          font-weight: bold;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          flex-shrink: 0;
+          backdrop-filter: blur(4px);
+        }
+        
+        .alert-close:hover {
+          background: rgba(255, 255, 255, 0.28);
+          transform: scale(1.1) rotate(90deg);
+        }
+        
+        .alert-close:active {
+          transform: scale(0.95) rotate(90deg);
+        }
+        
+        .alert-progress {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          height: 4px;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.85),
+            rgba(255, 255, 255, 0.45)
+          );
+          animation: progressShrink linear forwards;
+          border-radius: 0 0 16px 16px;
+          box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes progressShrink {
+          0% { 
+            width: 100%; 
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% { 
+            width: 0%; 
+            opacity: 0;
+          }
+        }
+        
+        /* Light theme adjustments */
+        .light-theme .custom-alert {
+          background: var(--alert-bg-light);
+          color: var(--alert-text-light);
+          box-shadow: 
+            0 10px 40px rgba(0, 0, 0, 0.15),
+            0 2px 8px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+          border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .light-theme .alert-close {
+          background: rgba(0, 0, 0, 0.1);
+          border-color: rgba(0, 0, 0, 0.14);
+          color: inherit;
+        }
+        
+        .light-theme .alert-close:hover {
+          background: rgba(0, 0, 0, 0.15);
+        }
+        
+        .light-theme .alert-progress {
+          background: linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.25),
+            rgba(0, 0, 0, 0.15)
+          );
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 640px) {
+          .custom-alert {
+            min-width: 280px;
+            max-width: calc(100vw - 32px);
+            padding: 14px 16px;
+            bottom: -100px;
+          }
+          
+          .custom-alert.visible {
+            bottom: 20px;
+          }
+          
+          .alert-message {
+            font-size: 13px;
+          }
+        }
+      ` })
+  ] });
+}
+const LOADING_WINDOW_TRANSITION_MS = 240;
+function LoadingWindow({
+  open,
+  title = "Loading Orders",
+  message = "Please wait while we process the latest data...",
+  scale = 1
+}) {
+  const clipId = reactExports.useId().replace(/:/g, "");
+  const [isMounted, setIsMounted] = reactExports.useState(open);
+  const [isVisible, setIsVisible] = reactExports.useState(open);
+  reactExports.useEffect(() => {
+    if (open) {
+      setIsMounted(true);
+      const frameId = window.requestAnimationFrame(() => {
+        setIsVisible(true);
+      });
+      return () => {
+        window.cancelAnimationFrame(frameId);
+      };
+    }
+    setIsVisible(false);
+    const timeoutId = window.setTimeout(() => {
+      setIsMounted(false);
+    }, LOADING_WINDOW_TRANSITION_MS);
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [open]);
+  if (!isMounted) {
+    return null;
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: `fixed left-1/2 bottom-4 z-2147483649 w-fit pointer-events-none ${isVisible ? "-translate-x-1/2 translate-y-0 scale-100 opacity-100" : "-translate-x-1/2 translate-y-5 scale-[0.98] opacity-0"}`,
+      style: {
+        transition: `transform ${LOADING_WINDOW_TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${LOADING_WINDOW_TRANSITION_MS}ms ease`
+      },
+      "aria-live": "polite",
+      "aria-busy": open,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          className: `min-w-65 max-w-[min(420px,calc(100vw-1.25rem))] rounded-[20px] border border-surface bg-surface/60 shadow-[0_16px_34px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.12)] py-3 px-[0.8rem] flex items-center gap-3 backdrop-blur-sm pointer-events-none motion-reduce:animate-none ${isVisible ? "animate-[loading-window-breathe_2.2s_ease-in-out_infinite]" : ""}`,
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "loading-window-loader",
+                style: {
+                  "--size": scale,
+                  "--color-one": "var(--color-warning-light, #ffbf48)",
+                  "--color-two": "var(--color-warning-dark, #be4a1d)",
+                  "--color-three": "hsl(var(--warning-h) var(--warning-s) var(--warning-l) / 0.5)",
+                  "--color-four": "hsl(var(--danger-h) var(--danger-s) var(--danger-l) / 0.5)",
+                  "--color-five": "hsl(var(--warning-h) var(--warning-s) var(--warning-l) / 0.25)"
+                },
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { width: "100", height: "100", viewBox: "0 0 100 100", "aria-hidden": true, children: /* @__PURE__ */ jsxRuntimeExports.jsx("defs", { children: /* @__PURE__ */ jsxRuntimeExports.jsxs("mask", { id: clipId, children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("polygon", { points: "0,0 100,0 100,100 0,100", fill: "black" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("polygon", { points: "25,25 75,25 50,75", fill: "white" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("polygon", { points: "50,25 75,75 25,75", fill: "white" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("polygon", { points: "35,35 65,35 50,65", fill: "white" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("polygon", { points: "35,35 65,35 50,65", fill: "white" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("polygon", { points: "35,35 65,35 50,65", fill: "white" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("polygon", { points: "35,35 65,35 50,65", fill: "white" })
+                  ] }) }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "div",
+                    {
+                      className: "loading-window-box",
+                      style: {
+                        mask: `url(#${clipId})`,
+                        WebkitMask: `url(#${clipId})`
+                      }
+                    }
+                  )
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-left text-fg-primary", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "m-0 text-[0.86rem] font-bold tracking-[0.02em] text-primary", children: title }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "m-0 mt-[0.2rem] text-[0.74rem] leading-[1.3] text-secondary", children: message })
+            ] })
+          ]
+        }
+      )
+    }
+  ) });
+}
+const nodeCrypto = {};
+var randomFallback = null;
+function randomBytes(len) {
+  try {
+    return crypto.getRandomValues(new Uint8Array(len));
+  } catch {
+  }
+  try {
+    return nodeCrypto.randomBytes(len);
+  } catch {
+  }
+  if (!randomFallback) {
+    throw Error(
+      "Neither WebCryptoAPI nor a crypto module is available. Use bcrypt.setRandomFallback to set an alternative"
+    );
+  }
+  return randomFallback(len);
+}
+function setRandomFallback(random) {
+  randomFallback = random;
+}
+function genSaltSync(rounds, seed_length) {
+  rounds = rounds || GENSALT_DEFAULT_LOG2_ROUNDS;
+  if (typeof rounds !== "number")
+    throw Error(
+      "Illegal arguments: " + typeof rounds + ", " + typeof seed_length
+    );
+  if (rounds < 4) rounds = 4;
+  else if (rounds > 31) rounds = 31;
+  var salt = [];
+  salt.push("$2b$");
+  if (rounds < 10) salt.push("0");
+  salt.push(rounds.toString());
+  salt.push("$");
+  salt.push(base64_encode(randomBytes(BCRYPT_SALT_LEN), BCRYPT_SALT_LEN));
+  return salt.join("");
+}
+function genSalt(rounds, seed_length, callback) {
+  if (typeof seed_length === "function")
+    callback = seed_length, seed_length = void 0;
+  if (typeof rounds === "function") callback = rounds, rounds = void 0;
+  if (typeof rounds === "undefined") rounds = GENSALT_DEFAULT_LOG2_ROUNDS;
+  else if (typeof rounds !== "number")
+    throw Error("illegal arguments: " + typeof rounds);
+  function _async(callback2) {
+    nextTick$1(function() {
+      try {
+        callback2(null, genSaltSync(rounds));
+      } catch (err) {
+        callback2(err);
+      }
+    });
+  }
+  if (callback) {
+    if (typeof callback !== "function")
+      throw Error("Illegal callback: " + typeof callback);
+    _async(callback);
+  } else
+    return new Promise(function(resolve, reject) {
+      _async(function(err, res) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(res);
+      });
+    });
+}
+function hashSync(password, salt) {
+  if (typeof salt === "undefined") salt = GENSALT_DEFAULT_LOG2_ROUNDS;
+  if (typeof salt === "number") salt = genSaltSync(salt);
+  if (typeof password !== "string" || typeof salt !== "string")
+    throw Error("Illegal arguments: " + typeof password + ", " + typeof salt);
+  return _hash(password, salt);
+}
+function hash(password, salt, callback, progressCallback) {
+  function _async(callback2) {
+    if (typeof password === "string" && typeof salt === "number")
+      genSalt(salt, function(err, salt2) {
+        _hash(password, salt2, callback2, progressCallback);
+      });
+    else if (typeof password === "string" && typeof salt === "string")
+      _hash(password, salt, callback2, progressCallback);
+    else
+      nextTick$1(
+        callback2.bind(
+          this,
+          Error("Illegal arguments: " + typeof password + ", " + typeof salt)
+        )
+      );
+  }
+  if (callback) {
+    if (typeof callback !== "function")
+      throw Error("Illegal callback: " + typeof callback);
+    _async(callback);
+  } else
+    return new Promise(function(resolve, reject) {
+      _async(function(err, res) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(res);
+      });
+    });
+}
+function safeStringCompare(known, unknown) {
+  var diff = known.length ^ unknown.length;
+  for (var i = 0; i < known.length; ++i) {
+    diff |= known.charCodeAt(i) ^ unknown.charCodeAt(i);
+  }
+  return diff === 0;
+}
+function compareSync(password, hash2) {
+  if (typeof password !== "string" || typeof hash2 !== "string")
+    throw Error("Illegal arguments: " + typeof password + ", " + typeof hash2);
+  if (hash2.length !== 60) return false;
+  return safeStringCompare(
+    hashSync(password, hash2.substring(0, hash2.length - 31)),
+    hash2
+  );
+}
+function compare(password, hashValue, callback, progressCallback) {
+  function _async(callback2) {
+    if (typeof password !== "string" || typeof hashValue !== "string") {
+      nextTick$1(
+        callback2.bind(
+          this,
+          Error(
+            "Illegal arguments: " + typeof password + ", " + typeof hashValue
+          )
+        )
+      );
+      return;
+    }
+    if (hashValue.length !== 60) {
+      nextTick$1(callback2.bind(this, null, false));
+      return;
+    }
+    hash(
+      password,
+      hashValue.substring(0, 29),
+      function(err, comp) {
+        if (err) callback2(err);
+        else callback2(null, safeStringCompare(comp, hashValue));
+      },
+      progressCallback
+    );
+  }
+  if (callback) {
+    if (typeof callback !== "function")
+      throw Error("Illegal callback: " + typeof callback);
+    _async(callback);
+  } else
+    return new Promise(function(resolve, reject) {
+      _async(function(err, res) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(res);
+      });
+    });
+}
+function getRounds(hash2) {
+  if (typeof hash2 !== "string")
+    throw Error("Illegal arguments: " + typeof hash2);
+  return parseInt(hash2.split("$")[2], 10);
+}
+function getSalt(hash2) {
+  if (typeof hash2 !== "string")
+    throw Error("Illegal arguments: " + typeof hash2);
+  if (hash2.length !== 60)
+    throw Error("Illegal hash length: " + hash2.length + " != 60");
+  return hash2.substring(0, 29);
+}
+function truncates(password) {
+  if (typeof password !== "string")
+    throw Error("Illegal arguments: " + typeof password);
+  return utf8Length(password) > 72;
+}
+var nextTick$1 = typeof setImmediate === "function" ? setImmediate : typeof scheduler === "object" && typeof scheduler.postTask === "function" ? scheduler.postTask.bind(scheduler) : setTimeout;
+function utf8Length(string) {
+  var len = 0, c = 0;
+  for (var i = 0; i < string.length; ++i) {
+    c = string.charCodeAt(i);
+    if (c < 128) len += 1;
+    else if (c < 2048) len += 2;
+    else if ((c & 64512) === 55296 && (string.charCodeAt(i + 1) & 64512) === 56320) {
+      ++i;
+      len += 4;
+    } else len += 3;
+  }
+  return len;
+}
+function utf8Array(string) {
+  var offset = 0, c1, c2;
+  var buffer = new Array(utf8Length(string));
+  for (var i = 0, k = string.length; i < k; ++i) {
+    c1 = string.charCodeAt(i);
+    if (c1 < 128) {
+      buffer[offset++] = c1;
+    } else if (c1 < 2048) {
+      buffer[offset++] = c1 >> 6 | 192;
+      buffer[offset++] = c1 & 63 | 128;
+    } else if ((c1 & 64512) === 55296 && ((c2 = string.charCodeAt(i + 1)) & 64512) === 56320) {
+      c1 = 65536 + ((c1 & 1023) << 10) + (c2 & 1023);
+      ++i;
+      buffer[offset++] = c1 >> 18 | 240;
+      buffer[offset++] = c1 >> 12 & 63 | 128;
+      buffer[offset++] = c1 >> 6 & 63 | 128;
+      buffer[offset++] = c1 & 63 | 128;
+    } else {
+      buffer[offset++] = c1 >> 12 | 224;
+      buffer[offset++] = c1 >> 6 & 63 | 128;
+      buffer[offset++] = c1 & 63 | 128;
+    }
+  }
+  return buffer;
+}
+var BASE64_CODE = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split("");
+var BASE64_INDEX = [
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  0,
+  1,
+  54,
+  55,
+  56,
+  57,
+  58,
+  59,
+  60,
+  61,
+  62,
+  63,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  46,
+  47,
+  48,
+  49,
+  50,
+  51,
+  52,
+  53,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1
+];
+function base64_encode(b, len) {
+  var off = 0, rs = [], c1, c2;
+  if (len <= 0 || len > b.length) throw Error("Illegal len: " + len);
+  while (off < len) {
+    c1 = b[off++] & 255;
+    rs.push(BASE64_CODE[c1 >> 2 & 63]);
+    c1 = (c1 & 3) << 4;
+    if (off >= len) {
+      rs.push(BASE64_CODE[c1 & 63]);
+      break;
+    }
+    c2 = b[off++] & 255;
+    c1 |= c2 >> 4 & 15;
+    rs.push(BASE64_CODE[c1 & 63]);
+    c1 = (c2 & 15) << 2;
+    if (off >= len) {
+      rs.push(BASE64_CODE[c1 & 63]);
+      break;
+    }
+    c2 = b[off++] & 255;
+    c1 |= c2 >> 6 & 3;
+    rs.push(BASE64_CODE[c1 & 63]);
+    rs.push(BASE64_CODE[c2 & 63]);
+  }
+  return rs.join("");
+}
+function base64_decode(s, len) {
+  var off = 0, slen = s.length, olen = 0, rs = [], c1, c2, c3, c4, o, code;
+  if (len <= 0) throw Error("Illegal len: " + len);
+  while (off < slen - 1 && olen < len) {
+    code = s.charCodeAt(off++);
+    c1 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
+    code = s.charCodeAt(off++);
+    c2 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
+    if (c1 == -1 || c2 == -1) break;
+    o = c1 << 2 >>> 0;
+    o |= (c2 & 48) >> 4;
+    rs.push(String.fromCharCode(o));
+    if (++olen >= len || off >= slen) break;
+    code = s.charCodeAt(off++);
+    c3 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
+    if (c3 == -1) break;
+    o = (c2 & 15) << 4 >>> 0;
+    o |= (c3 & 60) >> 2;
+    rs.push(String.fromCharCode(o));
+    if (++olen >= len || off >= slen) break;
+    code = s.charCodeAt(off++);
+    c4 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
+    o = (c3 & 3) << 6 >>> 0;
+    o |= c4;
+    rs.push(String.fromCharCode(o));
+    ++olen;
+  }
+  var res = [];
+  for (off = 0; off < olen; off++) res.push(rs[off].charCodeAt(0));
+  return res;
+}
+var BCRYPT_SALT_LEN = 16;
+var GENSALT_DEFAULT_LOG2_ROUNDS = 10;
+var BLOWFISH_NUM_ROUNDS = 16;
+var MAX_EXECUTION_TIME = 100;
+var P_ORIG = [
+  608135816,
+  2242054355,
+  320440878,
+  57701188,
+  2752067618,
+  698298832,
+  137296536,
+  3964562569,
+  1160258022,
+  953160567,
+  3193202383,
+  887688300,
+  3232508343,
+  3380367581,
+  1065670069,
+  3041331479,
+  2450970073,
+  2306472731
+];
+var S_ORIG = [
+  3509652390,
+  2564797868,
+  805139163,
+  3491422135,
+  3101798381,
+  1780907670,
+  3128725573,
+  4046225305,
+  614570311,
+  3012652279,
+  134345442,
+  2240740374,
+  1667834072,
+  1901547113,
+  2757295779,
+  4103290238,
+  227898511,
+  1921955416,
+  1904987480,
+  2182433518,
+  2069144605,
+  3260701109,
+  2620446009,
+  720527379,
+  3318853667,
+  677414384,
+  3393288472,
+  3101374703,
+  2390351024,
+  1614419982,
+  1822297739,
+  2954791486,
+  3608508353,
+  3174124327,
+  2024746970,
+  1432378464,
+  3864339955,
+  2857741204,
+  1464375394,
+  1676153920,
+  1439316330,
+  715854006,
+  3033291828,
+  289532110,
+  2706671279,
+  2087905683,
+  3018724369,
+  1668267050,
+  732546397,
+  1947742710,
+  3462151702,
+  2609353502,
+  2950085171,
+  1814351708,
+  2050118529,
+  680887927,
+  999245976,
+  1800124847,
+  3300911131,
+  1713906067,
+  1641548236,
+  4213287313,
+  1216130144,
+  1575780402,
+  4018429277,
+  3917837745,
+  3693486850,
+  3949271944,
+  596196993,
+  3549867205,
+  258830323,
+  2213823033,
+  772490370,
+  2760122372,
+  1774776394,
+  2652871518,
+  566650946,
+  4142492826,
+  1728879713,
+  2882767088,
+  1783734482,
+  3629395816,
+  2517608232,
+  2874225571,
+  1861159788,
+  326777828,
+  3124490320,
+  2130389656,
+  2716951837,
+  967770486,
+  1724537150,
+  2185432712,
+  2364442137,
+  1164943284,
+  2105845187,
+  998989502,
+  3765401048,
+  2244026483,
+  1075463327,
+  1455516326,
+  1322494562,
+  910128902,
+  469688178,
+  1117454909,
+  936433444,
+  3490320968,
+  3675253459,
+  1240580251,
+  122909385,
+  2157517691,
+  634681816,
+  4142456567,
+  3825094682,
+  3061402683,
+  2540495037,
+  79693498,
+  3249098678,
+  1084186820,
+  1583128258,
+  426386531,
+  1761308591,
+  1047286709,
+  322548459,
+  995290223,
+  1845252383,
+  2603652396,
+  3431023940,
+  2942221577,
+  3202600964,
+  3727903485,
+  1712269319,
+  422464435,
+  3234572375,
+  1170764815,
+  3523960633,
+  3117677531,
+  1434042557,
+  442511882,
+  3600875718,
+  1076654713,
+  1738483198,
+  4213154764,
+  2393238008,
+  3677496056,
+  1014306527,
+  4251020053,
+  793779912,
+  2902807211,
+  842905082,
+  4246964064,
+  1395751752,
+  1040244610,
+  2656851899,
+  3396308128,
+  445077038,
+  3742853595,
+  3577915638,
+  679411651,
+  2892444358,
+  2354009459,
+  1767581616,
+  3150600392,
+  3791627101,
+  3102740896,
+  284835224,
+  4246832056,
+  1258075500,
+  768725851,
+  2589189241,
+  3069724005,
+  3532540348,
+  1274779536,
+  3789419226,
+  2764799539,
+  1660621633,
+  3471099624,
+  4011903706,
+  913787905,
+  3497959166,
+  737222580,
+  2514213453,
+  2928710040,
+  3937242737,
+  1804850592,
+  3499020752,
+  2949064160,
+  2386320175,
+  2390070455,
+  2415321851,
+  4061277028,
+  2290661394,
+  2416832540,
+  1336762016,
+  1754252060,
+  3520065937,
+  3014181293,
+  791618072,
+  3188594551,
+  3933548030,
+  2332172193,
+  3852520463,
+  3043980520,
+  413987798,
+  3465142937,
+  3030929376,
+  4245938359,
+  2093235073,
+  3534596313,
+  375366246,
+  2157278981,
+  2479649556,
+  555357303,
+  3870105701,
+  2008414854,
+  3344188149,
+  4221384143,
+  3956125452,
+  2067696032,
+  3594591187,
+  2921233993,
+  2428461,
+  544322398,
+  577241275,
+  1471733935,
+  610547355,
+  4027169054,
+  1432588573,
+  1507829418,
+  2025931657,
+  3646575487,
+  545086370,
+  48609733,
+  2200306550,
+  1653985193,
+  298326376,
+  1316178497,
+  3007786442,
+  2064951626,
+  458293330,
+  2589141269,
+  3591329599,
+  3164325604,
+  727753846,
+  2179363840,
+  146436021,
+  1461446943,
+  4069977195,
+  705550613,
+  3059967265,
+  3887724982,
+  4281599278,
+  3313849956,
+  1404054877,
+  2845806497,
+  146425753,
+  1854211946,
+  1266315497,
+  3048417604,
+  3681880366,
+  3289982499,
+  290971e4,
+  1235738493,
+  2632868024,
+  2414719590,
+  3970600049,
+  1771706367,
+  1449415276,
+  3266420449,
+  422970021,
+  1963543593,
+  2690192192,
+  3826793022,
+  1062508698,
+  1531092325,
+  1804592342,
+  2583117782,
+  2714934279,
+  4024971509,
+  1294809318,
+  4028980673,
+  1289560198,
+  2221992742,
+  1669523910,
+  35572830,
+  157838143,
+  1052438473,
+  1016535060,
+  1802137761,
+  1753167236,
+  1386275462,
+  3080475397,
+  2857371447,
+  1040679964,
+  2145300060,
+  2390574316,
+  1461121720,
+  2956646967,
+  4031777805,
+  4028374788,
+  33600511,
+  2920084762,
+  1018524850,
+  629373528,
+  3691585981,
+  3515945977,
+  2091462646,
+  2486323059,
+  586499841,
+  988145025,
+  935516892,
+  3367335476,
+  2599673255,
+  2839830854,
+  265290510,
+  3972581182,
+  2759138881,
+  3795373465,
+  1005194799,
+  847297441,
+  406762289,
+  1314163512,
+  1332590856,
+  1866599683,
+  4127851711,
+  750260880,
+  613907577,
+  1450815602,
+  3165620655,
+  3734664991,
+  3650291728,
+  3012275730,
+  3704569646,
+  1427272223,
+  778793252,
+  1343938022,
+  2676280711,
+  2052605720,
+  1946737175,
+  3164576444,
+  3914038668,
+  3967478842,
+  3682934266,
+  1661551462,
+  3294938066,
+  4011595847,
+  840292616,
+  3712170807,
+  616741398,
+  312560963,
+  711312465,
+  1351876610,
+  322626781,
+  1910503582,
+  271666773,
+  2175563734,
+  1594956187,
+  70604529,
+  3617834859,
+  1007753275,
+  1495573769,
+  4069517037,
+  2549218298,
+  2663038764,
+  504708206,
+  2263041392,
+  3941167025,
+  2249088522,
+  1514023603,
+  1998579484,
+  1312622330,
+  694541497,
+  2582060303,
+  2151582166,
+  1382467621,
+  776784248,
+  2618340202,
+  3323268794,
+  2497899128,
+  2784771155,
+  503983604,
+  4076293799,
+  907881277,
+  423175695,
+  432175456,
+  1378068232,
+  4145222326,
+  3954048622,
+  3938656102,
+  3820766613,
+  2793130115,
+  2977904593,
+  26017576,
+  3274890735,
+  3194772133,
+  1700274565,
+  1756076034,
+  4006520079,
+  3677328699,
+  720338349,
+  1533947780,
+  354530856,
+  688349552,
+  3973924725,
+  1637815568,
+  332179504,
+  3949051286,
+  53804574,
+  2852348879,
+  3044236432,
+  1282449977,
+  3583942155,
+  3416972820,
+  4006381244,
+  1617046695,
+  2628476075,
+  3002303598,
+  1686838959,
+  431878346,
+  2686675385,
+  1700445008,
+  1080580658,
+  1009431731,
+  832498133,
+  3223435511,
+  2605976345,
+  2271191193,
+  2516031870,
+  1648197032,
+  4164389018,
+  2548247927,
+  300782431,
+  375919233,
+  238389289,
+  3353747414,
+  2531188641,
+  2019080857,
+  1475708069,
+  455242339,
+  2609103871,
+  448939670,
+  3451063019,
+  1395535956,
+  2413381860,
+  1841049896,
+  1491858159,
+  885456874,
+  4264095073,
+  4001119347,
+  1565136089,
+  3898914787,
+  1108368660,
+  540939232,
+  1173283510,
+  2745871338,
+  3681308437,
+  4207628240,
+  3343053890,
+  4016749493,
+  1699691293,
+  1103962373,
+  3625875870,
+  2256883143,
+  3830138730,
+  1031889488,
+  3479347698,
+  1535977030,
+  4236805024,
+  3251091107,
+  2132092099,
+  1774941330,
+  1199868427,
+  1452454533,
+  157007616,
+  2904115357,
+  342012276,
+  595725824,
+  1480756522,
+  206960106,
+  497939518,
+  591360097,
+  863170706,
+  2375253569,
+  3596610801,
+  1814182875,
+  2094937945,
+  3421402208,
+  1082520231,
+  3463918190,
+  2785509508,
+  435703966,
+  3908032597,
+  1641649973,
+  2842273706,
+  3305899714,
+  1510255612,
+  2148256476,
+  2655287854,
+  3276092548,
+  4258621189,
+  236887753,
+  3681803219,
+  274041037,
+  1734335097,
+  3815195456,
+  3317970021,
+  1899903192,
+  1026095262,
+  4050517792,
+  356393447,
+  2410691914,
+  3873677099,
+  3682840055,
+  3913112168,
+  2491498743,
+  4132185628,
+  2489919796,
+  1091903735,
+  1979897079,
+  3170134830,
+  3567386728,
+  3557303409,
+  857797738,
+  1136121015,
+  1342202287,
+  507115054,
+  2535736646,
+  337727348,
+  3213592640,
+  1301675037,
+  2528481711,
+  1895095763,
+  1721773893,
+  3216771564,
+  62756741,
+  2142006736,
+  835421444,
+  2531993523,
+  1442658625,
+  3659876326,
+  2882144922,
+  676362277,
+  1392781812,
+  170690266,
+  3921047035,
+  1759253602,
+  3611846912,
+  1745797284,
+  664899054,
+  1329594018,
+  3901205900,
+  3045908486,
+  2062866102,
+  2865634940,
+  3543621612,
+  3464012697,
+  1080764994,
+  553557557,
+  3656615353,
+  3996768171,
+  991055499,
+  499776247,
+  1265440854,
+  648242737,
+  3940784050,
+  980351604,
+  3713745714,
+  1749149687,
+  3396870395,
+  4211799374,
+  3640570775,
+  1161844396,
+  3125318951,
+  1431517754,
+  545492359,
+  4268468663,
+  3499529547,
+  1437099964,
+  2702547544,
+  3433638243,
+  2581715763,
+  2787789398,
+  1060185593,
+  1593081372,
+  2418618748,
+  4260947970,
+  69676912,
+  2159744348,
+  86519011,
+  2512459080,
+  3838209314,
+  1220612927,
+  3339683548,
+  133810670,
+  1090789135,
+  1078426020,
+  1569222167,
+  845107691,
+  3583754449,
+  4072456591,
+  1091646820,
+  628848692,
+  1613405280,
+  3757631651,
+  526609435,
+  236106946,
+  48312990,
+  2942717905,
+  3402727701,
+  1797494240,
+  859738849,
+  992217954,
+  4005476642,
+  2243076622,
+  3870952857,
+  3732016268,
+  765654824,
+  3490871365,
+  2511836413,
+  1685915746,
+  3888969200,
+  1414112111,
+  2273134842,
+  3281911079,
+  4080962846,
+  172450625,
+  2569994100,
+  980381355,
+  4109958455,
+  2819808352,
+  2716589560,
+  2568741196,
+  3681446669,
+  3329971472,
+  1835478071,
+  660984891,
+  3704678404,
+  4045999559,
+  3422617507,
+  3040415634,
+  1762651403,
+  1719377915,
+  3470491036,
+  2693910283,
+  3642056355,
+  3138596744,
+  1364962596,
+  2073328063,
+  1983633131,
+  926494387,
+  3423689081,
+  2150032023,
+  4096667949,
+  1749200295,
+  3328846651,
+  309677260,
+  2016342300,
+  1779581495,
+  3079819751,
+  111262694,
+  1274766160,
+  443224088,
+  298511866,
+  1025883608,
+  3806446537,
+  1145181785,
+  168956806,
+  3641502830,
+  3584813610,
+  1689216846,
+  3666258015,
+  3200248200,
+  1692713982,
+  2646376535,
+  4042768518,
+  1618508792,
+  1610833997,
+  3523052358,
+  4130873264,
+  2001055236,
+  3610705100,
+  2202168115,
+  4028541809,
+  2961195399,
+  1006657119,
+  2006996926,
+  3186142756,
+  1430667929,
+  3210227297,
+  1314452623,
+  4074634658,
+  4101304120,
+  2273951170,
+  1399257539,
+  3367210612,
+  3027628629,
+  1190975929,
+  2062231137,
+  2333990788,
+  2221543033,
+  2438960610,
+  1181637006,
+  548689776,
+  2362791313,
+  3372408396,
+  3104550113,
+  3145860560,
+  296247880,
+  1970579870,
+  3078560182,
+  3769228297,
+  1714227617,
+  3291629107,
+  3898220290,
+  166772364,
+  1251581989,
+  493813264,
+  448347421,
+  195405023,
+  2709975567,
+  677966185,
+  3703036547,
+  1463355134,
+  2715995803,
+  1338867538,
+  1343315457,
+  2802222074,
+  2684532164,
+  233230375,
+  2599980071,
+  2000651841,
+  3277868038,
+  1638401717,
+  4028070440,
+  3237316320,
+  6314154,
+  819756386,
+  300326615,
+  590932579,
+  1405279636,
+  3267499572,
+  3150704214,
+  2428286686,
+  3959192993,
+  3461946742,
+  1862657033,
+  1266418056,
+  963775037,
+  2089974820,
+  2263052895,
+  1917689273,
+  448879540,
+  3550394620,
+  3981727096,
+  150775221,
+  3627908307,
+  1303187396,
+  508620638,
+  2975983352,
+  2726630617,
+  1817252668,
+  1876281319,
+  1457606340,
+  908771278,
+  3720792119,
+  3617206836,
+  2455994898,
+  1729034894,
+  1080033504,
+  976866871,
+  3556439503,
+  2881648439,
+  1522871579,
+  1555064734,
+  1336096578,
+  3548522304,
+  2579274686,
+  3574697629,
+  3205460757,
+  3593280638,
+  3338716283,
+  3079412587,
+  564236357,
+  2993598910,
+  1781952180,
+  1464380207,
+  3163844217,
+  3332601554,
+  1699332808,
+  1393555694,
+  1183702653,
+  3581086237,
+  1288719814,
+  691649499,
+  2847557200,
+  2895455976,
+  3193889540,
+  2717570544,
+  1781354906,
+  1676643554,
+  2592534050,
+  3230253752,
+  1126444790,
+  2770207658,
+  2633158820,
+  2210423226,
+  2615765581,
+  2414155088,
+  3127139286,
+  673620729,
+  2805611233,
+  1269405062,
+  4015350505,
+  3341807571,
+  4149409754,
+  1057255273,
+  2012875353,
+  2162469141,
+  2276492801,
+  2601117357,
+  993977747,
+  3918593370,
+  2654263191,
+  753973209,
+  36408145,
+  2530585658,
+  25011837,
+  3520020182,
+  2088578344,
+  530523599,
+  2918365339,
+  1524020338,
+  1518925132,
+  3760827505,
+  3759777254,
+  1202760957,
+  3985898139,
+  3906192525,
+  674977740,
+  4174734889,
+  2031300136,
+  2019492241,
+  3983892565,
+  4153806404,
+  3822280332,
+  352677332,
+  2297720250,
+  60907813,
+  90501309,
+  3286998549,
+  1016092578,
+  2535922412,
+  2839152426,
+  457141659,
+  509813237,
+  4120667899,
+  652014361,
+  1966332200,
+  2975202805,
+  55981186,
+  2327461051,
+  676427537,
+  3255491064,
+  2882294119,
+  3433927263,
+  1307055953,
+  942726286,
+  933058658,
+  2468411793,
+  3933900994,
+  4215176142,
+  1361170020,
+  2001714738,
+  2830558078,
+  3274259782,
+  1222529897,
+  1679025792,
+  2729314320,
+  3714953764,
+  1770335741,
+  151462246,
+  3013232138,
+  1682292957,
+  1483529935,
+  471910574,
+  1539241949,
+  458788160,
+  3436315007,
+  1807016891,
+  3718408830,
+  978976581,
+  1043663428,
+  3165965781,
+  1927990952,
+  4200891579,
+  2372276910,
+  3208408903,
+  3533431907,
+  1412390302,
+  2931980059,
+  4132332400,
+  1947078029,
+  3881505623,
+  4168226417,
+  2941484381,
+  1077988104,
+  1320477388,
+  886195818,
+  18198404,
+  3786409e3,
+  2509781533,
+  112762804,
+  3463356488,
+  1866414978,
+  891333506,
+  18488651,
+  661792760,
+  1628790961,
+  3885187036,
+  3141171499,
+  876946877,
+  2693282273,
+  1372485963,
+  791857591,
+  2686433993,
+  3759982718,
+  3167212022,
+  3472953795,
+  2716379847,
+  445679433,
+  3561995674,
+  3504004811,
+  3574258232,
+  54117162,
+  3331405415,
+  2381918588,
+  3769707343,
+  4154350007,
+  1140177722,
+  4074052095,
+  668550556,
+  3214352940,
+  367459370,
+  261225585,
+  2610173221,
+  4209349473,
+  3468074219,
+  3265815641,
+  314222801,
+  3066103646,
+  3808782860,
+  282218597,
+  3406013506,
+  3773591054,
+  379116347,
+  1285071038,
+  846784868,
+  2669647154,
+  3771962079,
+  3550491691,
+  2305946142,
+  453669953,
+  1268987020,
+  3317592352,
+  3279303384,
+  3744833421,
+  2610507566,
+  3859509063,
+  266596637,
+  3847019092,
+  517658769,
+  3462560207,
+  3443424879,
+  370717030,
+  4247526661,
+  2224018117,
+  4143653529,
+  4112773975,
+  2788324899,
+  2477274417,
+  1456262402,
+  2901442914,
+  1517677493,
+  1846949527,
+  2295493580,
+  3734397586,
+  2176403920,
+  1280348187,
+  1908823572,
+  3871786941,
+  846861322,
+  1172426758,
+  3287448474,
+  3383383037,
+  1655181056,
+  3139813346,
+  901632758,
+  1897031941,
+  2986607138,
+  3066810236,
+  3447102507,
+  1393639104,
+  373351379,
+  950779232,
+  625454576,
+  3124240540,
+  4148612726,
+  2007998917,
+  544563296,
+  2244738638,
+  2330496472,
+  2058025392,
+  1291430526,
+  424198748,
+  50039436,
+  29584100,
+  3605783033,
+  2429876329,
+  2791104160,
+  1057563949,
+  3255363231,
+  3075367218,
+  3463963227,
+  1469046755,
+  985887462
+];
+var C_ORIG = [
+  1332899944,
+  1700884034,
+  1701343084,
+  1684370003,
+  1668446532,
+  1869963892
+];
+function _encipher(lr, off, P, S) {
+  var n, l = lr[off], r = lr[off + 1];
+  l ^= P[0];
+  n = S[l >>> 24];
+  n += S[256 | l >> 16 & 255];
+  n ^= S[512 | l >> 8 & 255];
+  n += S[768 | l & 255];
+  r ^= n ^ P[1];
+  n = S[r >>> 24];
+  n += S[256 | r >> 16 & 255];
+  n ^= S[512 | r >> 8 & 255];
+  n += S[768 | r & 255];
+  l ^= n ^ P[2];
+  n = S[l >>> 24];
+  n += S[256 | l >> 16 & 255];
+  n ^= S[512 | l >> 8 & 255];
+  n += S[768 | l & 255];
+  r ^= n ^ P[3];
+  n = S[r >>> 24];
+  n += S[256 | r >> 16 & 255];
+  n ^= S[512 | r >> 8 & 255];
+  n += S[768 | r & 255];
+  l ^= n ^ P[4];
+  n = S[l >>> 24];
+  n += S[256 | l >> 16 & 255];
+  n ^= S[512 | l >> 8 & 255];
+  n += S[768 | l & 255];
+  r ^= n ^ P[5];
+  n = S[r >>> 24];
+  n += S[256 | r >> 16 & 255];
+  n ^= S[512 | r >> 8 & 255];
+  n += S[768 | r & 255];
+  l ^= n ^ P[6];
+  n = S[l >>> 24];
+  n += S[256 | l >> 16 & 255];
+  n ^= S[512 | l >> 8 & 255];
+  n += S[768 | l & 255];
+  r ^= n ^ P[7];
+  n = S[r >>> 24];
+  n += S[256 | r >> 16 & 255];
+  n ^= S[512 | r >> 8 & 255];
+  n += S[768 | r & 255];
+  l ^= n ^ P[8];
+  n = S[l >>> 24];
+  n += S[256 | l >> 16 & 255];
+  n ^= S[512 | l >> 8 & 255];
+  n += S[768 | l & 255];
+  r ^= n ^ P[9];
+  n = S[r >>> 24];
+  n += S[256 | r >> 16 & 255];
+  n ^= S[512 | r >> 8 & 255];
+  n += S[768 | r & 255];
+  l ^= n ^ P[10];
+  n = S[l >>> 24];
+  n += S[256 | l >> 16 & 255];
+  n ^= S[512 | l >> 8 & 255];
+  n += S[768 | l & 255];
+  r ^= n ^ P[11];
+  n = S[r >>> 24];
+  n += S[256 | r >> 16 & 255];
+  n ^= S[512 | r >> 8 & 255];
+  n += S[768 | r & 255];
+  l ^= n ^ P[12];
+  n = S[l >>> 24];
+  n += S[256 | l >> 16 & 255];
+  n ^= S[512 | l >> 8 & 255];
+  n += S[768 | l & 255];
+  r ^= n ^ P[13];
+  n = S[r >>> 24];
+  n += S[256 | r >> 16 & 255];
+  n ^= S[512 | r >> 8 & 255];
+  n += S[768 | r & 255];
+  l ^= n ^ P[14];
+  n = S[l >>> 24];
+  n += S[256 | l >> 16 & 255];
+  n ^= S[512 | l >> 8 & 255];
+  n += S[768 | l & 255];
+  r ^= n ^ P[15];
+  n = S[r >>> 24];
+  n += S[256 | r >> 16 & 255];
+  n ^= S[512 | r >> 8 & 255];
+  n += S[768 | r & 255];
+  l ^= n ^ P[16];
+  lr[off] = r ^ P[BLOWFISH_NUM_ROUNDS + 1];
+  lr[off + 1] = l;
+  return lr;
+}
+function _streamtoword(data, offp) {
+  for (var i = 0, word = 0; i < 4; ++i)
+    word = word << 8 | data[offp] & 255, offp = (offp + 1) % data.length;
+  return { key: word, offp };
+}
+function _key(key, P, S) {
+  var offset = 0, lr = [0, 0], plen = P.length, slen = S.length, sw;
+  for (var i = 0; i < plen; i++)
+    sw = _streamtoword(key, offset), offset = sw.offp, P[i] = P[i] ^ sw.key;
+  for (i = 0; i < plen; i += 2)
+    lr = _encipher(lr, 0, P, S), P[i] = lr[0], P[i + 1] = lr[1];
+  for (i = 0; i < slen; i += 2)
+    lr = _encipher(lr, 0, P, S), S[i] = lr[0], S[i + 1] = lr[1];
+}
+function _ekskey(data, key, P, S) {
+  var offp = 0, lr = [0, 0], plen = P.length, slen = S.length, sw;
+  for (var i = 0; i < plen; i++)
+    sw = _streamtoword(key, offp), offp = sw.offp, P[i] = P[i] ^ sw.key;
+  offp = 0;
+  for (i = 0; i < plen; i += 2)
+    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S), P[i] = lr[0], P[i + 1] = lr[1];
+  for (i = 0; i < slen; i += 2)
+    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S), S[i] = lr[0], S[i + 1] = lr[1];
+}
+function _crypt(b, salt, rounds, callback, progressCallback) {
+  var cdata = C_ORIG.slice(), clen = cdata.length, err;
+  if (rounds < 4 || rounds > 31) {
+    err = Error("Illegal number of rounds (4-31): " + rounds);
+    if (callback) {
+      nextTick$1(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  if (salt.length !== BCRYPT_SALT_LEN) {
+    err = Error(
+      "Illegal salt length: " + salt.length + " != " + BCRYPT_SALT_LEN
+    );
+    if (callback) {
+      nextTick$1(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  rounds = 1 << rounds >>> 0;
+  var P, S, i = 0, j;
+  if (typeof Int32Array === "function") {
+    P = new Int32Array(P_ORIG);
+    S = new Int32Array(S_ORIG);
+  } else {
+    P = P_ORIG.slice();
+    S = S_ORIG.slice();
+  }
+  _ekskey(salt, b, P, S);
+  function next() {
+    if (progressCallback) progressCallback(i / rounds);
+    if (i < rounds) {
+      var start = Date.now();
+      for (; i < rounds; ) {
+        i = i + 1;
+        _key(b, P, S);
+        _key(salt, P, S);
+        if (Date.now() - start > MAX_EXECUTION_TIME) break;
+      }
+    } else {
+      for (i = 0; i < 64; i++)
+        for (j = 0; j < clen >> 1; j++) _encipher(cdata, j << 1, P, S);
+      var ret = [];
+      for (i = 0; i < clen; i++)
+        ret.push((cdata[i] >> 24 & 255) >>> 0), ret.push((cdata[i] >> 16 & 255) >>> 0), ret.push((cdata[i] >> 8 & 255) >>> 0), ret.push((cdata[i] & 255) >>> 0);
+      if (callback) {
+        callback(null, ret);
+        return;
+      } else return ret;
+    }
+    if (callback) nextTick$1(next);
+  }
+  if (typeof callback !== "undefined") {
+    next();
+  } else {
+    var res;
+    while (true) if (typeof (res = next()) !== "undefined") return res || [];
+  }
+}
+function _hash(password, salt, callback, progressCallback) {
+  var err;
+  if (typeof password !== "string" || typeof salt !== "string") {
+    err = Error("Invalid string / salt: Not a string");
+    if (callback) {
+      nextTick$1(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  var minor, offset;
+  if (salt.charAt(0) !== "$" || salt.charAt(1) !== "2") {
+    err = Error("Invalid salt version: " + salt.substring(0, 2));
+    if (callback) {
+      nextTick$1(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  if (salt.charAt(2) === "$") minor = String.fromCharCode(0), offset = 3;
+  else {
+    minor = salt.charAt(2);
+    if (minor !== "a" && minor !== "b" && minor !== "y" || salt.charAt(3) !== "$") {
+      err = Error("Invalid salt revision: " + salt.substring(2, 4));
+      if (callback) {
+        nextTick$1(callback.bind(this, err));
+        return;
+      } else throw err;
+    }
+    offset = 4;
+  }
+  if (salt.charAt(offset + 2) > "$") {
+    err = Error("Missing salt rounds");
+    if (callback) {
+      nextTick$1(callback.bind(this, err));
+      return;
+    } else throw err;
+  }
+  var r1 = parseInt(salt.substring(offset, offset + 1), 10) * 10, r2 = parseInt(salt.substring(offset + 1, offset + 2), 10), rounds = r1 + r2, real_salt = salt.substring(offset + 3, offset + 25);
+  password += minor >= "a" ? "\0" : "";
+  var passwordb = utf8Array(password), saltb = base64_decode(real_salt, BCRYPT_SALT_LEN);
+  function finish(bytes) {
+    var res = [];
+    res.push("$2");
+    if (minor >= "a") res.push(minor);
+    res.push("$");
+    if (rounds < 10) res.push("0");
+    res.push(rounds.toString());
+    res.push("$");
+    res.push(base64_encode(saltb, saltb.length));
+    res.push(base64_encode(bytes, C_ORIG.length * 4 - 1));
+    return res.join("");
+  }
+  if (typeof callback == "undefined")
+    return finish(_crypt(passwordb, saltb, rounds));
+  else {
+    _crypt(
+      passwordb,
+      saltb,
+      rounds,
+      function(err2, bytes) {
+        if (err2) callback(err2, null);
+        else callback(null, finish(bytes));
+      },
+      progressCallback
+    );
+  }
+}
+function encodeBase64(bytes, length) {
+  return base64_encode(bytes, length);
+}
+function decodeBase64(string, length) {
+  return base64_decode(string, length);
+}
+const bcrypt = {
+  setRandomFallback,
+  genSaltSync,
+  genSalt,
+  hashSync,
+  hash,
+  compareSync,
+  compare,
+  getRounds,
+  getSalt,
+  truncates,
+  encodeBase64,
+  decodeBase64
+};
+/*! js-cookie v3.0.5 | MIT */
+function assign(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+    for (var key in source) {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+var defaultConverter = {
+  read: function(value) {
+    if (value[0] === '"') {
+      value = value.slice(1, -1);
+    }
+    return value.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
+  },
+  write: function(value) {
+    return encodeURIComponent(value).replace(
+      /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
+      decodeURIComponent
+    );
+  }
+};
+function init(converter, defaultAttributes2) {
+  function set(name, value, attributes) {
+    if (typeof document === "undefined") {
+      return;
+    }
+    attributes = assign({}, defaultAttributes2, attributes);
+    if (typeof attributes.expires === "number") {
+      attributes.expires = new Date(Date.now() + attributes.expires * 864e5);
+    }
+    if (attributes.expires) {
+      attributes.expires = attributes.expires.toUTCString();
+    }
+    name = encodeURIComponent(name).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent).replace(/[()]/g, escape);
+    var stringifiedAttributes = "";
+    for (var attributeName in attributes) {
+      if (!attributes[attributeName]) {
+        continue;
+      }
+      stringifiedAttributes += "; " + attributeName;
+      if (attributes[attributeName] === true) {
+        continue;
+      }
+      stringifiedAttributes += "=" + attributes[attributeName].split(";")[0];
+    }
+    return document.cookie = name + "=" + converter.write(value, name) + stringifiedAttributes;
+  }
+  function get2(name) {
+    if (typeof document === "undefined" || arguments.length && !name) {
+      return;
+    }
+    var cookies = document.cookie ? document.cookie.split("; ") : [];
+    var jar = {};
+    for (var i = 0; i < cookies.length; i++) {
+      var parts = cookies[i].split("=");
+      var value = parts.slice(1).join("=");
+      try {
+        var found = decodeURIComponent(parts[0]);
+        jar[found] = converter.read(value, found);
+        if (name === found) {
+          break;
+        }
+      } catch (e) {
+      }
+    }
+    return name ? jar[name] : jar;
+  }
+  return Object.create(
+    {
+      set,
+      get: get2,
+      remove: function(name, attributes) {
+        set(
+          name,
+          "",
+          assign({}, attributes, {
+            expires: -1
+          })
+        );
+      },
+      withAttributes: function(attributes) {
+        return init(this.converter, assign({}, this.attributes, attributes));
+      },
+      withConverter: function(converter2) {
+        return init(assign({}, this.converter, converter2), this.attributes);
+      }
+    },
+    {
+      attributes: { value: Object.freeze(defaultAttributes2) },
+      converter: { value: Object.freeze(converter) }
+    }
+  );
+}
+var api = init(defaultConverter, { path: "/" });
 function __rest(s, e) {
   var t = {};
   for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -24605,1905 +26795,6 @@ if (shouldShowDeprecationWarning()) console.warn("⚠️  Node.js 18 and below a
 const supabaseUrl = "https://fwbasjserzhktdfnzqoq.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3YmFzanNlcnpoa3RkZm56cW9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjAwMzgsImV4cCI6MjA4OTAzNjAzOH0.Kl997Fy7cw4Fxu9jDvy2IgfoPcQRFgqqsA3U2TtkAyA";
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-async function getSharedOwnerIds(userId) {
-  if (!userId) return [];
-  const { data, error } = await supabase.from("shared_access_users").select("owner_user_id").eq("shared_with_user_id", userId).eq("is_active", true).eq("member_access_enabled", true);
-  if (error) throw new Error(error.message);
-  return Array.from(
-    new Set(
-      (data || []).map((row) => row.owner_user_id).filter((value) => Boolean(value))
-    )
-  );
-}
-function mapLegacyVisibilityRows(rows, ownerColumn) {
-  return (rows || []).map((row) => {
-    const ownerId = (row == null ? void 0 : row[ownerColumn]) || null;
-    return {
-      ...row,
-      created_by: (row == null ? void 0 : row.created_by) ?? ownerId,
-      user_id: (row == null ? void 0 : row.user_id) ?? ownerId
-    };
-  });
-}
-async function getVisibleRows({
-  table,
-  ownerColumn,
-  currentUserId,
-  select = "*",
-  orderBy,
-  ascending = false,
-  extraEq = {}
-}) {
-  const queries = [];
-  let publicQuery = supabase.from(table).select(select).eq("status", "public");
-  publicQuery = publicQuery.is("deleted_at", null);
-  Object.entries(extraEq).forEach(([key, value]) => {
-    if (typeof value === "undefined") return;
-    if (value === null) {
-      publicQuery = publicQuery.is(key, null);
-      return;
-    }
-    publicQuery = publicQuery.eq(key, value);
-  });
-  publicQuery = publicQuery.order(orderBy, { ascending });
-  queries.push(publicQuery);
-  if (currentUserId) {
-    let ownQuery = supabase.from(table).select(select).eq(ownerColumn, currentUserId);
-    ownQuery = ownQuery.is("deleted_at", null);
-    Object.entries(extraEq).forEach(([key, value]) => {
-      if (typeof value === "undefined") return;
-      if (value === null) {
-        ownQuery = ownQuery.is(key, null);
-        return;
-      }
-      ownQuery = ownQuery.eq(key, value);
-    });
-    ownQuery = ownQuery.order(orderBy, { ascending });
-    queries.push(ownQuery);
-    const sharedOwnerIds = await getSharedOwnerIds(currentUserId);
-    if (sharedOwnerIds.length > 0) {
-      let sharedQuery = supabase.from(table).select(select).eq("status", "shared").in(ownerColumn, sharedOwnerIds).is("deleted_at", null);
-      Object.entries(extraEq).forEach(([key, value]) => {
-        if (typeof value === "undefined") return;
-        if (value === null) {
-          sharedQuery = sharedQuery.is(key, null);
-          return;
-        }
-        sharedQuery = sharedQuery.eq(key, value);
-      });
-      sharedQuery = sharedQuery.order(orderBy, { ascending });
-      queries.push(sharedQuery);
-    }
-  }
-  const results = await Promise.all(queries);
-  results.forEach(({ error }) => {
-    if (error) throw new Error(error.message);
-  });
-  const merged = results.flatMap(({ data }) => data || []);
-  const dedup = /* @__PURE__ */ new Map();
-  merged.forEach((row) => {
-    if (row == null ? void 0 : row.id) dedup.set(row.id, row);
-  });
-  return Array.from(dedup.values());
-}
-const nodeCrypto = {};
-var randomFallback = null;
-function randomBytes(len) {
-  try {
-    return crypto.getRandomValues(new Uint8Array(len));
-  } catch {
-  }
-  try {
-    return nodeCrypto.randomBytes(len);
-  } catch {
-  }
-  if (!randomFallback) {
-    throw Error(
-      "Neither WebCryptoAPI nor a crypto module is available. Use bcrypt.setRandomFallback to set an alternative"
-    );
-  }
-  return randomFallback(len);
-}
-function setRandomFallback(random) {
-  randomFallback = random;
-}
-function genSaltSync(rounds, seed_length) {
-  rounds = rounds || GENSALT_DEFAULT_LOG2_ROUNDS;
-  if (typeof rounds !== "number")
-    throw Error(
-      "Illegal arguments: " + typeof rounds + ", " + typeof seed_length
-    );
-  if (rounds < 4) rounds = 4;
-  else if (rounds > 31) rounds = 31;
-  var salt = [];
-  salt.push("$2b$");
-  if (rounds < 10) salt.push("0");
-  salt.push(rounds.toString());
-  salt.push("$");
-  salt.push(base64_encode(randomBytes(BCRYPT_SALT_LEN), BCRYPT_SALT_LEN));
-  return salt.join("");
-}
-function genSalt(rounds, seed_length, callback) {
-  if (typeof seed_length === "function")
-    callback = seed_length, seed_length = void 0;
-  if (typeof rounds === "function") callback = rounds, rounds = void 0;
-  if (typeof rounds === "undefined") rounds = GENSALT_DEFAULT_LOG2_ROUNDS;
-  else if (typeof rounds !== "number")
-    throw Error("illegal arguments: " + typeof rounds);
-  function _async(callback2) {
-    nextTick$1(function() {
-      try {
-        callback2(null, genSaltSync(rounds));
-      } catch (err) {
-        callback2(err);
-      }
-    });
-  }
-  if (callback) {
-    if (typeof callback !== "function")
-      throw Error("Illegal callback: " + typeof callback);
-    _async(callback);
-  } else
-    return new Promise(function(resolve, reject) {
-      _async(function(err, res) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res);
-      });
-    });
-}
-function hashSync(password, salt) {
-  if (typeof salt === "undefined") salt = GENSALT_DEFAULT_LOG2_ROUNDS;
-  if (typeof salt === "number") salt = genSaltSync(salt);
-  if (typeof password !== "string" || typeof salt !== "string")
-    throw Error("Illegal arguments: " + typeof password + ", " + typeof salt);
-  return _hash(password, salt);
-}
-function hash(password, salt, callback, progressCallback) {
-  function _async(callback2) {
-    if (typeof password === "string" && typeof salt === "number")
-      genSalt(salt, function(err, salt2) {
-        _hash(password, salt2, callback2, progressCallback);
-      });
-    else if (typeof password === "string" && typeof salt === "string")
-      _hash(password, salt, callback2, progressCallback);
-    else
-      nextTick$1(
-        callback2.bind(
-          this,
-          Error("Illegal arguments: " + typeof password + ", " + typeof salt)
-        )
-      );
-  }
-  if (callback) {
-    if (typeof callback !== "function")
-      throw Error("Illegal callback: " + typeof callback);
-    _async(callback);
-  } else
-    return new Promise(function(resolve, reject) {
-      _async(function(err, res) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res);
-      });
-    });
-}
-function safeStringCompare(known, unknown) {
-  var diff = known.length ^ unknown.length;
-  for (var i = 0; i < known.length; ++i) {
-    diff |= known.charCodeAt(i) ^ unknown.charCodeAt(i);
-  }
-  return diff === 0;
-}
-function compareSync(password, hash2) {
-  if (typeof password !== "string" || typeof hash2 !== "string")
-    throw Error("Illegal arguments: " + typeof password + ", " + typeof hash2);
-  if (hash2.length !== 60) return false;
-  return safeStringCompare(
-    hashSync(password, hash2.substring(0, hash2.length - 31)),
-    hash2
-  );
-}
-function compare(password, hashValue, callback, progressCallback) {
-  function _async(callback2) {
-    if (typeof password !== "string" || typeof hashValue !== "string") {
-      nextTick$1(
-        callback2.bind(
-          this,
-          Error(
-            "Illegal arguments: " + typeof password + ", " + typeof hashValue
-          )
-        )
-      );
-      return;
-    }
-    if (hashValue.length !== 60) {
-      nextTick$1(callback2.bind(this, null, false));
-      return;
-    }
-    hash(
-      password,
-      hashValue.substring(0, 29),
-      function(err, comp) {
-        if (err) callback2(err);
-        else callback2(null, safeStringCompare(comp, hashValue));
-      },
-      progressCallback
-    );
-  }
-  if (callback) {
-    if (typeof callback !== "function")
-      throw Error("Illegal callback: " + typeof callback);
-    _async(callback);
-  } else
-    return new Promise(function(resolve, reject) {
-      _async(function(err, res) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res);
-      });
-    });
-}
-function getRounds(hash2) {
-  if (typeof hash2 !== "string")
-    throw Error("Illegal arguments: " + typeof hash2);
-  return parseInt(hash2.split("$")[2], 10);
-}
-function getSalt(hash2) {
-  if (typeof hash2 !== "string")
-    throw Error("Illegal arguments: " + typeof hash2);
-  if (hash2.length !== 60)
-    throw Error("Illegal hash length: " + hash2.length + " != 60");
-  return hash2.substring(0, 29);
-}
-function truncates(password) {
-  if (typeof password !== "string")
-    throw Error("Illegal arguments: " + typeof password);
-  return utf8Length(password) > 72;
-}
-var nextTick$1 = typeof setImmediate === "function" ? setImmediate : typeof scheduler === "object" && typeof scheduler.postTask === "function" ? scheduler.postTask.bind(scheduler) : setTimeout;
-function utf8Length(string) {
-  var len = 0, c = 0;
-  for (var i = 0; i < string.length; ++i) {
-    c = string.charCodeAt(i);
-    if (c < 128) len += 1;
-    else if (c < 2048) len += 2;
-    else if ((c & 64512) === 55296 && (string.charCodeAt(i + 1) & 64512) === 56320) {
-      ++i;
-      len += 4;
-    } else len += 3;
-  }
-  return len;
-}
-function utf8Array(string) {
-  var offset = 0, c1, c2;
-  var buffer = new Array(utf8Length(string));
-  for (var i = 0, k = string.length; i < k; ++i) {
-    c1 = string.charCodeAt(i);
-    if (c1 < 128) {
-      buffer[offset++] = c1;
-    } else if (c1 < 2048) {
-      buffer[offset++] = c1 >> 6 | 192;
-      buffer[offset++] = c1 & 63 | 128;
-    } else if ((c1 & 64512) === 55296 && ((c2 = string.charCodeAt(i + 1)) & 64512) === 56320) {
-      c1 = 65536 + ((c1 & 1023) << 10) + (c2 & 1023);
-      ++i;
-      buffer[offset++] = c1 >> 18 | 240;
-      buffer[offset++] = c1 >> 12 & 63 | 128;
-      buffer[offset++] = c1 >> 6 & 63 | 128;
-      buffer[offset++] = c1 & 63 | 128;
-    } else {
-      buffer[offset++] = c1 >> 12 | 224;
-      buffer[offset++] = c1 >> 6 & 63 | 128;
-      buffer[offset++] = c1 & 63 | 128;
-    }
-  }
-  return buffer;
-}
-var BASE64_CODE = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split("");
-var BASE64_INDEX = [
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  0,
-  1,
-  54,
-  55,
-  56,
-  57,
-  58,
-  59,
-  60,
-  61,
-  62,
-  63,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-  19,
-  20,
-  21,
-  22,
-  23,
-  24,
-  25,
-  26,
-  27,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1,
-  28,
-  29,
-  30,
-  31,
-  32,
-  33,
-  34,
-  35,
-  36,
-  37,
-  38,
-  39,
-  40,
-  41,
-  42,
-  43,
-  44,
-  45,
-  46,
-  47,
-  48,
-  49,
-  50,
-  51,
-  52,
-  53,
-  -1,
-  -1,
-  -1,
-  -1,
-  -1
-];
-function base64_encode(b, len) {
-  var off = 0, rs = [], c1, c2;
-  if (len <= 0 || len > b.length) throw Error("Illegal len: " + len);
-  while (off < len) {
-    c1 = b[off++] & 255;
-    rs.push(BASE64_CODE[c1 >> 2 & 63]);
-    c1 = (c1 & 3) << 4;
-    if (off >= len) {
-      rs.push(BASE64_CODE[c1 & 63]);
-      break;
-    }
-    c2 = b[off++] & 255;
-    c1 |= c2 >> 4 & 15;
-    rs.push(BASE64_CODE[c1 & 63]);
-    c1 = (c2 & 15) << 2;
-    if (off >= len) {
-      rs.push(BASE64_CODE[c1 & 63]);
-      break;
-    }
-    c2 = b[off++] & 255;
-    c1 |= c2 >> 6 & 3;
-    rs.push(BASE64_CODE[c1 & 63]);
-    rs.push(BASE64_CODE[c2 & 63]);
-  }
-  return rs.join("");
-}
-function base64_decode(s, len) {
-  var off = 0, slen = s.length, olen = 0, rs = [], c1, c2, c3, c4, o, code;
-  if (len <= 0) throw Error("Illegal len: " + len);
-  while (off < slen - 1 && olen < len) {
-    code = s.charCodeAt(off++);
-    c1 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
-    code = s.charCodeAt(off++);
-    c2 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
-    if (c1 == -1 || c2 == -1) break;
-    o = c1 << 2 >>> 0;
-    o |= (c2 & 48) >> 4;
-    rs.push(String.fromCharCode(o));
-    if (++olen >= len || off >= slen) break;
-    code = s.charCodeAt(off++);
-    c3 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
-    if (c3 == -1) break;
-    o = (c2 & 15) << 4 >>> 0;
-    o |= (c3 & 60) >> 2;
-    rs.push(String.fromCharCode(o));
-    if (++olen >= len || off >= slen) break;
-    code = s.charCodeAt(off++);
-    c4 = code < BASE64_INDEX.length ? BASE64_INDEX[code] : -1;
-    o = (c3 & 3) << 6 >>> 0;
-    o |= c4;
-    rs.push(String.fromCharCode(o));
-    ++olen;
-  }
-  var res = [];
-  for (off = 0; off < olen; off++) res.push(rs[off].charCodeAt(0));
-  return res;
-}
-var BCRYPT_SALT_LEN = 16;
-var GENSALT_DEFAULT_LOG2_ROUNDS = 10;
-var BLOWFISH_NUM_ROUNDS = 16;
-var MAX_EXECUTION_TIME = 100;
-var P_ORIG = [
-  608135816,
-  2242054355,
-  320440878,
-  57701188,
-  2752067618,
-  698298832,
-  137296536,
-  3964562569,
-  1160258022,
-  953160567,
-  3193202383,
-  887688300,
-  3232508343,
-  3380367581,
-  1065670069,
-  3041331479,
-  2450970073,
-  2306472731
-];
-var S_ORIG = [
-  3509652390,
-  2564797868,
-  805139163,
-  3491422135,
-  3101798381,
-  1780907670,
-  3128725573,
-  4046225305,
-  614570311,
-  3012652279,
-  134345442,
-  2240740374,
-  1667834072,
-  1901547113,
-  2757295779,
-  4103290238,
-  227898511,
-  1921955416,
-  1904987480,
-  2182433518,
-  2069144605,
-  3260701109,
-  2620446009,
-  720527379,
-  3318853667,
-  677414384,
-  3393288472,
-  3101374703,
-  2390351024,
-  1614419982,
-  1822297739,
-  2954791486,
-  3608508353,
-  3174124327,
-  2024746970,
-  1432378464,
-  3864339955,
-  2857741204,
-  1464375394,
-  1676153920,
-  1439316330,
-  715854006,
-  3033291828,
-  289532110,
-  2706671279,
-  2087905683,
-  3018724369,
-  1668267050,
-  732546397,
-  1947742710,
-  3462151702,
-  2609353502,
-  2950085171,
-  1814351708,
-  2050118529,
-  680887927,
-  999245976,
-  1800124847,
-  3300911131,
-  1713906067,
-  1641548236,
-  4213287313,
-  1216130144,
-  1575780402,
-  4018429277,
-  3917837745,
-  3693486850,
-  3949271944,
-  596196993,
-  3549867205,
-  258830323,
-  2213823033,
-  772490370,
-  2760122372,
-  1774776394,
-  2652871518,
-  566650946,
-  4142492826,
-  1728879713,
-  2882767088,
-  1783734482,
-  3629395816,
-  2517608232,
-  2874225571,
-  1861159788,
-  326777828,
-  3124490320,
-  2130389656,
-  2716951837,
-  967770486,
-  1724537150,
-  2185432712,
-  2364442137,
-  1164943284,
-  2105845187,
-  998989502,
-  3765401048,
-  2244026483,
-  1075463327,
-  1455516326,
-  1322494562,
-  910128902,
-  469688178,
-  1117454909,
-  936433444,
-  3490320968,
-  3675253459,
-  1240580251,
-  122909385,
-  2157517691,
-  634681816,
-  4142456567,
-  3825094682,
-  3061402683,
-  2540495037,
-  79693498,
-  3249098678,
-  1084186820,
-  1583128258,
-  426386531,
-  1761308591,
-  1047286709,
-  322548459,
-  995290223,
-  1845252383,
-  2603652396,
-  3431023940,
-  2942221577,
-  3202600964,
-  3727903485,
-  1712269319,
-  422464435,
-  3234572375,
-  1170764815,
-  3523960633,
-  3117677531,
-  1434042557,
-  442511882,
-  3600875718,
-  1076654713,
-  1738483198,
-  4213154764,
-  2393238008,
-  3677496056,
-  1014306527,
-  4251020053,
-  793779912,
-  2902807211,
-  842905082,
-  4246964064,
-  1395751752,
-  1040244610,
-  2656851899,
-  3396308128,
-  445077038,
-  3742853595,
-  3577915638,
-  679411651,
-  2892444358,
-  2354009459,
-  1767581616,
-  3150600392,
-  3791627101,
-  3102740896,
-  284835224,
-  4246832056,
-  1258075500,
-  768725851,
-  2589189241,
-  3069724005,
-  3532540348,
-  1274779536,
-  3789419226,
-  2764799539,
-  1660621633,
-  3471099624,
-  4011903706,
-  913787905,
-  3497959166,
-  737222580,
-  2514213453,
-  2928710040,
-  3937242737,
-  1804850592,
-  3499020752,
-  2949064160,
-  2386320175,
-  2390070455,
-  2415321851,
-  4061277028,
-  2290661394,
-  2416832540,
-  1336762016,
-  1754252060,
-  3520065937,
-  3014181293,
-  791618072,
-  3188594551,
-  3933548030,
-  2332172193,
-  3852520463,
-  3043980520,
-  413987798,
-  3465142937,
-  3030929376,
-  4245938359,
-  2093235073,
-  3534596313,
-  375366246,
-  2157278981,
-  2479649556,
-  555357303,
-  3870105701,
-  2008414854,
-  3344188149,
-  4221384143,
-  3956125452,
-  2067696032,
-  3594591187,
-  2921233993,
-  2428461,
-  544322398,
-  577241275,
-  1471733935,
-  610547355,
-  4027169054,
-  1432588573,
-  1507829418,
-  2025931657,
-  3646575487,
-  545086370,
-  48609733,
-  2200306550,
-  1653985193,
-  298326376,
-  1316178497,
-  3007786442,
-  2064951626,
-  458293330,
-  2589141269,
-  3591329599,
-  3164325604,
-  727753846,
-  2179363840,
-  146436021,
-  1461446943,
-  4069977195,
-  705550613,
-  3059967265,
-  3887724982,
-  4281599278,
-  3313849956,
-  1404054877,
-  2845806497,
-  146425753,
-  1854211946,
-  1266315497,
-  3048417604,
-  3681880366,
-  3289982499,
-  290971e4,
-  1235738493,
-  2632868024,
-  2414719590,
-  3970600049,
-  1771706367,
-  1449415276,
-  3266420449,
-  422970021,
-  1963543593,
-  2690192192,
-  3826793022,
-  1062508698,
-  1531092325,
-  1804592342,
-  2583117782,
-  2714934279,
-  4024971509,
-  1294809318,
-  4028980673,
-  1289560198,
-  2221992742,
-  1669523910,
-  35572830,
-  157838143,
-  1052438473,
-  1016535060,
-  1802137761,
-  1753167236,
-  1386275462,
-  3080475397,
-  2857371447,
-  1040679964,
-  2145300060,
-  2390574316,
-  1461121720,
-  2956646967,
-  4031777805,
-  4028374788,
-  33600511,
-  2920084762,
-  1018524850,
-  629373528,
-  3691585981,
-  3515945977,
-  2091462646,
-  2486323059,
-  586499841,
-  988145025,
-  935516892,
-  3367335476,
-  2599673255,
-  2839830854,
-  265290510,
-  3972581182,
-  2759138881,
-  3795373465,
-  1005194799,
-  847297441,
-  406762289,
-  1314163512,
-  1332590856,
-  1866599683,
-  4127851711,
-  750260880,
-  613907577,
-  1450815602,
-  3165620655,
-  3734664991,
-  3650291728,
-  3012275730,
-  3704569646,
-  1427272223,
-  778793252,
-  1343938022,
-  2676280711,
-  2052605720,
-  1946737175,
-  3164576444,
-  3914038668,
-  3967478842,
-  3682934266,
-  1661551462,
-  3294938066,
-  4011595847,
-  840292616,
-  3712170807,
-  616741398,
-  312560963,
-  711312465,
-  1351876610,
-  322626781,
-  1910503582,
-  271666773,
-  2175563734,
-  1594956187,
-  70604529,
-  3617834859,
-  1007753275,
-  1495573769,
-  4069517037,
-  2549218298,
-  2663038764,
-  504708206,
-  2263041392,
-  3941167025,
-  2249088522,
-  1514023603,
-  1998579484,
-  1312622330,
-  694541497,
-  2582060303,
-  2151582166,
-  1382467621,
-  776784248,
-  2618340202,
-  3323268794,
-  2497899128,
-  2784771155,
-  503983604,
-  4076293799,
-  907881277,
-  423175695,
-  432175456,
-  1378068232,
-  4145222326,
-  3954048622,
-  3938656102,
-  3820766613,
-  2793130115,
-  2977904593,
-  26017576,
-  3274890735,
-  3194772133,
-  1700274565,
-  1756076034,
-  4006520079,
-  3677328699,
-  720338349,
-  1533947780,
-  354530856,
-  688349552,
-  3973924725,
-  1637815568,
-  332179504,
-  3949051286,
-  53804574,
-  2852348879,
-  3044236432,
-  1282449977,
-  3583942155,
-  3416972820,
-  4006381244,
-  1617046695,
-  2628476075,
-  3002303598,
-  1686838959,
-  431878346,
-  2686675385,
-  1700445008,
-  1080580658,
-  1009431731,
-  832498133,
-  3223435511,
-  2605976345,
-  2271191193,
-  2516031870,
-  1648197032,
-  4164389018,
-  2548247927,
-  300782431,
-  375919233,
-  238389289,
-  3353747414,
-  2531188641,
-  2019080857,
-  1475708069,
-  455242339,
-  2609103871,
-  448939670,
-  3451063019,
-  1395535956,
-  2413381860,
-  1841049896,
-  1491858159,
-  885456874,
-  4264095073,
-  4001119347,
-  1565136089,
-  3898914787,
-  1108368660,
-  540939232,
-  1173283510,
-  2745871338,
-  3681308437,
-  4207628240,
-  3343053890,
-  4016749493,
-  1699691293,
-  1103962373,
-  3625875870,
-  2256883143,
-  3830138730,
-  1031889488,
-  3479347698,
-  1535977030,
-  4236805024,
-  3251091107,
-  2132092099,
-  1774941330,
-  1199868427,
-  1452454533,
-  157007616,
-  2904115357,
-  342012276,
-  595725824,
-  1480756522,
-  206960106,
-  497939518,
-  591360097,
-  863170706,
-  2375253569,
-  3596610801,
-  1814182875,
-  2094937945,
-  3421402208,
-  1082520231,
-  3463918190,
-  2785509508,
-  435703966,
-  3908032597,
-  1641649973,
-  2842273706,
-  3305899714,
-  1510255612,
-  2148256476,
-  2655287854,
-  3276092548,
-  4258621189,
-  236887753,
-  3681803219,
-  274041037,
-  1734335097,
-  3815195456,
-  3317970021,
-  1899903192,
-  1026095262,
-  4050517792,
-  356393447,
-  2410691914,
-  3873677099,
-  3682840055,
-  3913112168,
-  2491498743,
-  4132185628,
-  2489919796,
-  1091903735,
-  1979897079,
-  3170134830,
-  3567386728,
-  3557303409,
-  857797738,
-  1136121015,
-  1342202287,
-  507115054,
-  2535736646,
-  337727348,
-  3213592640,
-  1301675037,
-  2528481711,
-  1895095763,
-  1721773893,
-  3216771564,
-  62756741,
-  2142006736,
-  835421444,
-  2531993523,
-  1442658625,
-  3659876326,
-  2882144922,
-  676362277,
-  1392781812,
-  170690266,
-  3921047035,
-  1759253602,
-  3611846912,
-  1745797284,
-  664899054,
-  1329594018,
-  3901205900,
-  3045908486,
-  2062866102,
-  2865634940,
-  3543621612,
-  3464012697,
-  1080764994,
-  553557557,
-  3656615353,
-  3996768171,
-  991055499,
-  499776247,
-  1265440854,
-  648242737,
-  3940784050,
-  980351604,
-  3713745714,
-  1749149687,
-  3396870395,
-  4211799374,
-  3640570775,
-  1161844396,
-  3125318951,
-  1431517754,
-  545492359,
-  4268468663,
-  3499529547,
-  1437099964,
-  2702547544,
-  3433638243,
-  2581715763,
-  2787789398,
-  1060185593,
-  1593081372,
-  2418618748,
-  4260947970,
-  69676912,
-  2159744348,
-  86519011,
-  2512459080,
-  3838209314,
-  1220612927,
-  3339683548,
-  133810670,
-  1090789135,
-  1078426020,
-  1569222167,
-  845107691,
-  3583754449,
-  4072456591,
-  1091646820,
-  628848692,
-  1613405280,
-  3757631651,
-  526609435,
-  236106946,
-  48312990,
-  2942717905,
-  3402727701,
-  1797494240,
-  859738849,
-  992217954,
-  4005476642,
-  2243076622,
-  3870952857,
-  3732016268,
-  765654824,
-  3490871365,
-  2511836413,
-  1685915746,
-  3888969200,
-  1414112111,
-  2273134842,
-  3281911079,
-  4080962846,
-  172450625,
-  2569994100,
-  980381355,
-  4109958455,
-  2819808352,
-  2716589560,
-  2568741196,
-  3681446669,
-  3329971472,
-  1835478071,
-  660984891,
-  3704678404,
-  4045999559,
-  3422617507,
-  3040415634,
-  1762651403,
-  1719377915,
-  3470491036,
-  2693910283,
-  3642056355,
-  3138596744,
-  1364962596,
-  2073328063,
-  1983633131,
-  926494387,
-  3423689081,
-  2150032023,
-  4096667949,
-  1749200295,
-  3328846651,
-  309677260,
-  2016342300,
-  1779581495,
-  3079819751,
-  111262694,
-  1274766160,
-  443224088,
-  298511866,
-  1025883608,
-  3806446537,
-  1145181785,
-  168956806,
-  3641502830,
-  3584813610,
-  1689216846,
-  3666258015,
-  3200248200,
-  1692713982,
-  2646376535,
-  4042768518,
-  1618508792,
-  1610833997,
-  3523052358,
-  4130873264,
-  2001055236,
-  3610705100,
-  2202168115,
-  4028541809,
-  2961195399,
-  1006657119,
-  2006996926,
-  3186142756,
-  1430667929,
-  3210227297,
-  1314452623,
-  4074634658,
-  4101304120,
-  2273951170,
-  1399257539,
-  3367210612,
-  3027628629,
-  1190975929,
-  2062231137,
-  2333990788,
-  2221543033,
-  2438960610,
-  1181637006,
-  548689776,
-  2362791313,
-  3372408396,
-  3104550113,
-  3145860560,
-  296247880,
-  1970579870,
-  3078560182,
-  3769228297,
-  1714227617,
-  3291629107,
-  3898220290,
-  166772364,
-  1251581989,
-  493813264,
-  448347421,
-  195405023,
-  2709975567,
-  677966185,
-  3703036547,
-  1463355134,
-  2715995803,
-  1338867538,
-  1343315457,
-  2802222074,
-  2684532164,
-  233230375,
-  2599980071,
-  2000651841,
-  3277868038,
-  1638401717,
-  4028070440,
-  3237316320,
-  6314154,
-  819756386,
-  300326615,
-  590932579,
-  1405279636,
-  3267499572,
-  3150704214,
-  2428286686,
-  3959192993,
-  3461946742,
-  1862657033,
-  1266418056,
-  963775037,
-  2089974820,
-  2263052895,
-  1917689273,
-  448879540,
-  3550394620,
-  3981727096,
-  150775221,
-  3627908307,
-  1303187396,
-  508620638,
-  2975983352,
-  2726630617,
-  1817252668,
-  1876281319,
-  1457606340,
-  908771278,
-  3720792119,
-  3617206836,
-  2455994898,
-  1729034894,
-  1080033504,
-  976866871,
-  3556439503,
-  2881648439,
-  1522871579,
-  1555064734,
-  1336096578,
-  3548522304,
-  2579274686,
-  3574697629,
-  3205460757,
-  3593280638,
-  3338716283,
-  3079412587,
-  564236357,
-  2993598910,
-  1781952180,
-  1464380207,
-  3163844217,
-  3332601554,
-  1699332808,
-  1393555694,
-  1183702653,
-  3581086237,
-  1288719814,
-  691649499,
-  2847557200,
-  2895455976,
-  3193889540,
-  2717570544,
-  1781354906,
-  1676643554,
-  2592534050,
-  3230253752,
-  1126444790,
-  2770207658,
-  2633158820,
-  2210423226,
-  2615765581,
-  2414155088,
-  3127139286,
-  673620729,
-  2805611233,
-  1269405062,
-  4015350505,
-  3341807571,
-  4149409754,
-  1057255273,
-  2012875353,
-  2162469141,
-  2276492801,
-  2601117357,
-  993977747,
-  3918593370,
-  2654263191,
-  753973209,
-  36408145,
-  2530585658,
-  25011837,
-  3520020182,
-  2088578344,
-  530523599,
-  2918365339,
-  1524020338,
-  1518925132,
-  3760827505,
-  3759777254,
-  1202760957,
-  3985898139,
-  3906192525,
-  674977740,
-  4174734889,
-  2031300136,
-  2019492241,
-  3983892565,
-  4153806404,
-  3822280332,
-  352677332,
-  2297720250,
-  60907813,
-  90501309,
-  3286998549,
-  1016092578,
-  2535922412,
-  2839152426,
-  457141659,
-  509813237,
-  4120667899,
-  652014361,
-  1966332200,
-  2975202805,
-  55981186,
-  2327461051,
-  676427537,
-  3255491064,
-  2882294119,
-  3433927263,
-  1307055953,
-  942726286,
-  933058658,
-  2468411793,
-  3933900994,
-  4215176142,
-  1361170020,
-  2001714738,
-  2830558078,
-  3274259782,
-  1222529897,
-  1679025792,
-  2729314320,
-  3714953764,
-  1770335741,
-  151462246,
-  3013232138,
-  1682292957,
-  1483529935,
-  471910574,
-  1539241949,
-  458788160,
-  3436315007,
-  1807016891,
-  3718408830,
-  978976581,
-  1043663428,
-  3165965781,
-  1927990952,
-  4200891579,
-  2372276910,
-  3208408903,
-  3533431907,
-  1412390302,
-  2931980059,
-  4132332400,
-  1947078029,
-  3881505623,
-  4168226417,
-  2941484381,
-  1077988104,
-  1320477388,
-  886195818,
-  18198404,
-  3786409e3,
-  2509781533,
-  112762804,
-  3463356488,
-  1866414978,
-  891333506,
-  18488651,
-  661792760,
-  1628790961,
-  3885187036,
-  3141171499,
-  876946877,
-  2693282273,
-  1372485963,
-  791857591,
-  2686433993,
-  3759982718,
-  3167212022,
-  3472953795,
-  2716379847,
-  445679433,
-  3561995674,
-  3504004811,
-  3574258232,
-  54117162,
-  3331405415,
-  2381918588,
-  3769707343,
-  4154350007,
-  1140177722,
-  4074052095,
-  668550556,
-  3214352940,
-  367459370,
-  261225585,
-  2610173221,
-  4209349473,
-  3468074219,
-  3265815641,
-  314222801,
-  3066103646,
-  3808782860,
-  282218597,
-  3406013506,
-  3773591054,
-  379116347,
-  1285071038,
-  846784868,
-  2669647154,
-  3771962079,
-  3550491691,
-  2305946142,
-  453669953,
-  1268987020,
-  3317592352,
-  3279303384,
-  3744833421,
-  2610507566,
-  3859509063,
-  266596637,
-  3847019092,
-  517658769,
-  3462560207,
-  3443424879,
-  370717030,
-  4247526661,
-  2224018117,
-  4143653529,
-  4112773975,
-  2788324899,
-  2477274417,
-  1456262402,
-  2901442914,
-  1517677493,
-  1846949527,
-  2295493580,
-  3734397586,
-  2176403920,
-  1280348187,
-  1908823572,
-  3871786941,
-  846861322,
-  1172426758,
-  3287448474,
-  3383383037,
-  1655181056,
-  3139813346,
-  901632758,
-  1897031941,
-  2986607138,
-  3066810236,
-  3447102507,
-  1393639104,
-  373351379,
-  950779232,
-  625454576,
-  3124240540,
-  4148612726,
-  2007998917,
-  544563296,
-  2244738638,
-  2330496472,
-  2058025392,
-  1291430526,
-  424198748,
-  50039436,
-  29584100,
-  3605783033,
-  2429876329,
-  2791104160,
-  1057563949,
-  3255363231,
-  3075367218,
-  3463963227,
-  1469046755,
-  985887462
-];
-var C_ORIG = [
-  1332899944,
-  1700884034,
-  1701343084,
-  1684370003,
-  1668446532,
-  1869963892
-];
-function _encipher(lr, off, P, S) {
-  var n, l = lr[off], r = lr[off + 1];
-  l ^= P[0];
-  n = S[l >>> 24];
-  n += S[256 | l >> 16 & 255];
-  n ^= S[512 | l >> 8 & 255];
-  n += S[768 | l & 255];
-  r ^= n ^ P[1];
-  n = S[r >>> 24];
-  n += S[256 | r >> 16 & 255];
-  n ^= S[512 | r >> 8 & 255];
-  n += S[768 | r & 255];
-  l ^= n ^ P[2];
-  n = S[l >>> 24];
-  n += S[256 | l >> 16 & 255];
-  n ^= S[512 | l >> 8 & 255];
-  n += S[768 | l & 255];
-  r ^= n ^ P[3];
-  n = S[r >>> 24];
-  n += S[256 | r >> 16 & 255];
-  n ^= S[512 | r >> 8 & 255];
-  n += S[768 | r & 255];
-  l ^= n ^ P[4];
-  n = S[l >>> 24];
-  n += S[256 | l >> 16 & 255];
-  n ^= S[512 | l >> 8 & 255];
-  n += S[768 | l & 255];
-  r ^= n ^ P[5];
-  n = S[r >>> 24];
-  n += S[256 | r >> 16 & 255];
-  n ^= S[512 | r >> 8 & 255];
-  n += S[768 | r & 255];
-  l ^= n ^ P[6];
-  n = S[l >>> 24];
-  n += S[256 | l >> 16 & 255];
-  n ^= S[512 | l >> 8 & 255];
-  n += S[768 | l & 255];
-  r ^= n ^ P[7];
-  n = S[r >>> 24];
-  n += S[256 | r >> 16 & 255];
-  n ^= S[512 | r >> 8 & 255];
-  n += S[768 | r & 255];
-  l ^= n ^ P[8];
-  n = S[l >>> 24];
-  n += S[256 | l >> 16 & 255];
-  n ^= S[512 | l >> 8 & 255];
-  n += S[768 | l & 255];
-  r ^= n ^ P[9];
-  n = S[r >>> 24];
-  n += S[256 | r >> 16 & 255];
-  n ^= S[512 | r >> 8 & 255];
-  n += S[768 | r & 255];
-  l ^= n ^ P[10];
-  n = S[l >>> 24];
-  n += S[256 | l >> 16 & 255];
-  n ^= S[512 | l >> 8 & 255];
-  n += S[768 | l & 255];
-  r ^= n ^ P[11];
-  n = S[r >>> 24];
-  n += S[256 | r >> 16 & 255];
-  n ^= S[512 | r >> 8 & 255];
-  n += S[768 | r & 255];
-  l ^= n ^ P[12];
-  n = S[l >>> 24];
-  n += S[256 | l >> 16 & 255];
-  n ^= S[512 | l >> 8 & 255];
-  n += S[768 | l & 255];
-  r ^= n ^ P[13];
-  n = S[r >>> 24];
-  n += S[256 | r >> 16 & 255];
-  n ^= S[512 | r >> 8 & 255];
-  n += S[768 | r & 255];
-  l ^= n ^ P[14];
-  n = S[l >>> 24];
-  n += S[256 | l >> 16 & 255];
-  n ^= S[512 | l >> 8 & 255];
-  n += S[768 | l & 255];
-  r ^= n ^ P[15];
-  n = S[r >>> 24];
-  n += S[256 | r >> 16 & 255];
-  n ^= S[512 | r >> 8 & 255];
-  n += S[768 | r & 255];
-  l ^= n ^ P[16];
-  lr[off] = r ^ P[BLOWFISH_NUM_ROUNDS + 1];
-  lr[off + 1] = l;
-  return lr;
-}
-function _streamtoword(data, offp) {
-  for (var i = 0, word = 0; i < 4; ++i)
-    word = word << 8 | data[offp] & 255, offp = (offp + 1) % data.length;
-  return { key: word, offp };
-}
-function _key(key, P, S) {
-  var offset = 0, lr = [0, 0], plen = P.length, slen = S.length, sw;
-  for (var i = 0; i < plen; i++)
-    sw = _streamtoword(key, offset), offset = sw.offp, P[i] = P[i] ^ sw.key;
-  for (i = 0; i < plen; i += 2)
-    lr = _encipher(lr, 0, P, S), P[i] = lr[0], P[i + 1] = lr[1];
-  for (i = 0; i < slen; i += 2)
-    lr = _encipher(lr, 0, P, S), S[i] = lr[0], S[i + 1] = lr[1];
-}
-function _ekskey(data, key, P, S) {
-  var offp = 0, lr = [0, 0], plen = P.length, slen = S.length, sw;
-  for (var i = 0; i < plen; i++)
-    sw = _streamtoword(key, offp), offp = sw.offp, P[i] = P[i] ^ sw.key;
-  offp = 0;
-  for (i = 0; i < plen; i += 2)
-    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S), P[i] = lr[0], P[i + 1] = lr[1];
-  for (i = 0; i < slen; i += 2)
-    sw = _streamtoword(data, offp), offp = sw.offp, lr[0] ^= sw.key, sw = _streamtoword(data, offp), offp = sw.offp, lr[1] ^= sw.key, lr = _encipher(lr, 0, P, S), S[i] = lr[0], S[i + 1] = lr[1];
-}
-function _crypt(b, salt, rounds, callback, progressCallback) {
-  var cdata = C_ORIG.slice(), clen = cdata.length, err;
-  if (rounds < 4 || rounds > 31) {
-    err = Error("Illegal number of rounds (4-31): " + rounds);
-    if (callback) {
-      nextTick$1(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  if (salt.length !== BCRYPT_SALT_LEN) {
-    err = Error(
-      "Illegal salt length: " + salt.length + " != " + BCRYPT_SALT_LEN
-    );
-    if (callback) {
-      nextTick$1(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  rounds = 1 << rounds >>> 0;
-  var P, S, i = 0, j;
-  if (typeof Int32Array === "function") {
-    P = new Int32Array(P_ORIG);
-    S = new Int32Array(S_ORIG);
-  } else {
-    P = P_ORIG.slice();
-    S = S_ORIG.slice();
-  }
-  _ekskey(salt, b, P, S);
-  function next() {
-    if (progressCallback) progressCallback(i / rounds);
-    if (i < rounds) {
-      var start = Date.now();
-      for (; i < rounds; ) {
-        i = i + 1;
-        _key(b, P, S);
-        _key(salt, P, S);
-        if (Date.now() - start > MAX_EXECUTION_TIME) break;
-      }
-    } else {
-      for (i = 0; i < 64; i++)
-        for (j = 0; j < clen >> 1; j++) _encipher(cdata, j << 1, P, S);
-      var ret = [];
-      for (i = 0; i < clen; i++)
-        ret.push((cdata[i] >> 24 & 255) >>> 0), ret.push((cdata[i] >> 16 & 255) >>> 0), ret.push((cdata[i] >> 8 & 255) >>> 0), ret.push((cdata[i] & 255) >>> 0);
-      if (callback) {
-        callback(null, ret);
-        return;
-      } else return ret;
-    }
-    if (callback) nextTick$1(next);
-  }
-  if (typeof callback !== "undefined") {
-    next();
-  } else {
-    var res;
-    while (true) if (typeof (res = next()) !== "undefined") return res || [];
-  }
-}
-function _hash(password, salt, callback, progressCallback) {
-  var err;
-  if (typeof password !== "string" || typeof salt !== "string") {
-    err = Error("Invalid string / salt: Not a string");
-    if (callback) {
-      nextTick$1(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  var minor, offset;
-  if (salt.charAt(0) !== "$" || salt.charAt(1) !== "2") {
-    err = Error("Invalid salt version: " + salt.substring(0, 2));
-    if (callback) {
-      nextTick$1(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  if (salt.charAt(2) === "$") minor = String.fromCharCode(0), offset = 3;
-  else {
-    minor = salt.charAt(2);
-    if (minor !== "a" && minor !== "b" && minor !== "y" || salt.charAt(3) !== "$") {
-      err = Error("Invalid salt revision: " + salt.substring(2, 4));
-      if (callback) {
-        nextTick$1(callback.bind(this, err));
-        return;
-      } else throw err;
-    }
-    offset = 4;
-  }
-  if (salt.charAt(offset + 2) > "$") {
-    err = Error("Missing salt rounds");
-    if (callback) {
-      nextTick$1(callback.bind(this, err));
-      return;
-    } else throw err;
-  }
-  var r1 = parseInt(salt.substring(offset, offset + 1), 10) * 10, r2 = parseInt(salt.substring(offset + 1, offset + 2), 10), rounds = r1 + r2, real_salt = salt.substring(offset + 3, offset + 25);
-  password += minor >= "a" ? "\0" : "";
-  var passwordb = utf8Array(password), saltb = base64_decode(real_salt, BCRYPT_SALT_LEN);
-  function finish(bytes) {
-    var res = [];
-    res.push("$2");
-    if (minor >= "a") res.push(minor);
-    res.push("$");
-    if (rounds < 10) res.push("0");
-    res.push(rounds.toString());
-    res.push("$");
-    res.push(base64_encode(saltb, saltb.length));
-    res.push(base64_encode(bytes, C_ORIG.length * 4 - 1));
-    return res.join("");
-  }
-  if (typeof callback == "undefined")
-    return finish(_crypt(passwordb, saltb, rounds));
-  else {
-    _crypt(
-      passwordb,
-      saltb,
-      rounds,
-      function(err2, bytes) {
-        if (err2) callback(err2, null);
-        else callback(null, finish(bytes));
-      },
-      progressCallback
-    );
-  }
-}
-function encodeBase64(bytes, length) {
-  return base64_encode(bytes, length);
-}
-function decodeBase64(string, length) {
-  return base64_decode(string, length);
-}
-const bcrypt = {
-  setRandomFallback,
-  genSaltSync,
-  genSalt,
-  hashSync,
-  hash,
-  compareSync,
-  compare,
-  getRounds,
-  getSalt,
-  truncates,
-  encodeBase64,
-  decodeBase64
-};
-/*! js-cookie v3.0.5 | MIT */
-function assign(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-    for (var key in source) {
-      target[key] = source[key];
-    }
-  }
-  return target;
-}
-var defaultConverter = {
-  read: function(value) {
-    if (value[0] === '"') {
-      value = value.slice(1, -1);
-    }
-    return value.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
-  },
-  write: function(value) {
-    return encodeURIComponent(value).replace(
-      /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
-      decodeURIComponent
-    );
-  }
-};
-function init(converter, defaultAttributes2) {
-  function set(name, value, attributes) {
-    if (typeof document === "undefined") {
-      return;
-    }
-    attributes = assign({}, defaultAttributes2, attributes);
-    if (typeof attributes.expires === "number") {
-      attributes.expires = new Date(Date.now() + attributes.expires * 864e5);
-    }
-    if (attributes.expires) {
-      attributes.expires = attributes.expires.toUTCString();
-    }
-    name = encodeURIComponent(name).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent).replace(/[()]/g, escape);
-    var stringifiedAttributes = "";
-    for (var attributeName in attributes) {
-      if (!attributes[attributeName]) {
-        continue;
-      }
-      stringifiedAttributes += "; " + attributeName;
-      if (attributes[attributeName] === true) {
-        continue;
-      }
-      stringifiedAttributes += "=" + attributes[attributeName].split(";")[0];
-    }
-    return document.cookie = name + "=" + converter.write(value, name) + stringifiedAttributes;
-  }
-  function get2(name) {
-    if (typeof document === "undefined" || arguments.length && !name) {
-      return;
-    }
-    var cookies = document.cookie ? document.cookie.split("; ") : [];
-    var jar = {};
-    for (var i = 0; i < cookies.length; i++) {
-      var parts = cookies[i].split("=");
-      var value = parts.slice(1).join("=");
-      try {
-        var found = decodeURIComponent(parts[0]);
-        jar[found] = converter.read(value, found);
-        if (name === found) {
-          break;
-        }
-      } catch (e) {
-      }
-    }
-    return name ? jar[name] : jar;
-  }
-  return Object.create(
-    {
-      set,
-      get: get2,
-      remove: function(name, attributes) {
-        set(
-          name,
-          "",
-          assign({}, attributes, {
-            expires: -1
-          })
-        );
-      },
-      withAttributes: function(attributes) {
-        return init(this.converter, assign({}, this.attributes, attributes));
-      },
-      withConverter: function(converter2) {
-        return init(assign({}, this.converter, converter2), this.attributes);
-      }
-    },
-    {
-      attributes: { value: Object.freeze(defaultAttributes2) },
-      converter: { value: Object.freeze(converter) }
-    }
-  );
-}
-var api = init(defaultConverter, { path: "/" });
 const COOKIE_KEY = "user";
 const SAVED_ACCOUNTS_COOKIE_KEY = "saved_accounts";
 const COOKIE_EXPIRE_DAYS = 180;
@@ -26675,23 +26966,6 @@ async function verifyUserCredentials({ username, password }) {
     last_login: updatedUser.last_login ?? null
   };
   return { data: safeUser, error: null };
-}
-function mapOrderState(row) {
-  return {
-    ...row,
-    order_data: row.state_data
-  };
-}
-async function listOrderStates() {
-  const rows = await getVisibleRows({
-    table: "orders_states",
-    ownerColumn: "user_id",
-    currentUserId: getUserId(),
-    orderBy: "created_at",
-    ascending: false,
-    extraEq: { deleted_at: null }
-  });
-  return mapLegacyVisibilityRows(rows, "user_id").map(mapOrderState);
 }
 const AuthContext = reactExports.createContext(null);
 const useAuth = () => {
@@ -26873,8 +27147,8 @@ const AuthProvider = ({ children }) => {
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsx(AuthContext.Provider, { value, children });
 };
-const en = { "common": { "loading": "Loading...", "error": "Error", "success": "Success", "cancel": "Cancel", "confirm": "Confirm", "yes": "Yes", "no": "No", "next": "Next", "previous": "Previous", "save": "Save", "delete": "Delete", "edit": "Edit", "close": "Close", "ok": "OK" }, "navigation": { "home": "Home", "orders": "Orders", "account": "Account", "settings": "Settings" }, "auth": { "signIn": "Sign In", "signUp": "Sign Up", "signOut": "Sign Out", "logout": "Logout", "name": "Name", "username": "Username", "password": "Password", "confirmPassword": "Confirm Password", "signInToAccount": "Sign in to your account", "createAccount": "Create your account", "alreadyHaveAccount": "Already have an account?", "dontHaveAccount": "Don't have an account?", "authentication": "Authentication", "signInToAccess": "Sign in to access your orders and sync data", "yourAccountInfo": "Your account information", "confirmLogout": "Confirm Logout", "confirmLogoutMessage": "Are you sure you want to logout? You'll need to sign in again to access your account.", "confirmSignOut": "Confirm Sign Out", "confirmSignOutMessage": "Are you sure you want to sign out? You'll need to sign in again to access your orders.", "successfullyLoggedOut": "Successfully logged out" }, "home": { "savedStates": "Saved States", "noSavedStatesFound": "No saved states found", "noStatesCreated": "You haven't created any order states yet.", "loadingStates": "Loading states...", "rtd": "RTD", "handover": "Handover", "items": "items", "orders": "orders" }, "orders": { "selectOrder": "Select Order", "totalOrdersAvailable": "total orders available", "buyerDetails": "Buyer Details", "name": "Name", "state": "State", "noOrdersFound": "No Orders Found", "noOrdersFoundMessage": "No orders found for", "orderItems": "Order Items", "quantity": "Quantity", "weight": "Weight", "unit": "Unit", "sku": "SKU", "price": "Price", "total": "Total", "pieces": "Pic", "grams": "g", "kilograms": "Kilograms", "times": "x" }, "voice": { "clickToStart": "Click to start voice commands", "loading": "Loading...", "micOn": "Mic On", "listening": "Listening...", "voiceRecognitionStopped": "Voice recognition stopped", "voiceRecognitionUnavailable": "Voice recognition unavailable", "microphoneAccessDenied": "Microphone access denied", "voskInitializationFailed": "Vosk initialization failed", "commandProcessed": "Command processed", "commandNotRecognized": "Command not recognized", "navigatedToNext": "Navigated to next order", "navigatedToPrevious": "Navigated to previous order", "selectedOrder": "Selected order", "noNextOrder": "No next order available", "noPreviousOrder": "No previous order available", "invalidOrderNumber": "Invalid order number" }, "settings": { "appInformation": "App Information", "orderManagementSystem": "Order Management System", "version": "Version 1.2.0", "authenticationRequired": "Authentication Required", "appearance": "Appearance", "simpleOrdersView": "Simple Orders View", "simpleOrdersViewDescription": "Simplify order card details in Orders page", "darkMode": "Dark Mode", "toggleTheme": "Toggle between light and dark theme", "language": "Language", "selectLanguage": "Select your preferred language", "english": "English", "bengali": "বাংলা", "voiceSettings": "Voice Settings", "actionTalk": "Action Talk", "actionTalkDescription": "Enable voice feedback when commands are executed", "showMicButton": "Show Microphone Button", "showMicButtonDescription": "Display voice control button in orders page", "fontSize": "Font Size", "selectFontSize": "Select your preferred font size", "fontSizeSmall": "Small", "fontSizeMedium": "Medium", "fontSizeLarge": "Large", "fontSizeDescription": "Adjust text size throughout the application", "authentication": "Authentication", "switchAccount": "Switch Account", "switch": "Switch", "switchTo": "Switch to", "switchFailed": "Switch failed.", "switchedTo": "Switched to", "accountCenter": "Account Center", "openAccountCenter": "Open Account Center", "manageAccounts": "Manage Accounts", "addAccount": "Add Account", "add": "Add", "addingAccount": "Adding...", "disconnect": "Disconnect", "disconnectAccount": "Disconnect Account", "disconnectFailed": "Disconnect failed.", "disconnected": "Disconnected", "logoutAll": "Logout All", "logoutAllAccounts": "Logout All Accounts", "logoutAllConfirm": "Logout all saved accounts from this device?", "noSavedAccounts": "No saved accounts.", "unnamed": "Unnamed", "current": "Current", "accountLoginSuccess": "Successfully logged in!", "accountAdded": "Added", "accountUnableToAdd": "Unable to add account.", "accountUsernameRequired": "Username is required", "accountPasswordRequired": "Password is required" }, "skuMapping": { "title": "SKU Mappings", "activeMappings": "Active", "deletedMappings": "Deleted", "searchPlaceholder": "Search by Old SKU or New SKU...", "searchDeletedPlaceholder": "Search deleted mappings by Old SKU or New SKU...", "searchPrompt": "Start typing to search SKU mappings", "searchTitle": "🔍 Search SKU Mappings", "searchDescription": "Type in the search box above to find SKU mappings", "resultsFound": "result(s) found", "deletedResultsFound": "deleted mapping(s) found", "showingFirst": "showing first", "searching": "Searching...", "noResults": "No mappings found matching your search", "noDeletedResults": "No deleted mappings found", "add": "Add", "oldSku": "Old SKU", "newSku": "New SKU", "actions": "Actions", "edit": "Edit Mapping", "delete": "Delete Mapping", "restore": "Restore Mapping", "addTitle": "Add SKU Mapping", "editTitle": "Edit SKU Mapping", "oldSkuPlaceholder": "e.g., DAHLIA__100__PIECE__3AS7", "newSkuPlaceholder": "e.g., SED_FLW_DL_100P", "oldSkuCannotChange": "Old SKU cannot be changed", "enterNewSku": "Enter the new mapped SKU code", "pasteFromClipboard": "Paste from clipboard", "pasteError": "Failed to paste from clipboard", "newSkuPreview": "New SKU Preview:", "buildNewSku": "Build New SKU - Step", "of": "of", "step1": "Step 1: Select Vertical", "step2": "Step 2: Select Category", "step3": "Step 3: Select Product SKU", "step4": "Step 4: Enter Quantity", "step5": "Step 5: Select Unit", "selectVertical": "-- Select Vertical --", "selectCategory": "-- Select Category --", "selectProduct": "-- Select Product --", "addAnotherProduct": "+ Add Another Product", "next": "Next →", "quantityPlaceholder": "e.g., 100", "selectUnit": "-- Select Unit --", "piece": "P (Piece)", "gram": "G (Gram)", "kilogram": "KG (Kilogram)", "cancel": "Cancel", "update": "Update", "updateSku": "Update SKU", "addSku": "Add SKU", "deleteTitle": "Delete SKU Mapping?", "deleteMessage": "Are you sure you want to delete this SKU mapping? This action cannot be undone.", "restoreTitle": "Restore SKU Mapping?", "restoreMessage": "Do you want to restore this SKU mapping back to active list?", "bothFieldsRequired": "Both fields are required", "newSkuRequired": "New SKU is required", "addSuccess": "SKU mapping added successfully", "updateSuccess": "SKU mapping updated successfully", "deleteSuccess": "SKU mapping deleted successfully", "restoreSuccess": "SKU mapping restored successfully" } };
-const bn = { "common": { "loading": "লোড হচ্ছে...", "error": "ত্রুটি", "success": "সফল", "cancel": "বাতিল", "confirm": "নিশ্চিত", "yes": "হ্যাঁ", "no": "না", "next": "পরবর্তী", "previous": "পূর্ববর্তী", "save": "সংরক্ষণ", "delete": "মুছুন", "edit": "সম্পাদনা", "close": "বন্ধ", "ok": "ঠিক আছে" }, "navigation": { "home": "হোম", "orders": "অর্ডার", "account": "অ্যাকাউন্ট", "settings": "সেটিংস" }, "auth": { "signIn": "সাইন ইন", "signUp": "সাইন আপ", "signOut": "সাইন আউট", "logout": "লগআউট", "name": "নাম", "username": "ব্যবহারকারীর নাম", "password": "পাসওয়ার্ড", "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন", "signInToAccount": "আপনার অ্যাকাউন্টে সাইন ইন করুন", "createAccount": "আপনার অ্যাকাউন্ট তৈরি করুন", "alreadyHaveAccount": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?", "dontHaveAccount": "অ্যাকাউন্ট নেই?", "authentication": "প্রমাণীকরণ", "signInToAccess": "আপনার অর্ডার এবং ডেটা সিঙ্ক অ্যাক্সেস করতে সাইন ইন করুন", "yourAccountInfo": "আপনার অ্যাকাউন্টের তথ্য", "confirmLogout": "লগআউট নিশ্চিত করুন", "confirmLogoutMessage": "আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান? আপনার অ্যাকাউন্ট অ্যাক্সেস করতে আবার সাইন ইন করতে হবে।", "confirmSignOut": "সাইন আউট নিশ্চিত করুন", "confirmSignOutMessage": "আপনি কি নিশ্চিত যে আপনি সাইন আউট করতে চান? আপনার অর্ডার অ্যাক্সেস করতে আবার সাইন ইন করতে হবে।", "successfullyLoggedOut": "সফলভাবে লগআউট হয়েছে" }, "home": { "savedStates": "সংরক্ষিত স্টেট", "noSavedStatesFound": "কোন সংরক্ষিত স্টেট পাওয়া যায়নি", "noStatesCreated": "আপনি এখনও কোন অর্ডার স্টেট তৈরি করেননি।", "loadingStates": "স্টেট লোড হচ্ছে...", "rtd": "আরটিডি", "handover": "হস্তান্তর", "items": "আইটেম", "orders": "অর্ডার" }, "orders": { "selectOrder": "অর্ডার নির্বাচন করুন", "totalOrdersAvailable": "মোট অর্ডার উপলব্ধ", "buyerDetails": "ক্রেতার বিবরণ", "name": "নাম", "state": "রাজ্য", "noOrdersFound": "কোন অর্ডার পাওয়া যায়নি", "noOrdersFoundMessage": "এর জন্য কোন অর্ডার পাওয়া যায়নি", "orderItems": "অর্ডার আইটেম", "quantity": "পরিমাণ", "weight": "ওজন", "unit": "একক", "sku": "এসকিউ", "price": "মূল্য", "total": "মোট", "pieces": "পিস", "grams": "গ্রাম", "kilograms": "কিলোগ্রাম", "times": " টা" }, "voice": { "clickToStart": "ভয়েস কমান্ড শুরু করতে ক্লিক করুন", "loading": "লোড হচ্ছে...", "micOn": "মাইক চালু", "listening": "শুনছি...", "voiceRecognitionStopped": "ভয়েস রিকগনিশন বন্ধ", "voiceRecognitionUnavailable": "ভয়েস রিকগনিশন উপলব্ধ নয়", "microphoneAccessDenied": "মাইক্রোফোন অ্যাক্সেস অস্বীকৃত", "voskInitializationFailed": "Vosk ইনিশিয়ালাইজেশন ব্যর্থ", "commandProcessed": "কমান্ড প্রক্রিয়াজাত", "commandNotRecognized": "কমান্ড স্বীকৃত নয়", "navigatedToNext": "পরবর্তী অর্ডারে নেভিগেট করা হয়েছে", "navigatedToPrevious": "পূর্ববর্তী অর্ডারে নেভিগেট করা হয়েছে", "selectedOrder": "অর্ডার নির্বাচিত", "noNextOrder": "কোন পরবর্তী অর্ডার উপলব্ধ নয়", "noPreviousOrder": "কোন পূর্ববর্তী অর্ডার উপলব্ধ নয়", "invalidOrderNumber": "অবৈধ অর্ডার নম্বর" }, "settings": { "appInformation": "অ্যাপের তথ্য", "orderManagementSystem": "অর্ডার ব্যবস্থাপনা সিস্টেম", "version": "সংস্করণ ১.২.০", "authenticationRequired": "প্রমাণীকরণ প্রয়োজন", "appearance": "চেহারা", "simpleOrdersView": "সিম্পল অর্ডার ভিউ", "simpleOrdersViewDescription": "অর্ডার পেজে সরল কার্ড ভিউ চালু বা বন্ধ করুন", "darkMode": "ডার্ক মোড", "toggleTheme": "হালকা এবং গাঢ় থিমের মধ্যে টগল করুন", "language": "ভাষা", "selectLanguage": "আপনার পছন্দের ভাষা নির্বাচন করুন", "english": "English", "bengali": "বাংলা", "voiceSettings": "ভয়েস সেটিংস", "actionTalk": "অ্যাকশন টক", "actionTalkDescription": "কমান্ড সম্পাদনের সময় ভয়েস ফিডব্যাক সক্ষম করুন", "showMicButton": "মাইক্রোফোন বোতাম দেখান", "showMicButtonDescription": "অর্ডার পৃষ্ঠায় ভয়েস কন্ট্রোল বোতাম প্রদর্শন করুন", "fontSize": "ফন্ট সাইজ", "selectFontSize": "আপনার পছন্দের ফন্ট সাইজ নির্বাচন করুন", "fontSizeSmall": "ছোট", "fontSizeMedium": "মাঝারি", "fontSizeLarge": "বড়", "fontSizeDescription": "সমগ্র অ্যাপ্লিকেশন জুড়ে টেক্সট সাইজ সামঞ্জস্য করুন", "authentication": "প্রমাণীকরণ", "switchAccount": "অ্যাকাউন্ট বদলান", "switch": "বদলান", "switchTo": "এতে বদলান", "switchFailed": "অ্যাকাউন্ট বদলানো যায়নি।", "switchedTo": "বদলানো হয়েছে", "accountCenter": "অ্যাকাউন্ট সেন্টার", "openAccountCenter": "অ্যাকাউন্ট সেন্টার খুলুন", "manageAccounts": "অ্যাকাউন্ট ব্যবস্থাপনা", "addAccount": "অ্যাকাউন্ট যোগ করুন", "add": "যোগ করুন", "addingAccount": "যোগ করা হচ্ছে...", "disconnect": "সংযোগ বিচ্ছিন্ন করুন", "disconnectAccount": "অ্যাকাউন্ট সংযোগ বিচ্ছিন্ন", "disconnectFailed": "সংযোগ বিচ্ছিন্ন করা যায়নি।", "disconnected": "সংযোগ বিচ্ছিন্ন হয়েছে", "logoutAll": "সব লগআউট", "logoutAllAccounts": "সব অ্যাকাউন্ট লগআউট", "logoutAllConfirm": "এই ডিভাইস থেকে সব সংরক্ষিত অ্যাকাউন্ট লগআউট করবেন?", "noSavedAccounts": "কোনো সংরক্ষিত অ্যাকাউন্ট নেই।", "unnamed": "নামহীন", "current": "বর্তমান", "accountLoginSuccess": "সফলভাবে লগইন হয়েছে!", "accountAdded": "যোগ হয়েছে", "accountUnableToAdd": "অ্যাকাউন্ট যোগ করা যায়নি।", "accountUsernameRequired": "ব্যবহারকারীর নাম প্রয়োজন", "accountPasswordRequired": "পাসওয়ার্ড প্রয়োজন" }, "skuMapping": { "title": "এসকেইউ ম্যাপিং", "activeMappings": "সক্রিয়", "deletedMappings": "মুছে ফেলা", "searchPlaceholder": "পুরাতন এসকেইউ বা নতুন এসকেইউ দ্বারা অনুসন্ধান করুন...", "searchDeletedPlaceholder": "মুছে ফেলা ম্যাপিং পুরাতন এসকেইউ বা নতুন এসকেইউ দিয়ে খুঁজুন...", "searchPrompt": "এসকেইউ ম্যাপিং অনুসন্ধান করতে টাইপ করা শুরু করুন", "searchTitle": "🔍 এসকেইউ ম্যাপিং অনুসন্ধান করুন", "searchDescription": "এসকেইউ ম্যাপিং খুঁজতে উপরের অনুসন্ধান বক্সে টাইপ করুন", "resultsFound": "ফলাফল পাওয়া গেছে", "deletedResultsFound": "মুছে ফেলা ম্যাপিং পাওয়া গেছে", "showingFirst": "প্রথম দেখাচ্ছে", "searching": "অনুসন্ধান করা হচ্ছে...", "noResults": "আপনার অনুসন্ধানের সাথে মিলে এমন কোনো ম্যাপিং পাওয়া যায়নি", "noDeletedResults": "কোনো মুছে ফেলা ম্যাপিং পাওয়া যায়নি", "add": "যোগ করুন", "oldSku": "পুরাতন এসকেইউ", "newSku": "নতুন এসকেইউ", "actions": "কর্ম", "edit": "ম্যাপিং সম্পাদনা করুন", "delete": "ম্যাপিং মুছুন", "restore": "ম্যাপিং পুনরুদ্ধার করুন", "addTitle": "এসকেইউ ম্যাপিং যোগ করুন", "editTitle": "এসকেইউ ম্যাপিং সম্পাদনা করুন", "oldSkuPlaceholder": "যেমন, DAHLIA__100__PIECE__3AS7", "newSkuPlaceholder": "যেমন, SED_FLW_DL_100P", "oldSkuCannotChange": "পুরাতন এসকেইউ পরিবর্তন করা যাবে না", "enterNewSku": "নতুন ম্যাপ করা এসকেইউ কোড লিখুন", "pasteFromClipboard": "ক্লিপবোর্ড থেকে পেস্ট করুন", "pasteError": "ক্লিপবোর্ড থেকে পেস্ট করতে ব্যর্থ", "newSkuPreview": "নতুন এসকেইউ পূর্বরূপ:", "buildNewSku": "নতুন এসকেইউ তৈরি করুন - ধাপ", "of": "এর", "step1": "ধাপ ১: ভার্টিকাল নির্বাচন করুন", "step2": "ধাপ ২: ক্যাটাগরি নির্বাচন করুন", "step3": "ধাপ ৩: পণ্য এসকেইউ নির্বাচন করুন", "step4": "ধাপ ৪: পরিমাণ লিখুন", "step5": "ধাপ ৫: একক নির্বাচন করুন", "selectVertical": "-- ভার্টিকাল নির্বাচন করুন --", "selectCategory": "-- ক্যাটাগরি নির্বাচন করুন --", "selectProduct": "-- পণ্য নির্বাচন করুন --", "addAnotherProduct": "+ আরেকটি পণ্য যোগ করুন", "next": "পরবর্তী →", "quantityPlaceholder": "যেমন, ১০০", "selectUnit": "-- একক নির্বাচন করুন --", "piece": "P (পিস)", "gram": "G (গ্রাম)", "kilogram": "KG (কিলোগ্রাম)", "cancel": "বাতিল", "update": "আপডেট", "updateSku": "এসকেইউ আপডেট করুন", "addSku": "এসকেইউ যোগ করুন", "deleteTitle": "এসকেইউ ম্যাপিং মুছবেন?", "deleteMessage": "আপনি কি নিশ্চিত যে আপনি এই এসকেইউ ম্যাপিং মুছতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।", "restoreTitle": "এসকেইউ ম্যাপিং পুনরুদ্ধার করবেন?", "restoreMessage": "এই এসকেইউ ম্যাপিং কি সক্রিয় তালিকায় ফিরিয়ে আনতে চান?", "bothFieldsRequired": "উভয় ক্ষেত্র প্রয়োজন", "newSkuRequired": "নতুন এসকেইউ প্রয়োজন", "addSuccess": "এসকেইউ ম্যাপিং সফলভাবে যোগ করা হয়েছে", "updateSuccess": "এসকেইউ ম্যাপিং সফলভাবে আপডেট করা হয়েছে", "deleteSuccess": "এসকেইউ ম্যাপিং সফলভাবে মুছে ফেলা হয়েছে", "restoreSuccess": "এসকেইউ ম্যাপিং সফলভাবে পুনরুদ্ধার হয়েছে" } };
+const en = { "common": { "loading": "Loading...", "error": "Error", "success": "Success", "cancel": "Cancel", "confirm": "Confirm", "yes": "Yes", "no": "No", "next": "Next", "previous": "Previous", "save": "Save", "delete": "Delete", "edit": "Edit", "close": "Close", "ok": "OK" }, "navigation": { "home": "Home", "orders": "Orders", "account": "Account", "settings": "Settings" }, "auth": { "signIn": "Sign In", "signUp": "Sign Up", "signOut": "Sign Out", "logout": "Logout", "name": "Name", "username": "Username", "password": "Password", "confirmPassword": "Confirm Password", "signInToAccount": "Sign in to your account", "createAccount": "Create your account", "alreadyHaveAccount": "Already have an account?", "dontHaveAccount": "Don't have an account?", "authentication": "Authentication", "signInToAccess": "Sign in to access your orders and sync data", "yourAccountInfo": "Your account information", "confirmLogout": "Confirm Logout", "confirmLogoutMessage": "Are you sure you want to logout? You'll need to sign in again to access your account.", "confirmSignOut": "Confirm Sign Out", "confirmSignOutMessage": "Are you sure you want to sign out? You'll need to sign in again to access your orders.", "successfullyLoggedOut": "Successfully logged out" }, "home": { "savedStates": "Saved States", "noSavedStatesFound": "No saved states found", "noStatesCreated": "You haven't created any order states yet.", "loadingStates": "Loading states...", "rtd": "RTD", "handover": "Handover", "from": "From", "to": "To", "apply": "Apply", "clear": "Clear", "page": "Page", "states": "states", "items": "items", "orders": "orders" }, "orders": { "selectOrder": "Select Order", "totalOrdersAvailable": "total orders available", "buyerDetails": "Buyer Details", "name": "Name", "state": "State", "noOrdersFound": "No Orders Found", "noOrdersFoundMessage": "No orders found for", "orderItems": "Order Items", "quantity": "Quantity", "weight": "Weight", "unit": "Unit", "sku": "SKU", "price": "Price", "total": "Total", "pieces": "Pic", "grams": "g", "kilograms": "Kilograms", "times": "x" }, "voice": { "clickToStart": "Click to start voice commands", "loading": "Loading...", "micOn": "Mic On", "listening": "Listening...", "voiceRecognitionStopped": "Voice recognition stopped", "voiceRecognitionUnavailable": "Voice recognition unavailable", "microphoneAccessDenied": "Microphone access denied", "voskInitializationFailed": "Vosk initialization failed", "commandProcessed": "Command processed", "commandNotRecognized": "Command not recognized", "navigatedToNext": "Navigated to next order", "navigatedToPrevious": "Navigated to previous order", "selectedOrder": "Selected order", "noNextOrder": "No next order available", "noPreviousOrder": "No previous order available", "invalidOrderNumber": "Invalid order number" }, "settings": { "appInformation": "App Information", "orderManagementSystem": "Order Management System", "version": "Version 1.2.0", "authenticationRequired": "Authentication Required", "appearance": "Appearance", "simpleOrdersView": "Simple Orders View", "simpleOrdersViewDescription": "Simplify order card details in Orders page", "darkMode": "Dark Mode", "toggleTheme": "Toggle between light and dark theme", "language": "Language", "selectLanguage": "Select your preferred language", "english": "English", "bengali": "বাংলা", "voiceSettings": "Voice Settings", "actionTalk": "Action Talk", "actionTalkDescription": "Enable voice feedback when commands are executed", "showMicButton": "Show Microphone Button", "showMicButtonDescription": "Display voice control button in orders page", "fontSize": "Font Size", "selectFontSize": "Select your preferred font size", "fontSizeSmall": "Small", "fontSizeMedium": "Medium", "fontSizeLarge": "Large", "fontSizeDescription": "Adjust text size throughout the application", "authentication": "Authentication", "switchAccount": "Switch Account", "switch": "Switch", "switchTo": "Switch to", "switchFailed": "Switch failed.", "switchedTo": "Switched to", "accountCenter": "Account Center", "openAccountCenter": "Open Account Center", "manageAccounts": "Manage Accounts", "addAccount": "Add Account", "add": "Add", "addingAccount": "Adding...", "disconnect": "Disconnect", "disconnectAccount": "Disconnect Account", "disconnectFailed": "Disconnect failed.", "disconnected": "Disconnected", "logoutAll": "Logout All", "logoutAllAccounts": "Logout All Accounts", "logoutAllConfirm": "Logout all saved accounts from this device?", "noSavedAccounts": "No saved accounts.", "unnamed": "Unnamed", "current": "Current", "accountLoginSuccess": "Successfully logged in!", "accountAdded": "Added", "accountUnableToAdd": "Unable to add account.", "accountUsernameRequired": "Username is required", "accountPasswordRequired": "Password is required" }, "skuMapping": { "title": "SKU Mappings", "activeMappings": "Active", "deletedMappings": "Deleted", "searchPlaceholder": "Search by Old SKU or New SKU...", "searchDeletedPlaceholder": "Search deleted mappings by Old SKU or New SKU...", "searchPrompt": "Start typing to search SKU mappings", "searchTitle": "🔍 Search SKU Mappings", "searchDescription": "Type in the search box above to find SKU mappings", "resultsFound": "result(s) found", "deletedResultsFound": "deleted mapping(s) found", "showingFirst": "showing first", "searching": "Searching...", "noResults": "No mappings found matching your search", "noDeletedResults": "No deleted mappings found", "add": "Add", "oldSku": "Old SKU", "newSku": "New SKU", "actions": "Actions", "edit": "Edit Mapping", "delete": "Delete Mapping", "restore": "Restore Mapping", "addTitle": "Add SKU Mapping", "editTitle": "Edit SKU Mapping", "oldSkuPlaceholder": "e.g., DAHLIA__100__PIECE__3AS7", "newSkuPlaceholder": "e.g., SED_FLW_DL_100P", "oldSkuCannotChange": "Old SKU cannot be changed", "enterNewSku": "Enter the new mapped SKU code", "pasteFromClipboard": "Paste from clipboard", "pasteError": "Failed to paste from clipboard", "newSkuPreview": "New SKU Preview:", "buildNewSku": "Build New SKU - Step", "of": "of", "step1": "Step 1: Select Vertical", "step2": "Step 2: Select Category", "step3": "Step 3: Select Product SKU", "step4": "Step 4: Enter Quantity", "step5": "Step 5: Select Unit", "selectVertical": "-- Select Vertical --", "selectCategory": "-- Select Category --", "selectProduct": "-- Select Product --", "addAnotherProduct": "+ Add Another Product", "next": "Next →", "quantityPlaceholder": "e.g., 100", "selectUnit": "-- Select Unit --", "piece": "P (Piece)", "gram": "G (Gram)", "kilogram": "KG (Kilogram)", "cancel": "Cancel", "update": "Update", "updateSku": "Update SKU", "addSku": "Add SKU", "deleteTitle": "Delete SKU Mapping?", "deleteMessage": "Are you sure you want to delete this SKU mapping? This action cannot be undone.", "restoreTitle": "Restore SKU Mapping?", "restoreMessage": "Do you want to restore this SKU mapping back to active list?", "bothFieldsRequired": "Both fields are required", "newSkuRequired": "New SKU is required", "addSuccess": "SKU mapping added successfully", "updateSuccess": "SKU mapping updated successfully", "deleteSuccess": "SKU mapping deleted successfully", "restoreSuccess": "SKU mapping restored successfully" } };
+const bn = { "common": { "loading": "লোড হচ্ছে...", "error": "ত্রুটি", "success": "সফল", "cancel": "বাতিল", "confirm": "নিশ্চিত", "yes": "হ্যাঁ", "no": "না", "next": "পরবর্তী", "previous": "পূর্ববর্তী", "save": "সংরক্ষণ", "delete": "মুছুন", "edit": "সম্পাদনা", "close": "বন্ধ", "ok": "ঠিক আছে" }, "navigation": { "home": "হোম", "orders": "অর্ডার", "account": "অ্যাকাউন্ট", "settings": "সেটিংস" }, "auth": { "signIn": "সাইন ইন", "signUp": "সাইন আপ", "signOut": "সাইন আউট", "logout": "লগআউট", "name": "নাম", "username": "ব্যবহারকারীর নাম", "password": "পাসওয়ার্ড", "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন", "signInToAccount": "আপনার অ্যাকাউন্টে সাইন ইন করুন", "createAccount": "আপনার অ্যাকাউন্ট তৈরি করুন", "alreadyHaveAccount": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?", "dontHaveAccount": "অ্যাকাউন্ট নেই?", "authentication": "প্রমাণীকরণ", "signInToAccess": "আপনার অর্ডার এবং ডেটা সিঙ্ক অ্যাক্সেস করতে সাইন ইন করুন", "yourAccountInfo": "আপনার অ্যাকাউন্টের তথ্য", "confirmLogout": "লগআউট নিশ্চিত করুন", "confirmLogoutMessage": "আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান? আপনার অ্যাকাউন্ট অ্যাক্সেস করতে আবার সাইন ইন করতে হবে।", "confirmSignOut": "সাইন আউট নিশ্চিত করুন", "confirmSignOutMessage": "আপনি কি নিশ্চিত যে আপনি সাইন আউট করতে চান? আপনার অর্ডার অ্যাক্সেস করতে আবার সাইন ইন করতে হবে।", "successfullyLoggedOut": "সফলভাবে লগআউট হয়েছে" }, "home": { "savedStates": "সংরক্ষিত স্টেট", "noSavedStatesFound": "কোন সংরক্ষিত স্টেট পাওয়া যায়নি", "noStatesCreated": "আপনি এখনও কোন অর্ডার স্টেট তৈরি করেননি।", "loadingStates": "স্টেট লোড হচ্ছে...", "rtd": "আরটিডি", "handover": "হস্তান্তর", "from": "শুরু", "to": "শেষ", "apply": "প্রয়োগ", "clear": "মুছুন", "page": "পৃষ্ঠা", "states": "স্টেট", "items": "আইটেম", "orders": "অর্ডার" }, "orders": { "selectOrder": "অর্ডার নির্বাচন করুন", "totalOrdersAvailable": "মোট অর্ডার উপলব্ধ", "buyerDetails": "ক্রেতার বিবরণ", "name": "নাম", "state": "রাজ্য", "noOrdersFound": "কোন অর্ডার পাওয়া যায়নি", "noOrdersFoundMessage": "এর জন্য কোন অর্ডার পাওয়া যায়নি", "orderItems": "অর্ডার আইটেম", "quantity": "পরিমাণ", "weight": "ওজন", "unit": "একক", "sku": "এসকিউ", "price": "মূল্য", "total": "মোট", "pieces": "পিস", "grams": "গ্রাম", "kilograms": "কিলোগ্রাম", "times": " টা" }, "voice": { "clickToStart": "ভয়েস কমান্ড শুরু করতে ক্লিক করুন", "loading": "লোড হচ্ছে...", "micOn": "মাইক চালু", "listening": "শুনছি...", "voiceRecognitionStopped": "ভয়েস রিকগনিশন বন্ধ", "voiceRecognitionUnavailable": "ভয়েস রিকগনিশন উপলব্ধ নয়", "microphoneAccessDenied": "মাইক্রোফোন অ্যাক্সেস অস্বীকৃত", "voskInitializationFailed": "Vosk ইনিশিয়ালাইজেশন ব্যর্থ", "commandProcessed": "কমান্ড প্রক্রিয়াজাত", "commandNotRecognized": "কমান্ড স্বীকৃত নয়", "navigatedToNext": "পরবর্তী অর্ডারে নেভিগেট করা হয়েছে", "navigatedToPrevious": "পূর্ববর্তী অর্ডারে নেভিগেট করা হয়েছে", "selectedOrder": "অর্ডার নির্বাচিত", "noNextOrder": "কোন পরবর্তী অর্ডার উপলব্ধ নয়", "noPreviousOrder": "কোন পূর্ববর্তী অর্ডার উপলব্ধ নয়", "invalidOrderNumber": "অবৈধ অর্ডার নম্বর" }, "settings": { "appInformation": "অ্যাপের তথ্য", "orderManagementSystem": "অর্ডার ব্যবস্থাপনা সিস্টেম", "version": "সংস্করণ ১.২.০", "authenticationRequired": "প্রমাণীকরণ প্রয়োজন", "appearance": "চেহারা", "simpleOrdersView": "সিম্পল অর্ডার ভিউ", "simpleOrdersViewDescription": "অর্ডার পেজে সরল কার্ড ভিউ চালু বা বন্ধ করুন", "darkMode": "ডার্ক মোড", "toggleTheme": "হালকা এবং গাঢ় থিমের মধ্যে টগল করুন", "language": "ভাষা", "selectLanguage": "আপনার পছন্দের ভাষা নির্বাচন করুন", "english": "English", "bengali": "বাংলা", "voiceSettings": "ভয়েস সেটিংস", "actionTalk": "অ্যাকশন টক", "actionTalkDescription": "কমান্ড সম্পাদনের সময় ভয়েস ফিডব্যাক সক্ষম করুন", "showMicButton": "মাইক্রোফোন বোতাম দেখান", "showMicButtonDescription": "অর্ডার পৃষ্ঠায় ভয়েস কন্ট্রোল বোতাম প্রদর্শন করুন", "fontSize": "ফন্ট সাইজ", "selectFontSize": "আপনার পছন্দের ফন্ট সাইজ নির্বাচন করুন", "fontSizeSmall": "ছোট", "fontSizeMedium": "মাঝারি", "fontSizeLarge": "বড়", "fontSizeDescription": "সমগ্র অ্যাপ্লিকেশন জুড়ে টেক্সট সাইজ সামঞ্জস্য করুন", "authentication": "প্রমাণীকরণ", "switchAccount": "অ্যাকাউন্ট বদলান", "switch": "বদলান", "switchTo": "এতে বদলান", "switchFailed": "অ্যাকাউন্ট বদলানো যায়নি।", "switchedTo": "বদলানো হয়েছে", "accountCenter": "অ্যাকাউন্ট সেন্টার", "openAccountCenter": "অ্যাকাউন্ট সেন্টার খুলুন", "manageAccounts": "অ্যাকাউন্ট ব্যবস্থাপনা", "addAccount": "অ্যাকাউন্ট যোগ করুন", "add": "যোগ করুন", "addingAccount": "যোগ করা হচ্ছে...", "disconnect": "সংযোগ বিচ্ছিন্ন করুন", "disconnectAccount": "অ্যাকাউন্ট সংযোগ বিচ্ছিন্ন", "disconnectFailed": "সংযোগ বিচ্ছিন্ন করা যায়নি।", "disconnected": "সংযোগ বিচ্ছিন্ন হয়েছে", "logoutAll": "সব লগআউট", "logoutAllAccounts": "সব অ্যাকাউন্ট লগআউট", "logoutAllConfirm": "এই ডিভাইস থেকে সব সংরক্ষিত অ্যাকাউন্ট লগআউট করবেন?", "noSavedAccounts": "কোনো সংরক্ষিত অ্যাকাউন্ট নেই।", "unnamed": "নামহীন", "current": "বর্তমান", "accountLoginSuccess": "সফলভাবে লগইন হয়েছে!", "accountAdded": "যোগ হয়েছে", "accountUnableToAdd": "অ্যাকাউন্ট যোগ করা যায়নি।", "accountUsernameRequired": "ব্যবহারকারীর নাম প্রয়োজন", "accountPasswordRequired": "পাসওয়ার্ড প্রয়োজন" }, "skuMapping": { "title": "এসকেইউ ম্যাপিং", "activeMappings": "সক্রিয়", "deletedMappings": "মুছে ফেলা", "searchPlaceholder": "পুরাতন এসকেইউ বা নতুন এসকেইউ দ্বারা অনুসন্ধান করুন...", "searchDeletedPlaceholder": "মুছে ফেলা ম্যাপিং পুরাতন এসকেইউ বা নতুন এসকেইউ দিয়ে খুঁজুন...", "searchPrompt": "এসকেইউ ম্যাপিং অনুসন্ধান করতে টাইপ করা শুরু করুন", "searchTitle": "🔍 এসকেইউ ম্যাপিং অনুসন্ধান করুন", "searchDescription": "এসকেইউ ম্যাপিং খুঁজতে উপরের অনুসন্ধান বক্সে টাইপ করুন", "resultsFound": "ফলাফল পাওয়া গেছে", "deletedResultsFound": "মুছে ফেলা ম্যাপিং পাওয়া গেছে", "showingFirst": "প্রথম দেখাচ্ছে", "searching": "অনুসন্ধান করা হচ্ছে...", "noResults": "আপনার অনুসন্ধানের সাথে মিলে এমন কোনো ম্যাপিং পাওয়া যায়নি", "noDeletedResults": "কোনো মুছে ফেলা ম্যাপিং পাওয়া যায়নি", "add": "যোগ করুন", "oldSku": "পুরাতন এসকেইউ", "newSku": "নতুন এসকেইউ", "actions": "কর্ম", "edit": "ম্যাপিং সম্পাদনা করুন", "delete": "ম্যাপিং মুছুন", "restore": "ম্যাপিং পুনরুদ্ধার করুন", "addTitle": "এসকেইউ ম্যাপিং যোগ করুন", "editTitle": "এসকেইউ ম্যাপিং সম্পাদনা করুন", "oldSkuPlaceholder": "যেমন, DAHLIA__100__PIECE__3AS7", "newSkuPlaceholder": "যেমন, SED_FLW_DL_100P", "oldSkuCannotChange": "পুরাতন এসকেইউ পরিবর্তন করা যাবে না", "enterNewSku": "নতুন ম্যাপ করা এসকেইউ কোড লিখুন", "pasteFromClipboard": "ক্লিপবোর্ড থেকে পেস্ট করুন", "pasteError": "ক্লিপবোর্ড থেকে পেস্ট করতে ব্যর্থ", "newSkuPreview": "নতুন এসকেইউ পূর্বরূপ:", "buildNewSku": "নতুন এসকেইউ তৈরি করুন - ধাপ", "of": "এর", "step1": "ধাপ ১: ভার্টিকাল নির্বাচন করুন", "step2": "ধাপ ২: ক্যাটাগরি নির্বাচন করুন", "step3": "ধাপ ৩: পণ্য এসকেইউ নির্বাচন করুন", "step4": "ধাপ ৪: পরিমাণ লিখুন", "step5": "ধাপ ৫: একক নির্বাচন করুন", "selectVertical": "-- ভার্টিকাল নির্বাচন করুন --", "selectCategory": "-- ক্যাটাগরি নির্বাচন করুন --", "selectProduct": "-- পণ্য নির্বাচন করুন --", "addAnotherProduct": "+ আরেকটি পণ্য যোগ করুন", "next": "পরবর্তী →", "quantityPlaceholder": "যেমন, ১০০", "selectUnit": "-- একক নির্বাচন করুন --", "piece": "P (পিস)", "gram": "G (গ্রাম)", "kilogram": "KG (কিলোগ্রাম)", "cancel": "বাতিল", "update": "আপডেট", "updateSku": "এসকেইউ আপডেট করুন", "addSku": "এসকেইউ যোগ করুন", "deleteTitle": "এসকেইউ ম্যাপিং মুছবেন?", "deleteMessage": "আপনি কি নিশ্চিত যে আপনি এই এসকেইউ ম্যাপিং মুছতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।", "restoreTitle": "এসকেইউ ম্যাপিং পুনরুদ্ধার করবেন?", "restoreMessage": "এই এসকেইউ ম্যাপিং কি সক্রিয় তালিকায় ফিরিয়ে আনতে চান?", "bothFieldsRequired": "উভয় ক্ষেত্র প্রয়োজন", "newSkuRequired": "নতুন এসকেইউ প্রয়োজন", "addSuccess": "এসকেইউ ম্যাপিং সফলভাবে যোগ করা হয়েছে", "updateSuccess": "এসকেইউ ম্যাপিং সফলভাবে আপডেট করা হয়েছে", "deleteSuccess": "এসকেইউ ম্যাপিং সফলভাবে মুছে ফেলা হয়েছে", "restoreSuccess": "এসকেইউ ম্যাপিং সফলভাবে পুনরুদ্ধার হয়েছে" } };
 const translations = {
   en,
   bn
@@ -26932,278 +27206,270 @@ const useLanguage = () => {
   }
   return context;
 };
-function CustomAlert({
-  type = "info",
-  message,
-  onClose,
-  duration = 5e3
+function HomeFiltersFooter({
+  t,
+  fromDate,
+  toDate,
+  setFromDate,
+  setToDate,
+  loading,
+  onApply,
+  onClear,
+  page,
+  shown,
+  total,
+  hasPreviousPage,
+  hasMore,
+  onPrevious,
+  onNext
 }) {
-  const [isVisible, setIsVisible] = reactExports.useState(false);
-  const [isExiting, setIsExiting] = reactExports.useState(false);
-  const colorMap = {
-    info: {
-      bg: "#6366f1",
-      // primary
-      bgLight: "#818cf8",
-      // primary-light
-      text: "#eef2ff",
-      textLight: "#1e1b4b",
-      icon: "ℹ️"
-    },
-    success: {
-      bg: "#10b981",
-      // success
-      bgLight: "#34d399",
-      // success-light
-      text: "#ecfdf5",
-      textLight: "#052e16",
-      icon: "✓"
-    },
-    error: {
-      bg: "#f43f5e",
-      // danger
-      bgLight: "#fb7185",
-      // danger-light
-      text: "#fff1f2",
-      textLight: "#4c0519",
-      icon: "✕"
-    },
-    warning: {
-      bg: "#f59e0b",
-      // warning
-      bgLight: "#fbbf24",
-      // warning-light
-      text: "#1f2937",
-      textLight: "#422006",
-      icon: "⚠"
-    }
-  };
-  const handleClose = reactExports.useCallback(() => {
-    setIsExiting(true);
-    setTimeout(() => {
-      onClose == null ? void 0 : onClose();
-    }, 300);
-  }, [onClose]);
-  reactExports.useEffect(() => {
-    requestAnimationFrame(() => setIsVisible(true));
-    if (!onClose) return void 0;
-    const timer = setTimeout(() => {
-      handleClose();
-    }, duration);
-    return () => clearTimeout(timer);
-  }, [onClose, duration, handleClose]);
-  const colors = colorMap[type] || colorMap.info;
-  const alertStyle = {
-    "--alert-bg": colors.bg,
-    "--alert-bg-light": colors.bgLight,
-    "--alert-text": colors.text,
-    "--alert-text-light": colors.textLight
-  };
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "div",
-      {
-        className: `custom-alert custom-alert-${type} ${isVisible ? "visible" : ""} ${isExiting ? "exiting" : ""}`,
-        style: alertStyle,
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "alert-content", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "alert-icon", children: colors.icon }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "alert-message", children: message })
-          ] }),
-          onClose && /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: handleClose, className: "alert-close", children: "✕" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "div",
-            {
-              className: "alert-progress",
-              style: { animationDuration: `${duration}ms` }
-            }
-          )
-        ]
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("style", { children: `
-        .custom-alert {
-          position: fixed;
-          left: 50%;
-          bottom: -120px;
-          transform: translateX(-50%) scale(0.9);
-          z-index: 2147483648;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          min-width: 320px;
-          max-width: 480px;
-          padding: 16px 20px;
-          border-radius: 16px;
-          background: var(--alert-bg);
-          color: var(--alert-text);
-          font-weight: 500;
-          box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.3),
-            0 2px 8px rgba(0, 0, 0, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
-          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-          overflow: hidden;
-          opacity: 0;
-        }
-        
-        .custom-alert.visible {
-          bottom: 32px;
-          transform: translateX(-50%) scale(1) translateY(0);
-          opacity: 1;
-        }
-        
-        .custom-alert.exiting {
-          bottom: -120px;
-          opacity: 0;
-          transform: translateX(-50%) scale(0.85) translateY(30px);
-          transition: all 0.35s cubic-bezier(0.4, 0, 1, 1);
-        }
-        
-        .alert-content {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          flex: 1;
-          min-width: 0;
-        }
-        
-        .alert-icon {
-          font-size: 20px;
-          line-height: 1;
-          flex-shrink: 0;
-          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-          animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        @keyframes iconBounce {
-          0% { transform: scale(0) rotate(-180deg); }
-          50% { transform: scale(1.2) rotate(10deg); }
-          100% { transform: scale(1) rotate(0deg); }
-        }
-        
-        .alert-message {
-          font-size: 14px;
-          line-height: 1.5;
-          flex: 1;
-          min-width: 0;
-          word-wrap: break-word;
-        }
-        
-        .alert-close {
-          background: rgba(255, 255, 255, 0.18);
-          border: 1px solid rgba(255, 255, 255, 0.24);
-          color: inherit;
-          width: 28px;
-          height: 28px;
-          border-radius: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 14px;
-          font-weight: bold;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          flex-shrink: 0;
-          backdrop-filter: blur(4px);
-        }
-        
-        .alert-close:hover {
-          background: rgba(255, 255, 255, 0.28);
-          transform: scale(1.1) rotate(90deg);
-        }
-        
-        .alert-close:active {
-          transform: scale(0.95) rotate(90deg);
-        }
-        
-        .alert-progress {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          height: 4px;
-          background: linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.85),
-            rgba(255, 255, 255, 0.45)
-          );
-          animation: progressShrink linear forwards;
-          border-radius: 0 0 16px 16px;
-          box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        @keyframes progressShrink {
-          0% { 
-            width: 100%; 
-            opacity: 1;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/70 p-3 space-y-3", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-400", children: [
+        t("home.page"),
+        " ",
+        page,
+        " • ",
+        shown,
+        " / ",
+        total,
+        " ",
+        t("home.states")
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            onClick: onPrevious,
+            disabled: !hasPreviousPage || loading,
+            className: "h-9 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 text-sm font-semibold text-gray-700 dark:text-gray-200 disabled:opacity-40",
+            children: t("common.previous")
           }
-          90% {
-            opacity: 1;
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            onClick: onNext,
+            disabled: !hasMore || loading,
+            className: "h-9 rounded-md border border-primary-500 bg-primary px-3 text-sm font-semibold text-white disabled:opacity-40",
+            children: t("common.next")
           }
-          100% { 
-            width: 0%; 
-            opacity: 0;
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-2 items-end", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "space-y-1", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-medium text-gray-600 dark:text-gray-300", children: t("home.from") }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "input",
+          {
+            type: "date",
+            value: fromDate,
+            onChange: (event) => setFromDate(event.target.value),
+            className: "h-9 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 text-sm"
           }
-        }
-        
-        /* Light theme adjustments */
-        .light-theme .custom-alert {
-          background: var(--alert-bg-light);
-          color: var(--alert-text-light);
-          box-shadow: 
-            0 10px 40px rgba(0, 0, 0, 0.15),
-            0 2px 8px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.5);
-          border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        .light-theme .alert-close {
-          background: rgba(0, 0, 0, 0.1);
-          border-color: rgba(0, 0, 0, 0.14);
-          color: inherit;
-        }
-        
-        .light-theme .alert-close:hover {
-          background: rgba(0, 0, 0, 0.15);
-        }
-        
-        .light-theme .alert-progress {
-          background: linear-gradient(
-            90deg,
-            rgba(0, 0, 0, 0.25),
-            rgba(0, 0, 0, 0.15)
-          );
-        }
-        
-        /* Mobile responsive */
-        @media (max-width: 640px) {
-          .custom-alert {
-            min-width: 280px;
-            max-width: calc(100vw - 32px);
-            padding: 14px 16px;
-            bottom: -100px;
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "space-y-1", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-medium text-gray-600 dark:text-gray-300", children: t("home.to") }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "input",
+          {
+            type: "date",
+            value: toDate,
+            onChange: (event) => setToDate(event.target.value),
+            className: "h-9 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 text-sm"
           }
-          
-          .custom-alert.visible {
-            bottom: 20px;
-          }
-          
-          .alert-message {
-            font-size: 13px;
-          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          onClick: onApply,
+          className: "h-9 rounded-md border border-primary-500 bg-primary px-3 text-sm font-semibold text-white disabled:opacity-60",
+          disabled: loading,
+          children: t("home.apply")
         }
-      ` })
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          onClick: onClear,
+          className: "h-9 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 text-sm font-semibold text-gray-700 dark:text-gray-200 disabled:opacity-60",
+          disabled: loading,
+          children: t("home.clear")
+        }
+      )
+    ] })
   ] });
 }
-const HomePage = ({ onNavigateToOrders }) => {
-  const { user, savedAccounts, switchAccount } = useAuth();
-  const { t } = useLanguage();
-  const [states, setStates] = reactExports.useState([]);
-  const [loading, setLoading] = reactExports.useState(true);
-  const [error, setError] = reactExports.useState(null);
+function HomeHeader({
+  user,
+  t,
+  onOpenSwitchPopup
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center space-y-3", children: [
+    user && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-md font-semibold text-gray-900 dark:text-white", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-normal text-gray-500 dark:text-gray-400", children: [
+          t("orders.name"),
+          ":"
+        ] }),
+        user.name || "User"
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          onClick: onOpenSwitchPopup,
+          className: "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+          children: [
+            t("settings.switch"),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronRight, { className: "w-3 h-3" })
+          ]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white mb-2", children: t("home.savedStates") })
+  ] });
+}
+function SavedStateCard({
+  state,
+  index,
+  onOpenRtd,
+  onOpenHandover,
+  t
+}) {
+  var _a, _b;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      className: "relative w-full grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-2 bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative w-full h-full flex items-center text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-200", children: state.timestamp || "No timestamp" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full grid grid-cols-2 gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              className: "text-left bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2 border border-blue-200 dark:border-blue-800 active:bg-blue-100 dark:active:bg-blue-900/30 transition-colors duration-200 cursor-pointer",
+              onClick: () => onOpenRtd(state),
+              children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center active:bg-blue-200 dark:active:bg-blue-900/50 transition-colors duration-200", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Package, { className: "w-5 h-5 text-blue-600 dark:text-blue-400" }) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: t("home.rtd") }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-lg text-gray-600 dark:text-gray-400", children: [
+                    ((_a = state.rtd) == null ? void 0 : _a.length) || 0,
+                    " ",
+                    t("home.items")
+                  ] })
+                ] })
+              ] })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              className: "text-left bg-purple-50 dark:bg-purple-900/20 rounded-lg p-2 border border-purple-200 dark:border-purple-800 active:bg-purple-100 dark:active:bg-purple-900/30 transition-colors duration-200 cursor-pointer",
+              onClick: () => onOpenHandover(state),
+              children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center active:bg-purple-200 dark:active:bg-purple-900/50 transition-colors duration-200", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Truck, { className: "w-5 h-5 text-purple-600 dark:text-purple-400" }) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: t("home.handover") }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-lg text-gray-600 dark:text-gray-400", children: [
+                    ((_b = state.handover) == null ? void 0 : _b.length) || 0,
+                    " ",
+                    t("home.items")
+                  ] })
+                ] })
+              ] })
+            }
+          )
+        ] })
+      ]
+    },
+    state.id || index
+  );
+}
+function SwitchAccountPopup({
+  open,
+  visible,
+  savedAccounts,
+  user,
+  switchingUsername,
+  t,
+  onClose,
+  onSwitch
+}) {
+  if (!open) return null;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: `fixed inset-0 z-2147483645 flex items-end sm:items-center justify-center p-4 transition-all duration-200 ${visible ? "bg-black/30 backdrop-blur-sm opacity-100" : "bg-black/0 backdrop-blur-none opacity-0"}`,
+      onClick: (event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      },
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          className: `w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 transform transition-all duration-200 ${visible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-3 scale-95"}`,
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-3", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-gray-100", children: t("settings.switchAccount") }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  className: "text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600",
+                  onClick: onClose,
+                  children: t("common.close")
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-2 max-h-[50svh] overflow-y-auto custom-scrollbar", children: savedAccounts.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: t("settings.noSavedAccounts") }) : savedAccounts.map((account) => {
+              const isCurrent = String(account.username || "").toLowerCase() === String((user == null ? void 0 : user.username) || "").toLowerCase();
+              const isSwitching = switchingUsername === account.username;
+              return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  disabled: isCurrent || isSwitching,
+                  onClick: () => onSwitch(account.username),
+                  className: `w-full flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${isCurrent ? "border-primary-400 bg-primary-50 dark:bg-primary-900/30" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"} ${isSwitching ? "opacity-70" : ""}`,
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-gray-900 dark:text-white truncate", children: account.name || t("settings.unnamed") }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-300 truncate", children: [
+                        "@",
+                        account.username
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-medium text-gray-500 dark:text-gray-400", children: isCurrent ? t("settings.current") : isSwitching ? t("common.loading") : t("settings.switch") })
+                  ]
+                },
+                account.username
+              );
+            }) })
+          ]
+        }
+      )
+    }
+  );
+}
+function useAccountSwitch({
+  user,
+  switchAccount,
+  t
+}) {
   const [showSwitchPopup, setShowSwitchPopup] = reactExports.useState(false);
   const [switchPopupVisible, setSwitchPopupVisible] = reactExports.useState(false);
   const [switchingUsername, setSwitchingUsername] = reactExports.useState(
@@ -27240,197 +27506,361 @@ const HomePage = ({ onNavigateToOrders }) => {
     });
     closeSwitchPopup();
   };
+  return {
+    showSwitchPopup,
+    switchPopupVisible,
+    switchingUsername,
+    alert,
+    setAlert,
+    openSwitchPopup,
+    closeSwitchPopup,
+    handleQuickSwitch
+  };
+}
+async function getSharedOwnerIds(userId) {
+  if (!userId) return [];
+  const { data, error } = await supabase.from("shared_access_users").select("owner_user_id").eq("shared_with_user_id", userId).eq("is_active", true).eq("member_access_enabled", true);
+  if (error) throw new Error(error.message);
+  return Array.from(
+    new Set(
+      (data || []).map((row) => row.owner_user_id).filter((value) => Boolean(value))
+    )
+  );
+}
+function mapLegacyVisibilityRows(rows, ownerColumn) {
+  return (rows || []).map((row) => {
+    const ownerId = (row == null ? void 0 : row[ownerColumn]) || null;
+    return {
+      ...row,
+      created_by: (row == null ? void 0 : row.created_by) ?? ownerId,
+      user_id: (row == null ? void 0 : row.user_id) ?? ownerId
+    };
+  });
+}
+async function getVisibleRows({
+  table,
+  ownerColumn,
+  currentUserId,
+  select = "*",
+  orderBy,
+  ascending = false,
+  extraEq = {}
+}) {
+  const queries = [];
+  let publicQuery = supabase.from(table).select(select).eq("status", "public");
+  publicQuery = publicQuery.is("deleted_at", null);
+  Object.entries(extraEq).forEach(([key, value]) => {
+    if (typeof value === "undefined") return;
+    if (value === null) {
+      publicQuery = publicQuery.is(key, null);
+      return;
+    }
+    publicQuery = publicQuery.eq(key, value);
+  });
+  publicQuery = publicQuery.order(orderBy, { ascending });
+  queries.push(publicQuery);
+  if (currentUserId) {
+    let ownQuery = supabase.from(table).select(select).eq(ownerColumn, currentUserId);
+    ownQuery = ownQuery.is("deleted_at", null);
+    Object.entries(extraEq).forEach(([key, value]) => {
+      if (typeof value === "undefined") return;
+      if (value === null) {
+        ownQuery = ownQuery.is(key, null);
+        return;
+      }
+      ownQuery = ownQuery.eq(key, value);
+    });
+    ownQuery = ownQuery.order(orderBy, { ascending });
+    queries.push(ownQuery);
+    const sharedOwnerIds = await getSharedOwnerIds(currentUserId);
+    if (sharedOwnerIds.length > 0) {
+      let sharedQuery = supabase.from(table).select(select).eq("status", "shared").in(ownerColumn, sharedOwnerIds).is("deleted_at", null);
+      Object.entries(extraEq).forEach(([key, value]) => {
+        if (typeof value === "undefined") return;
+        if (value === null) {
+          sharedQuery = sharedQuery.is(key, null);
+          return;
+        }
+        sharedQuery = sharedQuery.eq(key, value);
+      });
+      sharedQuery = sharedQuery.order(orderBy, { ascending });
+      queries.push(sharedQuery);
+    }
+  }
+  const results = await Promise.all(queries);
+  results.forEach(({ error }) => {
+    if (error) throw new Error(error.message);
+  });
+  const merged = results.flatMap(({ data }) => data || []);
+  const dedup = /* @__PURE__ */ new Map();
+  merged.forEach((row) => {
+    if (row == null ? void 0 : row.id) dedup.set(row.id, row);
+  });
+  return Array.from(dedup.values());
+}
+const ORDERS_STATES_PAGE_SIZE = 4;
+function requireUserId$1() {
+  const userId = getUserId();
+  if (!userId) throw new Error("Not authenticated");
+  return userId;
+}
+function mapOrderState(row) {
+  return {
+    ...row,
+    order_data: row.state_data
+  };
+}
+async function listOrderStates() {
+  const rows = await getVisibleRows({
+    table: "orders_states",
+    ownerColumn: "user_id",
+    currentUserId: getUserId(),
+    orderBy: "created_at",
+    ascending: false,
+    extraEq: { deleted_at: null }
+  });
+  return mapLegacyVisibilityRows(rows, "user_id").map(mapOrderState);
+}
+function normalizePositiveInt(value, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return fallback;
+  }
+  return Math.floor(parsed);
+}
+function toOptionalDate(value) {
+  const normalized = String(value || "").trim();
+  return normalized || null;
+}
+async function listOwnOrderStatesPaged(options = {}) {
+  const userId = requireUserId$1();
+  const page = normalizePositiveInt(options.page, 1);
+  const limit = normalizePositiveInt(options.limit, ORDERS_STATES_PAGE_SIZE);
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  const startDate = toOptionalDate(options.startDate);
+  const endDate = toOptionalDate(options.endDate);
+  let query = supabase.from("orders_states").select("*", { count: "exact" }).eq("user_id", userId).is("deleted_at", null).order("created_at", { ascending: false });
+  if (startDate) {
+    query = query.gte("created_at", startDate);
+  }
+  if (endDate) {
+    query = query.lte("created_at", endDate);
+  }
+  const { data, error, count } = await query.range(from, to);
+  if (error) throw new Error(error.message);
+  const rows = mapLegacyVisibilityRows(data || [], "user_id").map(
+    mapOrderState
+  );
+  const total = Number(count || 0);
+  return {
+    rows,
+    page,
+    limit,
+    total,
+    hasMore: page * limit < total
+  };
+}
+function buildDateRangeIso(fromDate, toDate) {
+  return {
+    startDate: fromDate ? `${fromDate}T00:00:00.000Z` : null,
+    endDate: toDate ? `${toDate}T23:59:59.999Z` : null
+  };
+}
+function mapStateRows(rows = []) {
+  return rows.map((item) => {
+    var _a, _b;
+    return {
+      ...(_a = item == null ? void 0 : item.order_data) == null ? void 0 : _a.states,
+      id: item == null ? void 0 : item.id,
+      timestamp: (_b = item == null ? void 0 : item.order_data) == null ? void 0 : _b.timestamp,
+      userId: String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "")
+    };
+  });
+}
+function useHomeOrderStates(userId) {
+  const [states, setStates] = reactExports.useState([]);
+  const [loading, setLoading] = reactExports.useState(true);
+  const [error, setError] = reactExports.useState(null);
+  const [page, setPage] = reactExports.useState(1);
+  const [totalStates, setTotalStates] = reactExports.useState(0);
+  const [hasMore, setHasMore] = reactExports.useState(false);
+  const [fromDate, setFromDate] = reactExports.useState("");
+  const [toDate, setToDate] = reactExports.useState("");
+  const [appliedFromDate, setAppliedFromDate] = reactExports.useState("");
+  const [appliedToDate, setAppliedToDate] = reactExports.useState("");
+  const hasPreviousPage = page > 1;
   reactExports.useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchStates = async () => {
+      if (!userId) {
+        setStates([]);
+        setTotalStates(0);
+        setHasMore(false);
+        setLoading(false);
+        return;
+      }
       try {
-        setError(null);
         setLoading(true);
-        const response = await listOrderStates();
-        const currentUserId = String((user == null ? void 0 : user.id) || "");
-        const ownStates = (response || []).filter(
-          (item) => String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "") === currentUserId
-        );
-        const nextStates = (ownStates == null ? void 0 : ownStates.map((item) => {
-          var _a, _b;
-          return {
-            ...(_a = item == null ? void 0 : item.order_data) == null ? void 0 : _a.states,
-            id: item == null ? void 0 : item.id,
-            timestamp: (_b = item == null ? void 0 : item.order_data) == null ? void 0 : _b.timestamp,
-            userId: String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "")
-          };
-        })) || [];
-        setStates(nextStates);
+        setError(null);
+        const dateRange = buildDateRangeIso(appliedFromDate, appliedToDate);
+        const response = await listOwnOrderStatesPaged({
+          page,
+          limit: ORDERS_STATES_PAGE_SIZE,
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate
+        });
+        setStates(mapStateRows((response == null ? void 0 : response.rows) || []));
+        setTotalStates(Number((response == null ? void 0 : response.total) || 0));
+        setHasMore(Boolean(response == null ? void 0 : response.hasMore));
       } catch (err) {
-        setError(err.message);
+        setError(err instanceof Error ? err.message : "Failed to load states");
       } finally {
         setLoading(false);
       }
     };
-    fetchOrders();
-  }, [user == null ? void 0 : user.id]);
-  const handleRTDClick = (e, state) => {
-    e.stopPropagation();
+    fetchStates();
+  }, [appliedFromDate, appliedToDate, page, userId]);
+  const paginationLabel = reactExports.useMemo(
+    () => ({
+      page,
+      shown: states.length,
+      total: totalStates
+    }),
+    [page, states.length, totalStates]
+  );
+  const handleApplyDateFilter = () => {
+    setAppliedFromDate(fromDate);
+    setAppliedToDate(toDate);
+    setPage(1);
+  };
+  const handleClearDateFilter = () => {
+    setFromDate("");
+    setToDate("");
+    setAppliedFromDate("");
+    setAppliedToDate("");
+    setPage(1);
+  };
+  const goPrevious = () => {
+    setPage((current) => Math.max(1, current - 1));
+  };
+  const goNext = () => {
+    setPage((current) => current + 1);
+  };
+  return {
+    states,
+    loading,
+    error,
+    fromDate,
+    toDate,
+    setFromDate,
+    setToDate,
+    paginationLabel,
+    hasPreviousPage,
+    hasMore,
+    handleApplyDateFilter,
+    handleClearDateFilter,
+    goPrevious,
+    goNext
+  };
+}
+const HomePage = ({ onNavigateToOrders }) => {
+  const { user, savedAccounts, switchAccount } = useAuth();
+  const { t } = useLanguage();
+  const {
+    states,
+    loading,
+    error,
+    fromDate,
+    toDate,
+    setFromDate,
+    setToDate,
+    paginationLabel,
+    hasPreviousPage,
+    hasMore,
+    handleApplyDateFilter,
+    handleClearDateFilter,
+    goPrevious,
+    goNext
+  } = useHomeOrderStates(user == null ? void 0 : user.id);
+  const {
+    showSwitchPopup,
+    switchPopupVisible,
+    switchingUsername,
+    alert,
+    setAlert,
+    openSwitchPopup,
+    closeSwitchPopup,
+    handleQuickSwitch
+  } = useAccountSwitch({ user, switchAccount, t });
+  const openState = (state, selectedType) => {
     onNavigateToOrders == null ? void 0 : onNavigateToOrders({
       ...state,
-      selectedType: "rtd",
+      selectedType,
       userId: (user == null ? void 0 : user.id) ?? state.userId
     });
   };
-  const handleHandoverClick = (e, state) => {
-    e.stopPropagation();
-    onNavigateToOrders == null ? void 0 : onNavigateToOrders({
-      ...state,
-      selectedType: "handover",
-      userId: (user == null ? void 0 : user.id) ?? state.userId
-    });
-  };
-  if (loading) {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-600 dark:text-gray-400", children: t("home.loadingStates") })
-    ] }) });
-  }
-  if (error) {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-center py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md mx-auto", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-red-700 dark:text-red-400", children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-6", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      LoadingWindow,
+      {
+        open: loading,
+        title: t("home.loadingStates"),
+        message: "Please wait while we sync saved order states"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(HomeHeader, { user, t, onOpenSwitchPopup: openSwitchPopup }),
+    !loading && error && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-center py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md mx-auto", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-red-700 dark:text-red-400", children: [
       t("common.error"),
       ": ",
       error
-    ] }) }) });
-  }
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center space-y-3", children: [
-      user && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-md font-semibold text-gray-900 dark:text-white", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-normal text-gray-500 dark:text-gray-400", children: [
-            t("orders.name"),
-            ":",
-            " "
-          ] }),
-          user.name || "User"
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            onClick: openSwitchPopup,
-            className: "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            children: [
-              t("settings.switch"),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronRight, { className: "w-3 h-3" })
-            ]
-          }
-        )
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white mb-2", children: t("home.savedStates") })
-    ] }),
-    states.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center py-12", children: [
+    ] }) }) }),
+    !loading && !error && states.length === 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center py-12", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Package, { size: 64, className: "mx-auto text-gray-400 mb-4" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-lg font-medium text-gray-900 dark:text-white mb-2", children: t("home.noSavedStatesFound") }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-600 dark:text-gray-400", children: t("home.noStatesCreated") })
-    ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative flex flex-col gap-4", children: states.map((state, index) => {
-      var _a, _b;
-      return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-        "div",
-        {
-          className: "relative w-full grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-2 bg-white dark:bg-gray-800 rounded-lg px-2 py-2 shadow-sm border border-gray-200 dark:border-gray-700 active:shadow-lg active:border-primary-300 dark:active:border-primary-600 transition-all duration-300 active:-translate-y-1",
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative w-full h-full flex items-center text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-200", children: state.timestamp || "No timestamp" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full grid grid-cols-2 gap-2", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "div",
-                {
-                  className: "bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2 border border-blue-200 dark:border-blue-800 active:bg-blue-100 dark:active:bg-blue-900/30 transition-colors duration-200 cursor-pointer",
-                  onClick: (e) => handleRTDClick(e, state),
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center active:bg-blue-200 dark:active:bg-blue-900/50 transition-colors duration-200", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Package, { className: "w-5 h-5 text-blue-600 dark:text-blue-400" }) }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: t("home.rtd") }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-lg text-gray-600 dark:text-gray-400", children: [
-                        ((_a = state.rtd) == null ? void 0 : _a.length) || 0,
-                        " ",
-                        t("home.items")
-                      ] })
-                    ] })
-                  ] })
-                }
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "div",
-                {
-                  className: "bg-purple-50 dark:bg-purple-900/20 rounded-lg p-2 border border-purple-200 dark:border-purple-800 active:bg-purple-100 dark:active:bg-purple-900/30 transition-colors duration-200 cursor-pointer",
-                  onClick: (e) => handleHandoverClick(e, state),
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center active:bg-purple-200 dark:active:bg-purple-900/50 transition-colors duration-200", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Truck, { className: "w-5 h-5 text-purple-600 dark:text-purple-400" }) }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: t("home.handover") }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-lg text-gray-600 dark:text-gray-400", children: [
-                        ((_b = state.handover) == null ? void 0 : _b.length) || 0,
-                        " ",
-                        t("home.items")
-                      ] })
-                    ] })
-                  ] })
-                }
-              )
-            ] })
-          ]
-        },
-        state.id || index
-      );
-    }) }),
-    showSwitchPopup && /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "div",
+    ] }),
+    !loading && !error && states.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative flex flex-col gap-4", children: states.map((state, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      SavedStateCard,
       {
-        className: `fixed inset-0 z-2147483645 flex items-end sm:items-center justify-center p-4 transition-all duration-200 ${switchPopupVisible ? "bg-black/30 backdrop-blur-sm opacity-100" : "bg-black/0 backdrop-blur-none opacity-0"}`,
-        onClick: (event) => {
-          if (event.target === event.currentTarget) {
-            closeSwitchPopup();
-          }
-        },
-        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "div",
-          {
-            className: `w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 transform transition-all duration-200 ${switchPopupVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-3 scale-95"}`,
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-3", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-gray-100", children: t("settings.switchAccount") }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "button",
-                  {
-                    type: "button",
-                    className: "text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600",
-                    onClick: closeSwitchPopup,
-                    children: t("common.close")
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-2 max-h-[50svh] overflow-y-auto custom-scrollbar", children: savedAccounts.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: t("settings.noSavedAccounts") }) : savedAccounts.map((account) => {
-                const isCurrent = String(account.username || "").toLowerCase() === String((user == null ? void 0 : user.username) || "").toLowerCase();
-                const isSwitching = switchingUsername === account.username;
-                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                  "button",
-                  {
-                    type: "button",
-                    disabled: isCurrent || isSwitching,
-                    onClick: () => handleQuickSwitch(account.username),
-                    className: `w-full flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${isCurrent ? "border-primary-400 bg-primary-50 dark:bg-primary-900/30" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"} ${isSwitching ? "opacity-70" : ""}`,
-                    children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-gray-900 dark:text-white truncate", children: account.name || t("settings.unnamed") }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-300 truncate", children: [
-                          "@",
-                          account.username
-                        ] })
-                      ] }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-medium text-gray-500 dark:text-gray-400", children: isCurrent ? t("settings.current") : isSwitching ? t("common.loading") : t("settings.switch") })
-                    ]
-                  },
-                  account.username
-                );
-              }) })
-            ]
-          }
-        )
+        state,
+        index,
+        onOpenRtd: (nextState) => openState(nextState, "rtd"),
+        onOpenHandover: (nextState) => openState(nextState, "handover"),
+        t
+      },
+      String(state.id || index)
+    )) }),
+    !loading && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      HomeFiltersFooter,
+      {
+        t,
+        fromDate,
+        toDate,
+        setFromDate,
+        setToDate,
+        loading,
+        onApply: handleApplyDateFilter,
+        onClear: handleClearDateFilter,
+        page: paginationLabel.page,
+        shown: paginationLabel.shown,
+        total: paginationLabel.total,
+        hasPreviousPage,
+        hasMore,
+        onPrevious: goPrevious,
+        onNext: goNext
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      SwitchAccountPopup,
+      {
+        open: showSwitchPopup,
+        visible: switchPopupVisible,
+        savedAccounts,
+        user,
+        switchingUsername,
+        t,
+        onClose: closeSwitchPopup,
+        onSwitch: handleQuickSwitch
       }
     ),
     alert && /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -32676,6 +33106,52 @@ const SwiperSlide = /* @__PURE__ */ reactExports.forwardRef(({
   })));
 });
 SwiperSlide.displayName = "SwiperSlide";
+const SIMPLE_ORDERS_VIEW_KEY = "es_orders_simple_orders_view";
+const SIMPLE_ORDERS_VIEW_EVENT = "es_orders_simple_orders_view_change";
+function readSimpleOrdersView() {
+  const raw = localStorage.getItem(SIMPLE_ORDERS_VIEW_KEY);
+  if (raw === null) return true;
+  return raw === "true";
+}
+const useSimpleOrdersView = () => {
+  const [isSimpleOrdersViewEnabled, setIsSimpleOrdersViewEnabled] = reactExports.useState(() => readSimpleOrdersView());
+  reactExports.useEffect(() => {
+    const syncFromStorage = () => {
+      setIsSimpleOrdersViewEnabled(readSimpleOrdersView());
+    };
+    const handleStorage = (event) => {
+      if (event.key && event.key !== SIMPLE_ORDERS_VIEW_KEY) return;
+      syncFromStorage();
+    };
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener(SIMPLE_ORDERS_VIEW_EVENT, syncFromStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener(SIMPLE_ORDERS_VIEW_EVENT, syncFromStorage);
+    };
+  }, []);
+  const setSimpleOrdersViewEnabled = reactExports.useCallback((enabled) => {
+    localStorage.setItem(SIMPLE_ORDERS_VIEW_KEY, String(enabled));
+    setIsSimpleOrdersViewEnabled(enabled);
+    window.dispatchEvent(new Event(SIMPLE_ORDERS_VIEW_EVENT));
+  }, []);
+  const toggleSimpleOrdersView = reactExports.useCallback(() => {
+    setSimpleOrdersViewEnabled(!isSimpleOrdersViewEnabled);
+  }, [isSimpleOrdersViewEnabled, setSimpleOrdersViewEnabled]);
+  return {
+    isSimpleOrdersViewEnabled,
+    setSimpleOrdersViewEnabled,
+    toggleSimpleOrdersView
+  };
+};
+function formatIndianNumber(x) {
+  if (x === "" || x === void 0 || x === null) return "";
+  const num = Number(x);
+  if (isNaN(num)) return x;
+  const [intPart, decPart] = x.toString().split(".");
+  const formattedInt = new Intl.NumberFormat("en-IN").format(Number(intPart));
+  return decPart !== void 0 ? `${formattedInt}.${decPart}` : formattedInt;
+}
 var DefaultContext = {
   color: void 0,
   size: void 0,
@@ -32811,52 +33287,6 @@ function FaShopify(props) {
 }
 function SiFlipkart(props) {
   return GenIcon({ "attr": { "role": "img", "viewBox": "0 0 24 24" }, "child": [{ "tag": "path", "attr": { "d": "M3.833 1.333a.993.993 0 0 0-.333.061V1c0-.551.449-1 1-1h14.667c.551 0 1 .449 1 1v.333H3.833zm17.334 2.334H2.833c-.551 0-1 .449-1 1V23c0 .551.449 1 1 1h7.3l1.098-5.645h-2.24c-.051 0-5.158-.241-5.158-.241l4.639-.327-.078-.366-1.978-.285 1.882-.158-.124-.449-3.075-.467s3.341-.373 3.392-.373h3.232l.247-1.331c.289-1.616.945-2.807 1.973-3.693 1.033-.892 2.344-1.332 3.937-1.332.643 0 1.053.151 1.231.463.118.186.201.516.279.859.074.352.14.671.095.903-.057.345-.461.465-1.197.465h-.253c-1.327 0-2.134.763-2.405 2.31l-.243 1.355h1.54c.574 0 .781.402.622 1.306-.17.941-.539 1.36-1.111 1.36H14.9L13.804 24h7.362c.551 0 1-.449 1-1V4.667a1 1 0 0 0-.999-1zM20.5 2.333A.334.334 0 0 0 20.167 2H3.833a.334.334 0 0 0-.333.333V3h17v-.667z" }, "child": [] }] })(props);
-}
-const SIMPLE_ORDERS_VIEW_KEY = "es_orders_simple_orders_view";
-const SIMPLE_ORDERS_VIEW_EVENT = "es_orders_simple_orders_view_change";
-function readSimpleOrdersView() {
-  const raw = localStorage.getItem(SIMPLE_ORDERS_VIEW_KEY);
-  if (raw === null) return true;
-  return raw === "true";
-}
-const useSimpleOrdersView = () => {
-  const [isSimpleOrdersViewEnabled, setIsSimpleOrdersViewEnabled] = reactExports.useState(() => readSimpleOrdersView());
-  reactExports.useEffect(() => {
-    const syncFromStorage = () => {
-      setIsSimpleOrdersViewEnabled(readSimpleOrdersView());
-    };
-    const handleStorage = (event) => {
-      if (event.key && event.key !== SIMPLE_ORDERS_VIEW_KEY) return;
-      syncFromStorage();
-    };
-    window.addEventListener("storage", handleStorage);
-    window.addEventListener(SIMPLE_ORDERS_VIEW_EVENT, syncFromStorage);
-    return () => {
-      window.removeEventListener("storage", handleStorage);
-      window.removeEventListener(SIMPLE_ORDERS_VIEW_EVENT, syncFromStorage);
-    };
-  }, []);
-  const setSimpleOrdersViewEnabled = reactExports.useCallback((enabled) => {
-    localStorage.setItem(SIMPLE_ORDERS_VIEW_KEY, String(enabled));
-    setIsSimpleOrdersViewEnabled(enabled);
-    window.dispatchEvent(new Event(SIMPLE_ORDERS_VIEW_EVENT));
-  }, []);
-  const toggleSimpleOrdersView = reactExports.useCallback(() => {
-    setSimpleOrdersViewEnabled(!isSimpleOrdersViewEnabled);
-  }, [isSimpleOrdersViewEnabled, setSimpleOrdersViewEnabled]);
-  return {
-    isSimpleOrdersViewEnabled,
-    setSimpleOrdersViewEnabled,
-    toggleSimpleOrdersView
-  };
-};
-function formatIndianNumber(x) {
-  if (x === "" || x === void 0 || x === null) return "";
-  const num = Number(x);
-  if (isNaN(num)) return x;
-  const [intPart, decPart] = x.toString().split(".");
-  const formattedInt = new Intl.NumberFormat("en-IN").format(Number(intPart));
-  return decPart !== void 0 ? `${formattedInt}.${decPart}` : formattedInt;
 }
 const calculateWeightInGrams = (allQuantityPerKg, unit, unitType) => {
   const type = unitType.toLowerCase();
@@ -33025,6 +33455,18 @@ const OrderCard = ({
       setIsItemsBlinkOn(false);
     };
   }, [shouldBlinkItems, orderIdentity, isActive]);
+  const profitIcon = (price, quantity) => {
+    const p = Number(price);
+    const q = Number(quantity);
+    if (isNaN(p) || isNaN(q)) return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, {});
+    const actualPrice = p / q;
+    if (actualPrice > 300) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(Heart, { fill: "#ff0000", className: "w-5 h-5 text-red-700" });
+    } else if (actualPrice > 200) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(Heart, { fill: "#ffff00", className: "w-5 h-5 text-yellow-500" });
+    }
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, {});
+  };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
@@ -33104,7 +33546,7 @@ const OrderCard = ({
                   className: `relative w-full my-2 gap-1 grid grid-cols-1 ${hasMultipleItems ? "grid-cols-[1fr_50px] px-10" : ""}`,
                   children: [
                     marketplaceInfo && (marketplaceInfo.label === "Flipkart" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-gray-900/80 p-0.5 border border-gray-700 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SiFlipkart, { className: "size-6 text-yellow-400" }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute left-1 top-1 z-20 inline-flex items-center justify-center rounded-md bg-white/90 p-1 border border-gray-200 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaShopify, { className: "size-6 text-[#81BF37]" }) })),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full max-w-[min(45vw,45vh)] min-h-[min(30vw,30vh)] max-h-[min(45vw,45vh)]", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative w-full max-w-[min(70vw,70vh)] min-h-[min(30vw,30vh)] max-h-[min(75vw,75vh)]", children: [
                       isActive && isImageLoading && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 z-10", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" }) }),
                       /* @__PURE__ */ jsxRuntimeExports.jsx(
                         "img",
@@ -33143,7 +33585,7 @@ const OrderCard = ({
                   className: `font-medium text-gray-900 dark:text-white line-clamp-6 leading-relaxed ${isSimpleOrdersViewEnabled ? "flex justify-evenly text-md" : "text-sm"}`,
                   children: [
                     isSimpleOrdersViewEnabled ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-bold", children: simpleSkuQuantity }) : item.title,
-                    isSimpleOrdersViewEnabled && Number(item.price || "0") / Number(item.quantity) > 300 && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xl", children: "❤️" }),
+                    isSimpleOrdersViewEnabled && profitIcon(item.price, item.quantity),
                     isSimpleOrdersViewEnabled ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-bold", children: [
                       "₹",
                       formatIndianNumber(item.price),
@@ -33153,7 +33595,7 @@ const OrderCard = ({
                       t("orders.price"),
                       ": ₹",
                       formatIndianNumber(item.price),
-                      Number(item.price || "0") / Number(item.quantity) > 300 ? " ❤️" : ""
+                      profitIcon(item.price, item.quantity)
                     ] })
                   ]
                 }
@@ -33167,7 +33609,36 @@ const OrderCard = ({
                   onCopy: onCopySku,
                   copied: copiedSku
                 }
-              )
+              ),
+              isActive && orderItemsCount > 1 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full mt-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-900/40", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-2 py-1 border-b border-gray-200 dark:border-gray-700", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-xs font-semibold text-gray-800 dark:text-gray-100", children: t("orders.orderItems") }) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "overflow-auto max-h-40", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("table", { className: "w-full text-xs", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("thead", { className: "bg-gray-100/70 dark:bg-gray-800/70 text-gray-700 dark:text-gray-200", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("th", { className: "px-2 py-1 text-left font-semibold", children: "Image" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("th", { className: "px-2 py-1 text-left font-semibold", children: t("orders.name") }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("th", { className: "px-2 py-1 text-right font-semibold", children: t("orders.quantity") })
+                  ] }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { children: order.orderItems.map((orderItem, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "tr",
+                    {
+                      className: "border-t border-gray-100 dark:border-gray-800 text-gray-800 dark:text-gray-100",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-2 py-1", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "img",
+                          {
+                            src: String((orderItem == null ? void 0 : orderItem.primaryImageUrl) || ""),
+                            alt: String((orderItem == null ? void 0 : orderItem.title) || "item"),
+                            className: "h-8 w-8 rounded border border-gray-200 dark:border-gray-700 object-contain bg-gray-50 dark:bg-gray-800"
+                          }
+                        ) }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-2 py-1 max-w-45 truncate", children: String((orderItem == null ? void 0 : orderItem.title) || (orderItem == null ? void 0 : orderItem.sku) || "-") }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-2 py-1 text-right", children: Number((orderItem == null ? void 0 : orderItem.quantity) || 0) })
+                      ]
+                    },
+                    `${String((orderItem == null ? void 0 : orderItem.sku) || "item")}-${index}`
+                  )) })
+                ] }) })
+              ] })
             ]
           }
         ),
@@ -33341,6 +33812,217 @@ const InfoCell = ({ label, value }) => /* @__PURE__ */ jsxRuntimeExports.jsxs("d
   /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-medium text-gray-500 dark:text-gray-400 mb-0.5", children: label }),
   /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: value || "N/A" })
 ] });
+function toSafeNumber(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+function getSku(item) {
+  return String((item == null ? void 0 : item.newSku) || (item == null ? void 0 : item.sku) || "-").trim() || "-";
+}
+function normalizeGroupKey(value) {
+  return String(value).trim().toLowerCase().replace(/\s+/g, " ");
+}
+function getImageUrl(item) {
+  return String((item == null ? void 0 : item.primaryImageUrl) || "").trim();
+}
+function getProductName(item, details) {
+  return String((details == null ? void 0 : details.label) || (details == null ? void 0 : details.name) || (item == null ? void 0 : item.title) || "NA").trim();
+}
+function getUnitWeight(details) {
+  return toSafeNumber(Number.parseFloat(String((details == null ? void 0 : details.weight) || 0)));
+}
+function OrdersProductDetailsCard({
+  orders,
+  resolveProduct
+}) {
+  const { rows, summary } = reactExports.useMemo(() => {
+    const productMap = /* @__PURE__ */ new Map();
+    for (const order of orders) {
+      const items = Array.isArray(order == null ? void 0 : order.orderItems) ? order.orderItems : [];
+      const shipmentSeenKeys = /* @__PURE__ */ new Set();
+      for (const item of items) {
+        const details = resolveProduct(item);
+        const sku = getSku(item);
+        const displayName = getProductName(item, details);
+        const groupKey = normalizeGroupKey(displayName || sku) || sku;
+        const quantity = Math.max(1, toSafeNumber(item == null ? void 0 : item.quantity));
+        const totalPrice = toSafeNumber(item == null ? void 0 : item.price);
+        const unitWeight = getUnitWeight(details);
+        const totalWeight = unitWeight * quantity;
+        const current = productMap.get(groupKey) || {
+          key: groupKey,
+          sku,
+          name: displayName,
+          imageUrl: getImageUrl(item),
+          shipmentCount: 0,
+          itemQuantity: 0,
+          totalWeight: 0,
+          totalPrice: 0,
+          avgUnitWeight: 0,
+          avgUnitPrice: 0
+        };
+        current.itemQuantity += quantity;
+        current.totalWeight += totalWeight;
+        current.totalPrice += totalPrice;
+        if (!shipmentSeenKeys.has(groupKey)) {
+          current.shipmentCount += 1;
+          shipmentSeenKeys.add(groupKey);
+        }
+        if (!current.imageUrl) {
+          current.imageUrl = getImageUrl(item);
+        }
+        productMap.set(groupKey, current);
+      }
+    }
+    const nextRows = Array.from(productMap.values()).sort(
+      (a, b) => b.totalPrice - a.totalPrice
+    );
+    for (const row of nextRows) {
+      const qty = Math.max(1, row.itemQuantity);
+      row.avgUnitWeight = row.totalWeight / qty;
+      row.avgUnitPrice = row.totalPrice / qty;
+    }
+    const nextSummary = nextRows.reduce(
+      (acc, row) => {
+        acc.itemQuantity += row.itemQuantity;
+        acc.totalWeight += row.totalWeight;
+        acc.totalPrice += row.totalPrice;
+        return acc;
+      },
+      {
+        productCount: nextRows.length,
+        shipmentCount: orders.length,
+        itemQuantity: 0,
+        totalWeight: 0,
+        totalPrice: 0
+      }
+    );
+    return {
+      rows: nextRows,
+      summary: nextSummary
+    };
+  }, [orders, resolveProduct]);
+  if (!rows.length) {
+    return null;
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/70 p-2 space-y-2 overflow-hidden flex flex-col", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-white", children: "Product Details Totals" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-400", children: [
+        summary.productCount,
+        " products • ",
+        summary.shipmentCount,
+        " shipments"
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-3 md:grid-cols-4 gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Quantity",
+          value: String(formatIndianNumber(summary.itemQuantity))
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Products",
+          value: String(formatIndianNumber(summary.productCount))
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Weight",
+          value: `${formatIndianNumber(summary.totalWeight.toFixed(2))} g`
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InfoTile,
+        {
+          label: "Total Cost",
+          value: `₹${formatIndianNumber(summary.totalPrice.toFixed(2))}`
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 min-h-0 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 p-2 space-y-2", children: rows.map((row, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "article",
+      {
+        className: "rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/70 p-2",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 min-w-0", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs font-semibold text-gray-500 dark:text-gray-400 w-5 shrink-0", children: index + 1 }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "size-10 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-hidden shrink-0", children: row.imageUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "img",
+                {
+                  src: row.imageUrl,
+                  alt: row.name,
+                  className: "w-full h-full object-cover"
+                }
+              ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full h-full flex items-center justify-center text-[10px] text-gray-400", children: "IMG" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white wrap-break-word", children: row.name }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400 wrap-break-word", children: row.sku })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-right shrink-0", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400", children: "Qty" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-bold text-gray-900 dark:text-white", children: formatIndianNumber(row.itemQuantity) })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 grid grid-cols-2 md:grid-cols-4 gap-1.5", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MetricCell,
+              {
+                label: "Shipments",
+                value: String(formatIndianNumber(row.shipmentCount))
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MetricCell,
+              {
+                label: "Total Weight",
+                value: `${formatIndianNumber(row.totalWeight.toFixed(2))} g`
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MetricCell,
+              {
+                label: "Unit Weight",
+                value: `${formatIndianNumber(row.avgUnitWeight.toFixed(2))} g`
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MetricCell,
+              {
+                label: "Unit Price",
+                value: `₹${formatIndianNumber(row.avgUnitPrice.toFixed(2))}`
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-1.5 flex items-center justify-end", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: [
+            "Total: ₹",
+            formatIndianNumber(row.totalPrice.toFixed(2))
+          ] }) })
+        ]
+      },
+      `${row.key}-${index}`
+    )) })
+  ] });
+}
+function InfoTile({ label, value }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 px-2 py-1", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400", children: label }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: value })
+  ] });
+}
+function MetricCell({ label, value }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded border border-gray-200 dark:border-gray-700 bg-gray-50/70 dark:bg-gray-800/60 px-1.5 py-1", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] text-gray-500 dark:text-gray-400", children: label }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold text-gray-900 dark:text-white", children: value })
+  ] });
+}
 const HOTZONE_DEBUG_MODE = false;
 const SWIPE_TRANSITION_MS = 220;
 const EDGE_RESISTANCE_RATIO = 0.28;
@@ -33369,6 +34051,7 @@ const OrderPagesList = ({
   const [isOrderPickerVisible, setIsOrderPickerVisible] = reactExports.useState(false);
   const [orderJumpValue, setOrderJumpValue] = reactExports.useState("");
   const [scrollDirection, setScrollDirection] = reactExports.useState(0);
+  const totalSlides = orders.length + 1;
   reactExports.useEffect(() => {
     if (selectedOrderIndex === null) return;
     const previous = previousSelectedIndexRef.current;
@@ -33401,7 +34084,7 @@ const OrderPagesList = ({
     }, 180);
   };
   const pickerIndexes = reactExports.useMemo(() => {
-    const total = orders.length;
+    const total = totalSlides;
     if (total === 0) return [];
     if (total <= 120 || selectedOrderIndex === null) {
       return Array.from({ length: total }, (_, i) => i);
@@ -33413,11 +34096,11 @@ const OrderPagesList = ({
       indexSet.add(index);
     }
     return Array.from(indexSet).sort((a, b) => a - b);
-  }, [orders.length, selectedOrderIndex]);
+  }, [selectedOrderIndex, totalSlides]);
   const handleJumpToOrder = () => {
     const parsed = Number.parseInt(orderJumpValue, 10);
     if (Number.isNaN(parsed) || parsed < 1) return;
-    const targetIndex = Math.min(Math.max(parsed - 1, 0), orders.length - 1);
+    const targetIndex = Math.min(Math.max(parsed - 1, 0), totalSlides - 1);
     onSelectOrder(targetIndex);
     closeOrderPicker();
   };
@@ -33431,7 +34114,7 @@ const OrderPagesList = ({
   };
   if (!orders.length || selectedOrderIndex === null) return null;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full py-1 md:py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20 relative overflow-hidden", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
       Swiper2,
       {
         modules: [A11y],
@@ -33457,67 +34140,76 @@ const OrderPagesList = ({
           }
         },
         onSlideChange: handleSlideChange,
-        children: orders.map((order, index) => {
-          var _a;
-          const isActive = index === selectedOrderIndex;
-          const isOddPage = index % 2 === 1;
-          const isEvenNumberedCard = (index + 1) % 2 === 0;
-          const distance = Math.abs(selectedOrderIndex - index);
-          const scale = Math.max(0.92, 1 - distance * 0.08);
-          const opacity = Math.max(0.72, 1 - distance * 0.2);
-          const referenceIndex = selectedOrderIndex;
-          const remainingRight = orders.length - 1 - referenceIndex;
-          const remainingLeft = referenceIndex;
-          const renderBehind = scrollDirection > 0 ? BACKWARD_RENDER_WINDOW : FORWARD_RENDER_WINDOW;
-          const renderAhead = scrollDirection < 0 ? BACKWARD_RENDER_WINDOW : FORWARD_RENDER_WINDOW;
-          const edgeLeftBoost = scrollDirection < 0 && remainingLeft <= 2 ? EDGE_PRELOAD_EXTRA : 0;
-          const edgeRightBoost = scrollDirection > 0 && remainingRight <= 2 ? EDGE_PRELOAD_EXTRA : 0;
-          const renderStart = Math.max(
-            0,
-            referenceIndex - renderBehind - edgeLeftBoost
-          );
-          const renderEnd = Math.min(
-            orders.length - 1,
-            referenceIndex + renderAhead + edgeRightBoost
-          );
-          const shouldRenderCard = index >= renderStart && index <= renderEnd || isActive;
-          return /* @__PURE__ */ jsxRuntimeExports.jsx(
-            SwiperSlide,
+        children: [
+          orders.map((order, index) => {
+            var _a;
+            const isActive = index === selectedOrderIndex;
+            const isOddPage = index % 2 === 1;
+            const isEvenNumberedCard = (index + 1) % 2 === 0;
+            const distance = Math.abs(selectedOrderIndex - index);
+            const scale = Math.max(0.92, 1 - distance * 0.08);
+            const opacity = Math.max(0.72, 1 - distance * 0.2);
+            const referenceIndex = selectedOrderIndex;
+            const remainingRight = orders.length - 1 - referenceIndex;
+            const remainingLeft = referenceIndex;
+            const renderBehind = scrollDirection > 0 ? BACKWARD_RENDER_WINDOW : FORWARD_RENDER_WINDOW;
+            const renderAhead = scrollDirection < 0 ? BACKWARD_RENDER_WINDOW : FORWARD_RENDER_WINDOW;
+            const edgeLeftBoost = scrollDirection < 0 && remainingLeft <= 2 ? EDGE_PRELOAD_EXTRA : 0;
+            const edgeRightBoost = scrollDirection > 0 && remainingRight <= 2 ? EDGE_PRELOAD_EXTRA : 0;
+            const renderStart = Math.max(
+              0,
+              referenceIndex - renderBehind - edgeLeftBoost
+            );
+            const renderEnd = Math.min(
+              orders.length - 1,
+              referenceIndex + renderAhead + edgeRightBoost
+            );
+            const shouldRenderCard = index >= renderStart && index <= renderEnd || isActive;
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              SwiperSlide,
+              {
+                className: "h-full!",
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "div",
+                  {
+                    className: `relative w-full h-full p-1 rounded-xl ${isOddPage ? "bg-indigo-50/70 dark:bg-indigo-950/30" : "bg-transparent"}`,
+                    style: {
+                      transform: `scale(${scale})`,
+                      opacity,
+                      transition: "transform 220ms ease, opacity 220ms ease"
+                    },
+                    children: shouldRenderCard ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      OrderCard,
+                      {
+                        order,
+                        productDetails: isActive ? product : resolveProduct((_a = order.orderItems) == null ? void 0 : _a[0]),
+                        selectedItemIndex: isActive ? selectedItemIndex : 0,
+                        isActive,
+                        isEvenNumberedCard,
+                        orderNumber: index + 1,
+                        onOrderBadgeClick: isActive ? openOrderPicker : void 0,
+                        isImageLoading: isActive ? isImageLoading : false,
+                        onImageLoad,
+                        onImageError,
+                        onSelectItem: isActive ? onSelectItem : void 0,
+                        onCopySku,
+                        copiedSku
+                      }
+                    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/50" })
+                  }
+                )
+              },
+              `${order.orderId || order.order_id || index}-${index}`
+            );
+          }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(SwiperSlide, { className: "h-full!", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative w-full h-full p-1 rounded-xl bg-primary-50/60 dark:bg-primary-950/20", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            OrdersProductDetailsCard,
             {
-              className: "h-full!",
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "div",
-                {
-                  className: `relative w-full h-full p-1 rounded-xl ${isOddPage ? "bg-indigo-50/70 dark:bg-indigo-950/30" : "bg-transparent"}`,
-                  style: {
-                    transform: `scale(${scale})`,
-                    opacity,
-                    transition: "transform 220ms ease, opacity 220ms ease"
-                  },
-                  children: shouldRenderCard ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    OrderCard,
-                    {
-                      order,
-                      productDetails: isActive ? product : resolveProduct((_a = order.orderItems) == null ? void 0 : _a[0]),
-                      selectedItemIndex: isActive ? selectedItemIndex : 0,
-                      isActive,
-                      isEvenNumberedCard,
-                      orderNumber: index + 1,
-                      onOrderBadgeClick: isActive ? openOrderPicker : void 0,
-                      isImageLoading: isActive ? isImageLoading : false,
-                      onImageLoad,
-                      onImageError,
-                      onSelectItem: isActive ? onSelectItem : void 0,
-                      onCopySku,
-                      copiedSku
-                    }
-                  ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/50" })
-                }
-              )
-            },
-            `${order.orderId || order.order_id || index}-${index}`
-          );
-        })
+              orders,
+              resolveProduct
+            }
+          ) }) }, "orders-totals-card")
+        ]
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "absolute inset-y-0 left-0 right-0 z-40 pointer-events-none", children: [
@@ -33544,12 +34236,12 @@ const OrderPagesList = ({
           type: "button",
           onClick: (event) => {
             event.stopPropagation();
-            if (selectedOrderIndex < orders.length - 1) {
+            if (selectedOrderIndex < totalSlides - 1) {
               onSelectOrder(selectedOrderIndex + 1);
             }
           },
-          disabled: selectedOrderIndex >= orders.length - 1,
-          className: `absolute right-0 top-0 bottom-0 w-[5%] min-w-4 max-w-7 border-l pointer-events-auto transition-colors ${"bg-transparent border-transparent"} ${selectedOrderIndex < orders.length - 1 ? "cursor-pointer" : "cursor-not-allowed opacity-40"}`,
+          disabled: selectedOrderIndex >= totalSlides - 1,
+          className: `absolute right-0 top-0 bottom-0 w-[5%] min-w-4 max-w-7 border-l pointer-events-auto transition-colors ${"bg-transparent border-transparent"} ${selectedOrderIndex < totalSlides - 1 ? "cursor-pointer" : "cursor-not-allowed opacity-40"}`,
           "aria-label": "Next order",
           title: "Next order",
           children: HOTZONE_DEBUG_MODE
@@ -33588,7 +34280,7 @@ const OrderPagesList = ({
                   {
                     type: "number",
                     min: 1,
-                    max: orders.length,
+                    max: totalSlides,
                     value: orderJumpValue,
                     onChange: (event) => setOrderJumpValue(event.target.value),
                     onKeyDown: (event) => {
@@ -33596,7 +34288,7 @@ const OrderPagesList = ({
                         handleJumpToOrder();
                       }
                     },
-                    placeholder: `1 - ${orders.length}`,
+                    placeholder: `1 - ${totalSlides}`,
                     className: "flex-1 h-9 px-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
                   }
                 ),
@@ -33621,7 +34313,7 @@ const OrderPagesList = ({
                       closeOrderPicker();
                     },
                     className: `h-9 rounded-md border text-xs font-semibold ${isCurrent ? "bg-primary text-white border-primary-600" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600"}`,
-                    children: index + 1
+                    children: index === orders.length ? "Total" : index + 1
                   },
                   `picker-${index}`
                 );
@@ -33893,6 +34585,8 @@ const useOrderData = (selectedState = null) => {
   const [orders, setOrders] = reactExports.useState([]);
   const [products, setProducts] = reactExports.useState([]);
   const [skuMappings, setSkuMappings] = reactExports.useState({});
+  const [isStateLoading, setIsStateLoading] = reactExports.useState(false);
+  const [isProductsLoading, setIsProductsLoading] = reactExports.useState(false);
   reactExports.useEffect(() => {
     let isCancelled = false;
     const currentUserId = String((user == null ? void 0 : user.id) || "");
@@ -33905,6 +34599,7 @@ const useOrderData = (selectedState = null) => {
     const fetchLatestState = async () => {
       var _a, _b, _c, _d;
       try {
+        setIsStateLoading(true);
         const savedStates = await listOrderStates();
         const ownStates = (savedStates || []).filter(
           (item) => String((item == null ? void 0 : item.user_id) ?? (item == null ? void 0 : item.created_by) ?? "") === currentUserId
@@ -33926,13 +34621,19 @@ const useOrderData = (selectedState = null) => {
       } catch (error) {
         console.error("Error fetching latest order state:", error);
         applySelectedState(null);
+      } finally {
+        if (!isCancelled) {
+          setIsStateLoading(false);
+        }
       }
     };
     if (!(user == null ? void 0 : user.id)) {
+      setIsStateLoading(false);
       applySelectedState(null);
     } else {
       const selectedStateMatchesUser = !!selectedState && selectedState.userId === user.id;
       if (selectedStateMatchesUser && selectedState) {
+        setIsStateLoading(false);
         applySelectedState(selectedState);
       } else {
         applySelectedState(null);
@@ -33948,9 +34649,11 @@ const useOrderData = (selectedState = null) => {
     const fetchProducts = async () => {
       if (!(user == null ? void 0 : user.id)) {
         setProducts([]);
+        setIsProductsLoading(false);
         return;
       }
       setProducts([]);
+      setIsProductsLoading(true);
       try {
         const data = await listItems();
         if (isCancelled) return;
@@ -33962,6 +34665,10 @@ const useOrderData = (selectedState = null) => {
       } catch (error) {
         if (isCancelled) return;
         console.error("Error fetching products:", error);
+      } finally {
+        if (!isCancelled) {
+          setIsProductsLoading(false);
+        }
       }
     };
     fetchProducts();
@@ -34060,14 +34767,22 @@ const useOrderData = (selectedState = null) => {
     },
     [products, skuMappings]
   );
-  return { stateData, orders, products, resolveProduct };
+  return {
+    stateData,
+    orders,
+    products,
+    resolveProduct,
+    isOrdersLoading: isStateLoading || isProductsLoading
+  };
 };
 const sessionImageCache = /* @__PURE__ */ new Set();
 const inFlightImageLoads = /* @__PURE__ */ new Map();
-const OrdersPage = ({ selectedOrdersState = null }) => {
+const OrdersPageView = ({ selectedOrdersState = null }) => {
   const { t } = useLanguage();
-  const { stateData, orders, products, resolveProduct } = useOrderData(selectedOrdersState);
-  const [selectedOrderIndex, setSelectedOrderIndex] = reactExports.useState(null);
+  const { stateData, orders, products, resolveProduct, isOrdersLoading } = useOrderData(selectedOrdersState);
+  const [selectedOrderIndex, setSelectedOrderIndex] = reactExports.useState(
+    null
+  );
   const [selectedItemIndex, setSelectedItemIndex] = reactExports.useState(0);
   const [product, setProduct] = reactExports.useState(LOADING_PRODUCT);
   const [isImageLoading, setIsImageLoading] = reactExports.useState(false);
@@ -34164,15 +34879,21 @@ const OrdersPage = ({ selectedOrdersState = null }) => {
   const selectOrderRef = reactExports.useRef(null);
   selectOrderRef.current = (orderIndex) => {
     var _a;
+    if (orderIndex >= orders.length) {
+      setSelectedOrderIndex(orderIndex);
+      setIsImageLoading(false);
+      return;
+    }
     const order = orders[orderIndex];
     setSelectedOrderIndex(orderIndex);
     setSelectedItemIndex(0);
     const firstItem = (_a = order == null ? void 0 : order.orderItems) == null ? void 0 : _a[0];
     if (products.length > 0 && firstItem) {
       setProduct(resolveProduct(firstItem));
-      checkAndLoadImage(firstItem.primaryImageUrl);
+      checkAndLoadImage(String(firstItem.primaryImageUrl || ""));
     } else {
       setProduct(LOADING_PRODUCT);
+      setIsImageLoading(false);
     }
   };
   const selectOrder = reactExports.useCallback((index) => {
@@ -34193,7 +34914,7 @@ const OrdersPage = ({ selectedOrdersState = null }) => {
       if (!item) return;
       setSelectedItemIndex(itemIndex);
       setProduct(resolveProduct(item));
-      checkAndLoadImage(item.primaryImageUrl);
+      checkAndLoadImage(String(item.primaryImageUrl || ""));
     },
     [checkAndLoadImage, orders, resolveProduct, selectedOrderIndex]
   );
@@ -34206,9 +34927,17 @@ const OrdersPage = ({ selectedOrdersState = null }) => {
       setIsImageLoading(false);
       return;
     }
-    checkAndLoadImage(currentItem.primaryImageUrl);
+    checkAndLoadImage(String(currentItem.primaryImageUrl || ""));
   }, [checkAndLoadImage, orders, selectedItemIndex, selectedOrderIndex]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col h-[calc(100svh-4.5rem)] overflow-hidden", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      LoadingWindow,
+      {
+        open: isOrdersLoading,
+        title: "Loading Orders",
+        message: "Please wait while we prepare your orders data..."
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative opacity-30 flex justify-center items-center gap-2 my-1 shrink-0", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-2 py-0.5 border border-primary-200 dark:border-primary-700 rounded-md", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-medium text-primary-700 dark:text-primary-300", children: (stateData == null ? void 0 : stateData.selectedType) ? t(`home.${stateData.selectedType}`) : t("common.loading") }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-2 py-0.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-md", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-gray-600 dark:text-gray-400", children: [
@@ -34235,7 +34964,7 @@ const OrdersPage = ({ selectedOrdersState = null }) => {
         resolveProduct
       }
     ) }),
-    orders.length === 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center py-8", children: [
+    !isOrdersLoading && orders.length === 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center py-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Package, { className: "w-8 h-8 text-gray-400 dark:text-gray-600" }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-sm mx-auto px-4", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-gray-900 dark:text-white mb-1", children: t("orders.noOrdersFound") }),
@@ -36490,7 +37219,7 @@ function IndexPage() {
         if (!isAuthenticated) {
           return /* @__PURE__ */ jsxRuntimeExports.jsx(SettingsPage, {});
         }
-        return /* @__PURE__ */ jsxRuntimeExports.jsx(OrdersPage, { selectedOrdersState: selectedOrdersStateForCurrentUser });
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(OrdersPageView, { selectedOrdersState: selectedOrdersStateForCurrentUser });
       case "settings":
         return /* @__PURE__ */ jsxRuntimeExports.jsx(SettingsPage, {});
       default:
@@ -36498,10 +37227,14 @@ function IndexPage() {
     }
   };
   if (loading) {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "min-h-svh bg-gray-50 dark:bg-gray-900 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center space-y-4", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-600 dark:text-gray-400", children: "Loading..." })
-    ] }) });
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "min-h-svh bg-gray-50 dark:bg-gray-900 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      LoadingWindow,
+      {
+        open: true,
+        title: "Loading App",
+        message: "Checking authentication and preparing your workspace"
+      }
+    ) });
   }
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-svh bg-gray-50 dark:bg-gray-900 overflow-hidden", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(ResponsiveNav, { activeTab, onTabChange: handleTabChange }),
