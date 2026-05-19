@@ -27766,6 +27766,44 @@ async function getVisibleRows({
   });
   return Array.from(dedup.values());
 }
+function toCategoryShape(row) {
+  return {
+    ...row,
+    categorySku: (row == null ? void 0 : row.categorySku) || ""
+  };
+}
+async function getAllCategories() {
+  const rows = await getVisibleRows({
+    table: "categories",
+    ownerColumn: "created_by",
+    currentUserId: getUserId(),
+    orderBy: "created_at",
+    ascending: false
+  });
+  return mapLegacyVisibilityRows(rows, "created_by").map(toCategoryShape);
+}
+async function getVerticalCategories(verticalId) {
+  const rows = await getVisibleRows({
+    table: "categories",
+    ownerColumn: "created_by",
+    currentUserId: getUserId(),
+    orderBy: "created_at",
+    ascending: false,
+    extraEq: { vertical_id: verticalId }
+  });
+  return mapLegacyVisibilityRows(rows, "created_by").map(toCategoryShape);
+}
+async function getCategoryBaseItems(categoryId) {
+  const rows = await getVisibleRows({
+    table: "base_items",
+    ownerColumn: "created_by",
+    currentUserId: getUserId(),
+    orderBy: "created_at",
+    ascending: false,
+    extraEq: { category_id: categoryId }
+  });
+  return mapLegacyVisibilityRows(rows, "created_by");
+}
 async function listItems() {
   const rows = await getVisibleRows({
     table: "items",
@@ -28036,6 +28074,22 @@ async function listOwnOrderStatesPaged(options = {}) {
     hasMore: page * limit < total
   };
 }
+function toVerticalShape(row) {
+  return {
+    ...row,
+    verticalSku: (row == null ? void 0 : row.verticalSku) || ""
+  };
+}
+async function getAllVerticals() {
+  const rows = await getVisibleRows({
+    table: "verticals",
+    ownerColumn: "created_by",
+    currentUserId: getUserId(),
+    orderBy: "created_at",
+    ascending: false
+  });
+  return mapLegacyVisibilityRows(rows, "created_by").map(toVerticalShape);
+}
 function isShopsyProduct(skuId) {
   return !!skuId && /^(SPY_|SHY_|SH_)/.test(skuId.toUpperCase());
 }
@@ -28093,6 +28147,8 @@ const QUANTITY_PART_REGEX$1 = /^(\d+)([a-zA-Z]+)$/;
 function parseCompositeSku(value) {
   const parts = String(value || "").split("_").filter(Boolean);
   if (parts.length < 4) return null;
+  const verticalSku = String(parts[0] || "").trim();
+  const categorySku = String(parts[1] || "").trim();
   const directMatch = parts[3].match(QUANTITY_PART_REGEX$1);
   if (directMatch) {
     return {
@@ -28101,7 +28157,9 @@ function parseCompositeSku(value) {
       unitType: directMatch[2],
       quantityPart: parts[3],
       itemIdsPart: parts[2],
-      format: "ids-then-qty"
+      format: "ids-then-qty",
+      verticalSku,
+      categorySku
     };
   }
   const swappedMatch = parts[2].match(QUANTITY_PART_REGEX$1);
@@ -28112,7 +28170,9 @@ function parseCompositeSku(value) {
       unitType: swappedMatch[2],
       quantityPart: parts[2],
       itemIdsPart: parts[3],
-      format: "qty-then-ids"
+      format: "qty-then-ids",
+      verticalSku,
+      categorySku
     };
   }
   return null;
@@ -28126,6 +28186,9 @@ function parseItemTokens(value) {
 }
 function normalizeText(value) {
   return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+function normalizeSkuKey(value) {
+  return normalizeText(value).replace(/[^a-z0-9]/g, "");
 }
 function toNonNegativeNumber(value) {
   const parsed = Number(value);
@@ -28213,12 +28276,29 @@ const useOrderData = (selectedState = null) => {
       setProducts([]);
       setIsProductsLoading(true);
       try {
-        const data = await listItems();
+        const [itemsData, categoriesData, verticalsData] = await Promise.all([
+          listItems(),
+          getAllCategories(),
+          getAllVerticals()
+        ]);
         if (isCancelled) return;
-        const normalizedProducts = (data || []).map((item) => ({
-          ...item,
-          sku_id: item.sku_id || item.item_sku
-        }));
+        const categoryMap = new Map(
+          (categoriesData || []).map((category) => [category.id, category])
+        );
+        const verticalMap = new Map(
+          (verticalsData || []).map((vertical) => [vertical.id, vertical])
+        );
+        const normalizedProducts = (itemsData || []).map((item) => {
+          const category = categoryMap.get(item.category_id);
+          const verticalId = item.vertical_id || (category == null ? void 0 : category.vertical_id);
+          const vertical = verticalMap.get(verticalId);
+          return {
+            ...item,
+            sku_id: item.sku_id || item.item_sku,
+            categorySku: (category == null ? void 0 : category.categorySku) || "",
+            verticalSku: (vertical == null ? void 0 : vertical.verticalSku) || ""
+          };
+        });
         setProducts(normalizedProducts);
       } catch (error) {
         if (isCancelled) return;
@@ -28274,21 +28354,35 @@ const useOrderData = (selectedState = null) => {
   }, [orders, stateData, user == null ? void 0 : user.id]);
   const resolveProduct = reactExports.useCallback(
     (item) => {
+      if (!item) {
+        return DEFAULT_PRODUCT;
+      }
       if (!products.length) {
         return LOADING_PRODUCT;
       }
-      const originalSku = item.sku;
+      const originalSku = item == null ? void 0 : item.sku;
       const modified = shopsyModifySkuId(originalSku);
-      const sku = skuMappings[modified] || item.newSku || modified;
+      const sku = skuMappings[modified] || (item == null ? void 0 : item.newSku) || modified;
       const parsedSku = parseCompositeSku(sku);
       if (parsedSku) {
+        const parsedVertical = normalizeSkuKey(parsedSku.verticalSku);
+        const parsedCategory = normalizeSkuKey(parsedSku.categorySku);
         const parsedItemIds = parsedSku.itemIds.flatMap(
           (token) => parseItemTokens(token)
         );
         const matched = parsedItemIds.map(
-          (id) => products.find(
-            (p) => normalizeText(p.sku_id) === normalizeText(id) || normalizeText(p.item_sku) === normalizeText(id)
-          )
+          (id) => products.find((p) => {
+            const itemMatch = normalizeText(p.sku_id) === normalizeText(id) || normalizeText(p.item_sku) === normalizeText(id);
+            if (!itemMatch) return false;
+            if (parsedVertical || parsedCategory) {
+              const productVertical = normalizeSkuKey(p.verticalSku);
+              const productCategory = normalizeSkuKey(p.categorySku);
+              const verticalMatch = !parsedVertical || productVertical === parsedVertical;
+              const categoryMatch = !parsedCategory || productCategory === parsedCategory;
+              return verticalMatch && categoryMatch;
+            }
+            return true;
+          })
         );
         if (matched.every(Boolean)) {
           const matchedProducts = matched;
@@ -28328,6 +28422,11 @@ const useOrderData = (selectedState = null) => {
           const titleMatch = products.find((p) => {
             const productName = normalizeText(p == null ? void 0 : p.name);
             const productLabel = normalizeText(p == null ? void 0 : p.label);
+            const productVertical = normalizeSkuKey(p == null ? void 0 : p.verticalSku);
+            const productCategory = normalizeSkuKey(p == null ? void 0 : p.categorySku);
+            const verticalMatch = !parsedVertical || productVertical === parsedVertical;
+            const categoryMatch = !parsedCategory || productCategory === parsedCategory;
+            if (!(verticalMatch && categoryMatch)) return false;
             return productName === normalizedTitle || productLabel === normalizedTitle || normalizedTitle.includes(productName) || productName.includes(normalizedTitle) || productLabel && normalizedTitle.includes(productLabel) || productLabel && productLabel.includes(normalizedTitle);
           });
           if (titleMatch) {
@@ -35943,60 +36042,6 @@ function ManageAccountsDialog({
     }
   );
 }
-function toVerticalShape(row) {
-  return {
-    ...row,
-    verticalSku: (row == null ? void 0 : row.verticalSku) || ""
-  };
-}
-async function getAllVerticals() {
-  const rows = await getVisibleRows({
-    table: "verticals",
-    ownerColumn: "created_by",
-    currentUserId: getUserId(),
-    orderBy: "created_at",
-    ascending: false
-  });
-  return mapLegacyVisibilityRows(rows, "created_by").map(toVerticalShape);
-}
-function toCategoryShape(row) {
-  return {
-    ...row,
-    categorySku: (row == null ? void 0 : row.categorySku) || ""
-  };
-}
-async function getAllCategories() {
-  const rows = await getVisibleRows({
-    table: "categories",
-    ownerColumn: "created_by",
-    currentUserId: getUserId(),
-    orderBy: "created_at",
-    ascending: false
-  });
-  return mapLegacyVisibilityRows(rows, "created_by").map(toCategoryShape);
-}
-async function getVerticalCategories(verticalId) {
-  const rows = await getVisibleRows({
-    table: "categories",
-    ownerColumn: "created_by",
-    currentUserId: getUserId(),
-    orderBy: "created_at",
-    ascending: false,
-    extraEq: { vertical_id: verticalId }
-  });
-  return mapLegacyVisibilityRows(rows, "created_by").map(toCategoryShape);
-}
-async function getCategoryBaseItems(categoryId) {
-  const rows = await getVisibleRows({
-    table: "base_items",
-    ownerColumn: "created_by",
-    currentUserId: getUserId(),
-    orderBy: "created_at",
-    ascending: false,
-    extraEq: { category_id: categoryId }
-  });
-  return mapLegacyVisibilityRows(rows, "created_by");
-}
 function FiAlertTriangle(props) {
   return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "path", "attr": { "d": "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" }, "child": [] }, { "tag": "line", "attr": { "x1": "12", "y1": "9", "x2": "12", "y2": "13" }, "child": [] }, { "tag": "line", "attr": { "x1": "12", "y1": "17", "x2": "12.01", "y2": "17" }, "child": [] }] })(props);
 }
@@ -37106,11 +37151,8 @@ const SettingsPage = () => {
           },
           account.username
         );
-      }) })
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-lg font-semibold text-gray-900 dark:text-white mb-3", children: t("settings.accountCenter") }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
+      }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full flex justify-end  mt-5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
         "button",
         {
           type: "button",
@@ -37118,7 +37160,7 @@ const SettingsPage = () => {
           className: "px-3 py-2 rounded-lg bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 text-sm font-medium",
           children: t("settings.openAccountCenter")
         }
-      )
+      ) })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(SkuMappingSection, {}),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-5", children: [

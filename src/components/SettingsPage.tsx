@@ -262,20 +262,17 @@ const SettingsPage = () => {
             })
           )}
         </div>
-      </div>
 
-      {/* Manage Accounts */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-5">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-          {t("settings.accountCenter")}
-        </h2>
-        <button
-          type="button"
-          onClick={() => setShowManageAccounts(true)}
-          className="px-3 py-2 rounded-lg bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 text-sm font-medium"
-        >
-          {t("settings.openAccountCenter")}
-        </button>
+        {/* Manage Accounts */}
+        <div className="w-full flex justify-end  mt-5">
+          <button
+            type="button"
+            onClick={() => setShowManageAccounts(true)}
+            className="px-3 py-2 rounded-lg bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 text-sm font-medium"
+          >
+            {t("settings.openAccountCenter")}
+          </button>
+        </div>
       </div>
 
       {/* SKU Mapping Section */}

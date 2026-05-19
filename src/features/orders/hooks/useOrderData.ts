@@ -1,6 +1,8 @@
+import { getAllCategories } from "@/api/categoriesApi";
 import { listItems } from "@/api/itemsApi";
 import { getMapSkusObject } from "@/api/mapSkusApi";
 import { listOrderStates } from "@/api/ordersStatesApi";
+import { getAllVerticals } from "@/api/verticalsApi";
 import { useAuth } from "@/lib/AuthContext";
 import type { Order, SelectedOrdersState } from "@/types/orders";
 import { shopsyModifySkuId } from "@/utils/idAndSkuUtils";
@@ -20,6 +22,8 @@ type ParsedCompositeSku = {
   quantityPart: string;
   itemIdsPart: string;
   format: "ids-then-qty" | "qty-then-ids";
+  verticalSku: string;
+  categorySku: string;
 };
 
 function parseCompositeSku(value: unknown): ParsedCompositeSku | null {
@@ -28,6 +32,9 @@ function parseCompositeSku(value: unknown): ParsedCompositeSku | null {
     .filter(Boolean);
 
   if (parts.length < 4) return null;
+
+  const verticalSku = String(parts[0] || "").trim();
+  const categorySku = String(parts[1] || "").trim();
 
   const directMatch = parts[3].match(QUANTITY_PART_REGEX);
   if (directMatch) {
@@ -38,6 +45,8 @@ function parseCompositeSku(value: unknown): ParsedCompositeSku | null {
       quantityPart: parts[3],
       itemIdsPart: parts[2],
       format: "ids-then-qty",
+      verticalSku,
+      categorySku,
     };
   }
 
@@ -51,6 +60,8 @@ function parseCompositeSku(value: unknown): ParsedCompositeSku | null {
       quantityPart: parts[2],
       itemIdsPart: parts[3],
       format: "qty-then-ids",
+      verticalSku,
+      categorySku,
     };
   }
 
@@ -75,6 +86,10 @@ function normalizeText(value: unknown) {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, " ");
+}
+
+function normalizeSkuKey(value: unknown) {
+  return normalizeText(value).replace(/[^a-z0-9]/g, "");
 }
 
 function toNonNegativeNumber(value: unknown) {
@@ -179,7 +194,7 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
     };
   }, [selectedState, user?.id]);
 
-  // ── Fetch products from API (refresh on account switch) ─────────────
+  // ── Fetch products and taxonomy from API (refresh on account switch) ─────────────
   useEffect(() => {
     let isCancelled = false;
 
@@ -195,13 +210,32 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
       setIsProductsLoading(true);
 
       try {
-        const data = await listItems();
+        const [itemsData, categoriesData, verticalsData] = await Promise.all([
+          listItems(),
+          getAllCategories(),
+          getAllVerticals(),
+        ]);
         if (isCancelled) return;
 
-        const normalizedProducts = (data || []).map((item) => ({
-          ...item,
-          sku_id: item.sku_id || item.item_sku,
-        }));
+        const categoryMap = new Map(
+          (categoriesData || []).map((category) => [category.id, category]),
+        );
+        const verticalMap = new Map(
+          (verticalsData || []).map((vertical) => [vertical.id, vertical]),
+        );
+
+        const normalizedProducts = (itemsData || []).map((item) => {
+          const category = categoryMap.get(item.category_id);
+          const verticalId = item.vertical_id || category?.vertical_id;
+          const vertical = verticalMap.get(verticalId);
+
+          return {
+            ...item,
+            sku_id: item.sku_id || item.item_sku,
+            categorySku: category?.categorySku || "",
+            verticalSku: vertical?.verticalSku || "",
+          };
+        });
 
         setProducts(normalizedProducts);
       } catch (error) {
@@ -270,27 +304,47 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
   // ── Resolve product details from an order item ──────────────────────
   const resolveProduct = useCallback(
     (item) => {
+      if (!item) {
+        return DEFAULT_PRODUCT;
+      }
+
       if (!products.length) {
         return LOADING_PRODUCT;
       }
 
-      const originalSku = item.sku;
+      const originalSku = item?.sku;
       const modified = shopsyModifySkuId(originalSku);
-      const sku = skuMappings[modified] || item.newSku || modified;
+      const sku = skuMappings[modified] || item?.newSku || modified;
 
       const parsedSku = parseCompositeSku(sku);
 
       if (parsedSku) {
+        const parsedVertical = normalizeSkuKey(parsedSku.verticalSku);
+        const parsedCategory = normalizeSkuKey(parsedSku.categorySku);
         const parsedItemIds = parsedSku.itemIds.flatMap((token) =>
           parseItemTokens(token),
         );
 
         const matched = parsedItemIds.map((id) =>
-          products.find(
-            (p) =>
+          products.find((p) => {
+            const itemMatch =
               normalizeText(p.sku_id) === normalizeText(id) ||
-              normalizeText(p.item_sku) === normalizeText(id),
-          ),
+              normalizeText(p.item_sku) === normalizeText(id);
+
+            if (!itemMatch) return false;
+
+            if (parsedVertical || parsedCategory) {
+              const productVertical = normalizeSkuKey(p.verticalSku);
+              const productCategory = normalizeSkuKey(p.categorySku);
+              const verticalMatch =
+                !parsedVertical || productVertical === parsedVertical;
+              const categoryMatch =
+                !parsedCategory || productCategory === parsedCategory;
+              return verticalMatch && categoryMatch;
+            }
+
+            return true;
+          }),
         );
 
         if (matched.every(Boolean)) {
@@ -341,6 +395,14 @@ const useOrderData = (selectedState: SelectedOrdersState | null = null) => {
           const titleMatch = products.find((p) => {
             const productName = normalizeText(p?.name);
             const productLabel = normalizeText(p?.label);
+            const productVertical = normalizeSkuKey(p?.verticalSku);
+            const productCategory = normalizeSkuKey(p?.categorySku);
+
+            const verticalMatch =
+              !parsedVertical || productVertical === parsedVertical;
+            const categoryMatch =
+              !parsedCategory || productCategory === parsedCategory;
+            if (!(verticalMatch && categoryMatch)) return false;
 
             return (
               productName === normalizedTitle ||

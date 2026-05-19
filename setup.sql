@@ -1,236 +1,203 @@
--- ENUM type for status
-DROP TYPE IF EXISTS status_enum CASCADE;
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
-CREATE TYPE status_enum AS ENUM ('public', 'private');
-
--- USERS
-DROP TABLE IF EXISTS users CASCADE;
-
-CREATE TABLE
-   users (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      name TEXT,
-      username TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT now (),
-      last_login TIMESTAMP
-   );
-
-
--- USER DATA table (simplified - no chunking triggers needed)
-DROP TABLE IF EXISTS user_data CASCADE;
-
-CREATE TABLE
-   user_data (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      user_id UUID REFERENCES users (id) ON DELETE CASCADE,
-      name TEXT NOT NULL, -- like 'listing', 'mapping', 'pdf'
-      data JSONB NOT NULL,
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now (),
-      UNIQUE (user_id, name) -- ensures one entry per name per user
-   );
-
--- VERTICALS
-DROP TABLE IF EXISTS verticals CASCADE;
-
-CREATE TABLE
-   verticals (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      name TEXT NOT NULL UNIQUE,
-      label TEXT,
-      status status_enum DEFAULT 'public',
-      created_by UUID REFERENCES users (id) ON DELETE SET NULL,
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now ()
-   );
-
--- CATEGORIES
-DROP TABLE IF EXISTS categories CASCADE;
-
-CREATE TABLE
-   categories (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      vertical_id UUID REFERENCES verticals (id) ON DELETE CASCADE, -- New field
-      name TEXT NOT NULL,
-      label TEXT,
-      status status_enum DEFAULT 'public',
-      created_by UUID REFERENCES users (id) ON DELETE SET NULL,
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now (),
-      UNIQUE (vertical_id, name)
-   );
-
--- PRODUCTS (with pricing fields)
-DROP TABLE IF EXISTS products CASCADE;
-
-CREATE TABLE
-   products (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      name TEXT NOT NULL,
-      label TEXT,
-      status status_enum,
-      vertical_id UUID REFERENCES verticals (id) ON DELETE CASCADE,
-      category_id UUID REFERENCES categories (id) ON DELETE CASCADE,
-      created_by UUID REFERENCES users (id),
-      price NUMERIC(10, 2),
-      quantity_per_kg NUMERIC(10, 2),
-      self_life INTEGER,
-      sku_id TEXT NOT NULL UNIQUE,
-      increment_per_rupee NUMERIC(10, 2),
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now ()
-   );
-
--- FORMS (for form structure in JSON)
-DROP TABLE IF EXISTS forms CASCADE;
-
-CREATE TABLE
-   forms (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      created_by UUID REFERENCES users (id),
-      structure JSONB NOT NULL,
-      created_at TIMESTAMP DEFAULT now ()
-   );
-
--- BASE FORMS
-DROP TABLE IF EXISTS base_forms CASCADE;
-
-CREATE TABLE
-   base_forms (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      name TEXT NOT NULL,
-      label TEXT,
-      status status_enum DEFAULT 'private',
-      form_id UUID REFERENCES forms (id),
-      vertical_id UUID REFERENCES verticals (id) ON DELETE CASCADE,
-      category_id UUID REFERENCES categories (id) ON DELETE CASCADE,
-      created_by UUID REFERENCES users (id),
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now ()
-   );
-
--- DESCRIPTION FORMS
-DROP TABLE IF EXISTS description_forms CASCADE;
-
-CREATE TABLE
-   description_forms (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      name TEXT,
-      label TEXT,
-      status status_enum DEFAULT 'private',
-      form_id UUID REFERENCES forms (id),
-      base_form_id UUID REFERENCES base_forms (id) ON DELETE CASCADE,
-      vertical_id UUID REFERENCES verticals (id) ON DELETE CASCADE,
-      category_id UUID REFERENCES categories (id) ON DELETE CASCADE,
-      created_by UUID REFERENCES users (id),
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now ()
-   );
-
--- DATA STORE (for storing form data)
-DROP TABLE IF EXISTS data_store CASCADE;
-
-CREATE TABLE
-   data_store (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      created_by UUID REFERENCES users (id),
-      data JSONB NOT NULL,
-      created_at TIMESTAMP DEFAULT now ()
-   );
-
--- BASE FORM DATA
-DROP TABLE IF EXISTS base_form_data CASCADE;
-
-CREATE TABLE
-   base_form_data (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      name TEXT,
-      label TEXT,
-      data_id UUID REFERENCES data_store (id) ON DELETE CASCADE,
-      status status_enum DEFAULT 'private',
-      base_form_id UUID REFERENCES base_forms (id) ON DELETE CASCADE,
-      vertical_id UUID REFERENCES verticals (id) ON DELETE CASCADE,
-      category_id UUID REFERENCES categories (id) ON DELETE CASCADE,
-      created_by UUID REFERENCES users (id),
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now ()
-   );
-
--- DESCRIPTION FORM DATA
-DROP TABLE IF EXISTS description_form_data CASCADE;
-
-CREATE TABLE
-   description_form_data (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      name TEXT,
-      label TEXT,
-      data_id UUID REFERENCES data_store (id) ON DELETE CASCADE,
-      status status_enum DEFAULT 'private',
-      description_form_id UUID REFERENCES description_forms (id) ON DELETE CASCADE,
-      base_form_data_id UUID REFERENCES base_form_data (id) ON DELETE CASCADE,
-      vertical_id UUID REFERENCES verticals (id) ON DELETE CASCADE,
-      category_id UUID REFERENCES categories (id) ON DELETE CASCADE,
-      created_by UUID REFERENCES users (id),
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now ()
-   );
-
--- PRODUCT GROUPS (for grouping seller products)
-DROP TABLE IF EXISTS product_groups CASCADE;
-
-CREATE TABLE
-   product_groups (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-      name TEXT NOT NULL,
-      base_form_data_id UUID REFERENCES base_form_data (id) ON DELETE CASCADE, -- Auto-delete when base_form_data is deleted
-      product_ids JSONB NOT NULL DEFAULT '[]', -- Array of product IDs in JSON
-      created_by UUID REFERENCES users (id) ON DELETE CASCADE,
-      created_at TIMESTAMP DEFAULT now (),
-      updated_at TIMESTAMP DEFAULT now (),
-      UNIQUE (created_by, name) -- One group name per user
-   );
-
-
--- ORDERS (for storing order data)
-DROP TABLE IF EXISTS orders CASCADE;
-
-CREATE TABLE orders (
-   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-   user_id UUID REFERENCES users (id) ON DELETE CASCADE,
-   order_data JSONB NOT NULL,
-   created_at TIMESTAMP DEFAULT now()
+CREATE TABLE public.base_items (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  category_id uuid NOT NULL,
+  status USER-DEFINED NOT NULL DEFAULT 'shared'::"StatusEnum",
+  item_name text NOT NULL,
+  item_sku USER-DEFINED NOT NULL,
+  created_by uuid,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT base_items_pkey PRIMARY KEY (id),
+  CONSTRAINT base_items_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.categories(id),
+  CONSTRAINT base_items_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id)
 );
-
-
--- Trigger function
-CREATE OR REPLACE FUNCTION fifo_order_queue()
-RETURNS TRIGGER AS $$
-DECLARE
-   row_count INTEGER;
-BEGIN
-   -- Count total rows for this specific user
-   SELECT COUNT(*) INTO row_count FROM orders WHERE user_id = NEW.user_id;
-
-   -- If more than 9 rows already for this user, delete the oldest before inserting
-   IF row_count >= 10 THEN
-      DELETE FROM orders
-      WHERE id = (
-         SELECT id FROM orders
-         WHERE user_id = NEW.user_id
-         ORDER BY created_at ASC
-         LIMIT 1
-      );
-   END IF;
-
-   RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-
--- Trigger
-CREATE TRIGGER orders_queue_limit
-BEFORE INSERT ON orders
-FOR EACH ROW
-EXECUTE FUNCTION fifo_order_queue();
-
+CREATE TABLE public.categories (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  vertical_id uuid NOT NULL,
+  categorySku USER-DEFINED NOT NULL,
+  label text,
+  status USER-DEFINED NOT NULL DEFAULT 'shared'::"StatusEnum",
+  created_by uuid,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT categories_pkey PRIMARY KEY (id),
+  CONSTRAINT categories_vertical_id_fkey FOREIGN KEY (vertical_id) REFERENCES public.verticals(id),
+  CONSTRAINT categories_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id)
+);
+CREATE TABLE public.group_items (
+  group_id uuid NOT NULL,
+  item_id uuid NOT NULL,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by uuid,
+  CONSTRAINT group_items_pkey PRIMARY KEY (group_id, item_id),
+  CONSTRAINT group_items_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.groups(id),
+  CONSTRAINT group_items_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id)
+);
+CREATE TABLE public.group_user_products (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  group_id uuid NOT NULL,
+  user_id uuid NOT NULL,
+  product_id text NOT NULL,
+  listing_id text,
+  sku_id text,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT group_user_products_pkey PRIMARY KEY (id),
+  CONSTRAINT group_user_products_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.groups(id),
+  CONSTRAINT group_user_products_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.groups (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  label text,
+  status USER-DEFINED NOT NULL DEFAULT 'shared'::"StatusEnum",
+  hsn integer,
+  tax_code USER-DEFINED NOT NULL DEFAULT 'Select One'::"TaxCodeEnum",
+  height_cm numeric,
+  length_cm numeric,
+  weight_kg numeric,
+  breadth_cm numeric,
+  packaging_cost numeric,
+  final_price_over_300 boolean NOT NULL DEFAULT false,
+  min_quantity_in_piece integer,
+  vertical_id uuid,
+  category_id uuid,
+  created_by uuid NOT NULL,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT groups_pkey PRIMARY KEY (id),
+  CONSTRAINT groups_vertical_id_fkey FOREIGN KEY (vertical_id) REFERENCES public.verticals(id),
+  CONSTRAINT groups_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.categories(id),
+  CONSTRAINT groups_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id)
+);
+CREATE TABLE public.item_history (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  item_id uuid NOT NULL,
+  user_id uuid NOT NULL,
+  operation text NOT NULL DEFAULT 'UPDATE'::text CHECK (operation = 'UPDATE'::text),
+  previous_data jsonb NOT NULL,
+  next_data jsonb NOT NULL,
+  changed_fields jsonb NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT item_history_pkey PRIMARY KEY (id),
+  CONSTRAINT item_history_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id),
+  CONSTRAINT item_history_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.items (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  label text,
+  status USER-DEFINED NOT NULL DEFAULT 'shared'::"StatusEnum",
+  vertical_id uuid,
+  category_id uuid NOT NULL,
+  created_by uuid,
+  price numeric,
+  quantity_per_kg numeric,
+  self_life integer,
+  item_sku USER-DEFINED NOT NULL,
+  increment_per_rupee numeric,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT items_pkey PRIMARY KEY (id),
+  CONSTRAINT items_vertical_id_fkey FOREIGN KEY (vertical_id) REFERENCES public.verticals(id),
+  CONSTRAINT items_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.categories(id),
+  CONSTRAINT items_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id)
+);
+CREATE TABLE public.listing_template (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  status USER-DEFINED NOT NULL DEFAULT 'shared'::"StatusEnum",
+  group_id uuid,
+  prompt_id uuid,
+  name text NOT NULL,
+  color text,
+  json jsonb,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT listing_template_pkey PRIMARY KEY (id),
+  CONSTRAINT listing_template_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id),
+  CONSTRAINT listing_template_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.groups(id),
+  CONSTRAINT listing_template_prompt_id_fkey FOREIGN KEY (prompt_id) REFERENCES public.prompt(id)
+);
+CREATE TABLE public.map_skus (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  old_sku USER-DEFINED NOT NULL,
+  new_sku USER-DEFINED NOT NULL,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT map_skus_pkey PRIMARY KEY (id),
+  CONSTRAINT map_skus_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.orders_states (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  status USER-DEFINED NOT NULL DEFAULT 'shared'::"StatusEnum",
+  state_data jsonb NOT NULL,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT orders_states_pkey PRIMARY KEY (id),
+  CONSTRAINT orders_states_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.prompt (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  status USER-DEFINED NOT NULL DEFAULT 'shared'::"StatusEnum",
+  name text NOT NULL,
+  value text,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT prompt_pkey PRIMARY KEY (id),
+  CONSTRAINT prompt_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.shared_access_users (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  owner_user_id uuid NOT NULL,
+  shared_with_user_id uuid NOT NULL,
+  is_active boolean NOT NULL DEFAULT true,
+  member_access_enabled boolean NOT NULL DEFAULT true,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT shared_access_users_pkey PRIMARY KEY (id),
+  CONSTRAINT shared_access_users_owner_user_id_fkey FOREIGN KEY (owner_user_id) REFERENCES public.users(id),
+  CONSTRAINT shared_access_users_shared_with_user_id_fkey FOREIGN KEY (shared_with_user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.users (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text,
+  username text NOT NULL,
+  password text NOT NULL,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_login timestamp without time zone,
+  CONSTRAINT users_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.verticals (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  verticalSku USER-DEFINED NOT NULL,
+  label text,
+  status USER-DEFINED NOT NULL DEFAULT 'shared'::"StatusEnum",
+  created_by uuid,
+  created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone NOT NULL,
+  updated_by uuid,
+  deleted_at timestamp without time zone,
+  CONSTRAINT verticals_pkey PRIMARY KEY (id),
+  CONSTRAINT verticals_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id)
+);
